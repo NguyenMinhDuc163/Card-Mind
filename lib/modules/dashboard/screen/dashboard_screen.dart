@@ -59,22 +59,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
             },
             items: [
               SalomonBottomBarItem(
-                icon: SvgPicture.asset(IconPath.iconHome),
+                icon: Icon(Icons.home),
                 title: Text("home_screen.home".tr()),
                 activeIcon: SizedBox.shrink(),
               ),
               SalomonBottomBarItem(
-                icon: SvgPicture.asset(IconPath.iconHome),
+                icon: Icon(Icons.wallet_giftcard),
                 title: Text("home_screen.wishlist".tr()),
                 activeIcon: SizedBox.shrink(),
               ),
               SalomonBottomBarItem(
-                icon: SvgPicture.asset(IconPath.iconHome),
+                icon: Icon(Icons.shopping_cart),
                 title: Text("home_screen.cart".tr()),
                 activeIcon: SizedBox.shrink(),
               ),
               SalomonBottomBarItem(
-                icon: SvgPicture.asset(IconPath.iconHome),
+                icon: Icon(Icons.wallet),
                 title: Text("home_screen.wallet".tr()),
                 activeIcon: SizedBox.shrink(),
               ),

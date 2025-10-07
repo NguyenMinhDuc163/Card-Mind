@@ -1,8 +1,5 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:card_mind/init.dart';
-import 'package:card_mind/modules/auth/login/screen/login_screen.dart';
-import 'package:card_mind/modules/auth/sign_in/repository/sign_in_repo.dart';
-import 'package:card_mind/modules/home/screen/home_screen.dart';
+import 'package:card_mind/modules/dashboard/screen/dashboard_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -16,7 +13,10 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    redirectIntroScreen();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      redirectIntroScreen();
+    });
   }
 
   void redirectIntroScreen() async {
@@ -29,7 +29,7 @@ class _SplashScreenState extends State<SplashScreen> {
     //   Navigator.of(context).pushNamed(LoginScreen.routeName);
     //
     // }
-
+    Navigator.of(context).pushReplacementNamed(DashboardScreen.routeName);
   }
 
   @override

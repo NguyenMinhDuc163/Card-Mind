@@ -142,9 +142,8 @@ class _FunctionScreenTemplateState extends State<FunctionScreenTemplate>
               widget.leadingWidget ??
               (widget.isShowDrawer
                   ? IconButton(
-                    icon: SvgPicture.asset(IconPath.iconMenu),
+                    icon: Icon(Icons.menu),
                     onPressed: () {
-                      print("ádasdsd");
                       _scaffoldKey.currentState?.openDrawer();
                     },
                   )

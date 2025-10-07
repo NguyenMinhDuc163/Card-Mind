@@ -1,16 +1,13 @@
-﻿import 'package:card_mind/modules/dashboard/screen/dashboard_screen.dart';
-import 'package:device_preview_plus/device_preview_plus.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:responsive_framework/responsive_framework.dart';
-import 'package:card_mind/core/public/navigation_service.dart';
+﻿import 'package:card_mind/core/public/navigation_service.dart';
 import 'package:card_mind/core/routes/routers.dart';
-import 'package:card_mind/firebase_options.dart';
 import 'package:card_mind/core/theme/app_theme.dart';
 import 'package:card_mind/core/theme/theme_cubit.dart';
 import 'package:card_mind/core/theme/theme_service.dart';
+import 'package:device_preview_plus/device_preview_plus.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -63,7 +60,7 @@ class MyApp extends StatelessWidget {
           themeMode: themeMode,
           onGenerateRoute: Routers.generateRoute,
           routes: Routers.routes,
-          initialRoute: DashboardScreen.routeName,
+          initialRoute: '/',
           navigatorKey: NavigationService.navigatorKey,
           navigatorObservers: [NavigationService.routeObserver],
         ),

@@ -1,12 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:card_mind/core/widgets/switch_botton_widget.dart';
 import 'package:card_mind/core/widgets/template/button_widget.dart';
 import 'package:card_mind/init.dart';
-import 'package:card_mind/modules/auth/login/screen/login_screen.dart';
-import 'package:card_mind/modules/auth/sign_in/repository/sign_in_repo.dart';
-import 'package:card_mind/modules/auth/sign_in/screen/sign_in_screen.dart';
 
 class DrawerWidget extends StatelessWidget {
   const DrawerWidget({super.key});
@@ -27,7 +23,7 @@ class DrawerWidget extends StatelessWidget {
                   onTap: () => Navigator.pop(context),
                   child: CircleAvatar(
                     backgroundColor: AppColors.offWhite,
-                    child: SvgPicture.asset(IconPath.iconMenu),
+                    child: Icon(Icons.menu),
                   ),
                 ),
               ),
@@ -48,7 +44,7 @@ class DrawerWidget extends StatelessWidget {
               children: [
                 Expanded(
                   child: _buildDrawerItem(
-                    icon: IconPath.iconSun,
+                    icon: Icon(Icons.nightlight),
                     title: 'common.dark_mode'.tr(),
                     onTap: () => Navigator.pop(context),
                   ),
@@ -57,14 +53,12 @@ class DrawerWidget extends StatelessWidget {
               ],
             ),
             _buildDrawerItem(
-              icon: IconPath.iconLogout,
+              icon: Icon(Icons.logout),
               title: 'common.logout'.tr(),
               iconColor: Colors.red,
               textStyle: AppTextStyles.textContent2.copyWith(color: Colors.red),
               onTap: () async {
-                context.read<SignInRepo>().logout();
-
-                Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+                print("Logout");
               },
             ),
           ],
@@ -90,7 +84,7 @@ class DrawerWidget extends StatelessWidget {
                   "common.verified_profile".tr(),
                   style: AppTextStyles.textContent2.copyWith(color: AppColors.coolGray),
                 ),
-                SvgPicture.asset(IconPath.iconDone),
+                Icon(Icons.done_outline_outlined),
               ],
             ),
           ],
@@ -107,14 +101,14 @@ class DrawerWidget extends StatelessWidget {
   }
 
   Widget _buildDrawerItem({
-    required String icon,
+    required Widget icon,
     required String title,
     required VoidCallback onTap,
     TextStyle? textStyle,
     Color? iconColor,
   }) {
     return ListTile(
-      leading: SvgPicture.asset(icon, color: iconColor ?? Colors.grey[700]),
+      leading: icon,
       title: Text(title, style: textStyle ?? AppTextStyles.textContent2),
       onTap: onTap,
       contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),

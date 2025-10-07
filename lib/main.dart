@@ -1,10 +1,10 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:card_mind/core/app_bloc_observer.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'modules/app.dart';
 import 'core/theme/theme_service.dart';
+import 'modules/app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

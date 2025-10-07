@@ -2,7 +2,6 @@ import 'package:card_mind/core/public/navigation_service.dart';
 import 'package:card_mind/core/routes/routers.dart';
 import 'package:card_mind/core/theme/app_theme.dart';
 import 'package:card_mind/core/theme/theme_cubit.dart';
-import 'package:card_mind/modules/dashboard/screen/dashboard_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -41,7 +40,7 @@ class App extends StatelessWidget {
               supportedLocales: context.supportedLocales,
               locale: context.locale,
               routes: Routers.routes,
-              initialRoute: DashboardScreen.routeName,
+              initialRoute: '/',
               onGenerateRoute: Routers.generateRoute,
               navigatorKey: NavigationService.navigatorKey,
               navigatorObservers: [NavigationService.routeObserver],
