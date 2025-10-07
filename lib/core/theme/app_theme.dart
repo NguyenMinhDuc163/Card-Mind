@@ -8,12 +8,12 @@ class AppTheme {
   static ThemeData light() {
     final ColorScheme colorScheme = const ColorScheme.light(
       primary: AppColors.primary,
-      secondary: AppColors.highlight,
+      secondary: AppColors.deepBlue,
       error: AppColors.error,
       background: AppColors.bodyBackground,
       surface: AppColors.white,
       onPrimary: Colors.white,
-      onSecondary: Colors.white,
+      onSecondary: Colors.white10,
       onError: Colors.white,
       onBackground: AppColors.text,
       onSurface: AppColors.text,

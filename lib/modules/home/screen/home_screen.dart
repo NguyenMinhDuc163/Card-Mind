@@ -9,7 +9,244 @@ class HomeScreen extends StatelessWidget {
       isShowBottomButton: false,
       isShowAppBar: true,
       isShowDrawer: true,
-      screen: Container(),
+      background: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFF0B1D3B), Color(0xFF0E2B5C)],
+          ),
+        ),
+      ),
+      backgroundColor: Colors.transparent,
+      title: 'Trang chủ',
+      screen: CustomScrollView(
+        slivers: [
+          SliverPadding(
+            padding: AppPad.h16v20,
+            sliver: SliverToBoxAdapter(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(22),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 14),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.search, color: Colors.white70),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: TextField(
+                              style: AppTextStyles.text.copyWith(
+                                color: AppColors.white,
+                              ),
+                              decoration: const InputDecoration(
+                                hintText: 'Tìm kiếm',
+                                hintStyle: TextStyle(color: Colors.white70),
+                                border: InputBorder.none,
+                                isDense: true,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  const CircleAvatar(
+                    radius: 18,
+                    backgroundColor: Colors.white24,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SliverPadding(
+            padding: AppPad.h16,
+            sliver: SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    'Lựa chọn của đội ngũ',
+                    style: AppTextStyles.text.copyWith(color: Colors.white70),
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Hãy thử các học phần này',
+                          style: AppTextStyles.textHeader3.copyWith(
+                            color: AppColors.white,
+                          ),
+                        ),
+                      ),
+                      const Icon(Icons.more_vert, color: Colors.white70),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 12)),
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: 160,
+              child: PageView.builder(
+                controller: PageController(viewportFraction: 0.64),
+                padEnds: false,
+                itemCount: 5,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.08),
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0x33000000),
+                            blurRadius: 8,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            width: 36,
+                            height: 36,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.08),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: const Icon(
+                              Icons.style,
+                              color: Colors.white70,
+                            ),
+                          ),
+                          Text(
+                            'Thông tin cơ bản về Quizlet',
+                            style: AppTextStyles.textContent2.copyWith(
+                              color: AppColors.white,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  '9 thẻ · Tác giả: Quizlet',
+                                  style: AppTextStyles.textContent4.copyWith(
+                                    color: Colors.white70,
+                                  ),
+                                ),
+                              ),
+                              const Icon(
+                                Icons.more_vert,
+                                color: Colors.white70,
+                                size: 18,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 16)),
+          SliverPadding(
+            padding: AppPad.h16,
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate((context, i) {
+                const int itemCount = 6;
+                if (i.isOdd) return const SizedBox(height: 16);
+                final int index = i ~/ 2;
+                if (index >= itemCount) return null;
+                return Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(22),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0x33000000),
+                        blurRadius: 8,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: 36,
+                            height: 36,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: const Icon(
+                              Icons.rocket_launch,
+                              color: Colors.white70,
+                            ),
+                          ),
+                          const Spacer(),
+                          const Icon(Icons.more_vert, color: Colors.white70),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        'Xin chào bằng nhiều thứ tiếng',
+                        style: AppTextStyles.textHeader3.copyWith(
+                          color: AppColors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        'Bắn vào câu trả lời đúng trước khi hết thời gian',
+                        style: AppTextStyles.textContent3.copyWith(
+                          color: Colors.white70,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(14),
+                        child: Container(
+                          height: 140,
+                          width: double.infinity,
+                          color: Colors.white.withOpacity(0.06),
+                          child: const Icon(
+                            Icons.image,
+                            color: Colors.white30,
+                            size: 48,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }, childCount: 6 * 2 - 1),
+            ),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 16)),
+        ],
+      ),
     );
   }
 }

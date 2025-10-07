@@ -1,3 +1,4 @@
+import 'package:card_mind/core/theme/theme_extensions.dart';
 import 'package:card_mind/modules/home/screen/home_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +41,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           systemNavigationBarContrastEnforced:false,
         ),
         child: Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: Color(0xFF0E2B5C),
           drawer: DrawerWidget() ,
           body: IndexedStack(
             index: _currentIndex,
@@ -51,6 +52,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
             selectedColorOpacity: 0.0,
             backgroundColor: Colors.transparent,
             duration: Duration.zero,
+            unselectedItemColor: context.colors.onPrimary,
+            selectedItemColor: context.colors.onPrimary,
             onTap: (index) {
               setState(() {
                 _currentIndex = index;
@@ -59,22 +62,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
             },
             items: [
               SalomonBottomBarItem(
-                icon: Icon(Icons.home),
+                icon: Icon(Icons.home, color: context.colors.onSecondary,),
                 title: Text("home_screen.home".tr()),
                 activeIcon: SizedBox.shrink(),
               ),
               SalomonBottomBarItem(
-                icon: Icon(Icons.wallet_giftcard),
+                icon: Icon(Icons.wallet_giftcard,color: context.colors.onSecondary,),
                 title: Text("home_screen.wishlist".tr()),
                 activeIcon: SizedBox.shrink(),
               ),
               SalomonBottomBarItem(
-                icon: Icon(Icons.shopping_cart),
+                icon: Icon(Icons.shopping_cart, color: context.colors.onSecondary,),
                 title: Text("home_screen.cart".tr()),
                 activeIcon: SizedBox.shrink(),
               ),
               SalomonBottomBarItem(
-                icon: Icon(Icons.wallet),
+                icon: Icon(Icons.wallet, color: context.colors.onSecondary,),
                 title: Text("home_screen.wallet".tr()),
                 activeIcon: SizedBox.shrink(),
               ),
