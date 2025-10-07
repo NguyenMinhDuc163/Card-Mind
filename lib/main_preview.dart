@@ -1,4 +1,5 @@
-﻿import 'package:device_preview_plus/device_preview_plus.dart';
+﻿import 'package:card_mind/modules/dashboard/screen/dashboard_screen.dart';
+import 'package:device_preview_plus/device_preview_plus.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -6,20 +7,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:card_mind/core/public/navigation_service.dart';
 import 'package:card_mind/core/routes/routers.dart';
-import 'package:card_mind/data/api_client.dart';
 import 'package:card_mind/firebase_options.dart';
-import 'package:card_mind/modules/auth/initial/screen/splash_screen.dart';
-import 'package:card_mind/modules/auth/sign_in/bloc/sign_in_cubit.dart';
-import 'package:card_mind/modules/auth/sign_in/use_case/social_login.dart';
-
-import 'data/services/auth_service.dart';
-import 'modules/auth/sign_in/repository/sign_in_repo.dart';
+import 'package:card_mind/core/theme/app_theme.dart';
+import 'package:card_mind/core/theme/theme_cubit.dart';
+import 'package:card_mind/core/theme/theme_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await EasyLocalization.ensureInitialized();
-  AuthService authService = await AuthService.initialize();
+  await ThemeService.init();
 
   Locale defaultLocale = const Locale('en', 'US');
 
@@ -32,22 +29,20 @@ void main() async {
             path: 'assets/translations',
             fallbackLocale: const Locale('en', 'US'),
             startLocale: defaultLocale,
-            child: MyApp(authService: authService),
+            child: const MyApp(),
           ),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key, required this.authService});
-  final AuthService authService;
+  const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider(
-      create: (context) => SignInRepo(apiClient: ApiClient(), authService: authService),
-      child: BlocProvider(
-        create: (context) => SignInCubit(repo: context.read<SignInRepo>(), socialLogin: SocialLogin(repo: context.read<SignInRepo>())),
-        child: MaterialApp(
+    return BlocProvider(
+      create: (context) => ThemeCubit(),
+      child: BlocBuilder<ThemeCubit, ThemeMode>(
+        builder: (context, themeMode) => MaterialApp(
           builder: (context, child) {
             return ResponsiveBreakpoints.builder(
               child: DevicePreview.appBuilder(context, child),
@@ -63,13 +58,14 @@ class MyApp extends StatelessWidget {
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,
           locale: DevicePreview.locale(context),
-          theme: ThemeData.light(),
-          darkTheme: ThemeData.dark(),
+          theme: AppTheme.light(),
+          darkTheme: AppTheme.dark(),
+          themeMode: themeMode,
           onGenerateRoute: Routers.generateRoute,
           routes: Routers.routes,
+          initialRoute: DashboardScreen.routeName,
           navigatorKey: NavigationService.navigatorKey,
           navigatorObservers: [NavigationService.routeObserver],
-          home: const SplashScreen(),
         ),
       ),
     );

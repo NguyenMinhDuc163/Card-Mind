@@ -20,15 +20,15 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void redirectIntroScreen() async {
-    String? token = context.read<SignInRepo>().authService.accessToken;
-    await Future.delayed(const Duration(seconds: 1));
-    if (!mounted) return;
-    if(token != null) {
-      Navigator.of(context).pushNamed(HomeScreen.routeName);
-    }else{
-      Navigator.of(context).pushNamed(LoginScreen.routeName);
-
-    }
+    // String? token = context.read<SignInRepo>().authService.accessToken;
+    // await Future.delayed(const Duration(seconds: 1));
+    // if (!mounted) return;
+    // if(token != null) {
+    //   Navigator.of(context).pushNamed(HomeScreen.routeName);
+    // }else{
+    //   Navigator.of(context).pushNamed(LoginScreen.routeName);
+    //
+    // }
 
   }
 

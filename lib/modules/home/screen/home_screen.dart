@@ -1,3 +1,4 @@
+import 'package:card_mind/core/widgets/theme_demo_widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:card_mind/init.dart';
@@ -11,14 +12,8 @@ class HomeScreen extends StatelessWidget {
       isShowBottomButton: false,
       isShowAppBar: true,
       isShowDrawer: true,
-      actionsWidget: [
-        GestureDetector(
-          onTap: () => {},
-          child: SvgPicture.asset(IconPath.iconBag),
-        ),
-      ],
+      actionsWidget: [GestureDetector(onTap: () => {}, child: SvgPicture.asset(IconPath.iconBag))],
       screen: Container(),
     );
   }
 }
-
