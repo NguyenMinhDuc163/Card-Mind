@@ -2,6 +2,8 @@ import 'package:card_mind/core/public/global_utils.dart';
 import 'package:card_mind/core/theme/app_text_styles.dart';
 import 'package:card_mind/core/widgets/template/function_screen_template.dart';
 import 'package:card_mind/modules/auth/initial/screen/splash_screen.dart';
+import 'package:card_mind/modules/course/screen/course_info_screen.dart';
+import 'package:card_mind/modules/course/screen/detail_flash_card_screen.dart';
 import 'package:card_mind/modules/dashboard/screen/dashboard_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -19,21 +21,24 @@ class Routers {
         return MaterialPageRoute(settings: settings, builder: (_) => const SplashScreen());
       case DashboardScreen.routeName:
         return MaterialPageRoute(settings: settings, builder: (_) => DashboardScreen());
-
+      case CourseInfoScreen.routeName:
+        return MaterialPageRoute(settings: settings, builder: (_) => CourseInfoScreen());
+      case DetailFlashCardScreen.routeName:
+        return MaterialPageRoute(settings: settings, builder: (_) => DetailFlashCardScreen());
       default:
         return MaterialPageRoute(
           settings: settings,
           builder:
               (_) => FunctionScreenTemplate(
-            title: "Chức năng đang trong quá trình phát triển",
-            isShowBottomButton: false,
-            screen: Center(
-              child: Text(
-                "Chức năng đang trong quá trình phát triển",
-                style: AppTextStyles.text,
+                title: "Chức năng đang trong quá trình phát triển",
+                isShowBottomButton: false,
+                screen: Center(
+                  child: Text(
+                    "Chức năng đang trong quá trình phát triển",
+                    style: AppTextStyles.text,
+                  ),
+                ),
               ),
-            ),
-          ),
         );
     }
   }

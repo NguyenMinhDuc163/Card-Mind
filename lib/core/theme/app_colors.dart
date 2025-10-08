@@ -3,9 +3,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static const Color electricBlue = Color(0xFF0A092D);
+  static const Color electricBlue = Color(0xFF0B1D3B);
 
-  static const Color deepBlue = Color(0xFF202040);
+  static const Color deepBlue = Color(0xFF0E2B5C);
 
   static const Color skyBlue = Color(0xFF1DA1F2);
 

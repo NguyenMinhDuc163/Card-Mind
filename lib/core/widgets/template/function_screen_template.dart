@@ -1,3 +1,4 @@
+import 'package:card_mind/core/theme/theme_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:card_mind/core/constants/icon_path.dart';
@@ -30,7 +31,7 @@ class FunctionScreenTemplate extends StatefulWidget {
     this.title,
     this.screen,
     this.titleButtonBottom,
-    this.isShowBottomButton = true,
+    this.isShowBottomButton = false,
     this.onBack,
     this.resizeToAvoidBottomInset = true,
     this.titleWidget,
@@ -104,7 +105,7 @@ class _FunctionScreenTemplateState extends State<FunctionScreenTemplate>
         key: _scaffoldKey,
         backgroundColor:
             widget.background != null
-                ? Colors.transparent
+                ? context.colors.primary
                 : widget.backgroundColor ?? AppColors.white,
         appBar: appBar ? appBarWidget() : null,
         drawer: DrawerWidget(), // Thêm drawer property
@@ -131,13 +132,13 @@ class _FunctionScreenTemplateState extends State<FunctionScreenTemplate>
   // TODO tang kich thuoc nut back
   PreferredSizeWidget appBarWidget() {
     return AppBar(
-      backgroundColor: widget.backgroundColor ?? AppColors.white,
+      backgroundColor: widget.backgroundColor ?? context.colors.primary,
       toolbarHeight: 55,
       elevation: 0,
       leading: Padding(
         padding: AppPad.a8,
         child: CircleAvatar(
-          backgroundColor: AppColors.lightGray,
+          backgroundColor: context.colors.secondary,
           child:
               widget.leadingWidget ??
               (widget.isShowDrawer
