@@ -1,4 +1,4 @@
-package com.example.card_mind
+package com.nguyenduc.card_mind
 
 import io.flutter.embedding.android.FlutterActivity
 

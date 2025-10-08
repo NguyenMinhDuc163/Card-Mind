@@ -58,7 +58,7 @@ class AppTheme {
 
     final ColorScheme colorScheme = const ColorScheme.dark(
       primary: AppColors.primary,
-      secondary: AppColors.highlight,
+      secondary: AppColors.deepBlue,
       error: AppColors.error,
       background: background,
       surface: surface,
