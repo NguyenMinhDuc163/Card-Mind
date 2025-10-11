@@ -3,8 +3,11 @@ import 'package:card_mind/core/theme/app_text_styles.dart';
 import 'package:card_mind/core/widgets/template/function_screen_template.dart';
 import 'package:card_mind/modules/auth/initial/screen/splash_screen.dart';
 import 'package:card_mind/modules/course/screen/course_info_screen.dart';
+import 'package:card_mind/modules/course/screen/course_result_screen.dart';
 import 'package:card_mind/modules/course/screen/detail_flash_card_screen.dart';
+import 'package:card_mind/modules/create_course/screen/create_course_screen.dart';
 import 'package:card_mind/modules/dashboard/screen/dashboard_screen.dart';
+import 'package:card_mind/modules/library/screen/library_screen.dart';
 import 'package:flutter/material.dart';
 
 //part of in dart
@@ -18,13 +21,41 @@ class Routers {
 
     switch (settings.name) {
       case '/':
-        return MaterialPageRoute(settings: settings, builder: (_) => const SplashScreen());
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (_) => const SplashScreen(),
+        );
       case DashboardScreen.routeName:
-        return MaterialPageRoute(settings: settings, builder: (_) => DashboardScreen());
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (_) => DashboardScreen(),
+        );
       case CourseInfoScreen.routeName:
-        return MaterialPageRoute(settings: settings, builder: (_) => CourseInfoScreen());
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (_) => CourseInfoScreen(),
+        );
       case DetailFlashCardScreen.routeName:
-        return MaterialPageRoute(settings: settings, builder: (_) => DetailFlashCardScreen());
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (_) => DetailFlashCardScreen(),
+        );
+      case CourseResultScreen.routeName:
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (_) => const CourseResultScreen(),
+        );
+      case LibraryScreen.routeName:
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (_) => const LibraryScreen(),
+        );
+      case CreateCourseScreen.routeName:
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (_) => const CreateCourseScreen(),
+        );
+
       default:
         return MaterialPageRoute(
           settings: settings,

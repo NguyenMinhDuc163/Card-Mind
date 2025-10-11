@@ -1,5 +1,6 @@
 import 'package:card_mind/core/theme/theme_extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:card_mind/core/constants/icon_path.dart';
 import 'package:card_mind/core/theme/app_colors.dart';
@@ -88,9 +89,15 @@ class _FunctionScreenTemplateState extends State<FunctionScreenTemplate>
       children: [
         if (widget.background != null)
           Positioned.fill(child: widget.background!),
-        _buildScaffold(
-          body: widget.screen ?? const SizedBox(),
-          appBar: widget.isShowAppBar,
+        AnnotatedRegion(
+          value: SystemUiOverlayStyle.dark.copyWith(
+            systemNavigationBarColor: context.colors.primary,
+            systemNavigationBarContrastEnforced: false,
+          ),
+          child: _buildScaffold(
+            body: widget.screen ?? const SizedBox(),
+            appBar: widget.isShowAppBar,
+          ),
         ),
         if (isOpacity) const OpacityWidget(),
       ],
@@ -163,7 +170,7 @@ class _FunctionScreenTemplateState extends State<FunctionScreenTemplate>
       title:
           widget.titleWidget ??
           (widget.title != null
-              ? Text(widget.title!, style: AppTextStyles.textHeader3)
+              ? Text(widget.title!, style: AppTextStyles.textHeader3.copyWith(color: context.colors.surface))
               : null),
       centerTitle: true,
       actions:

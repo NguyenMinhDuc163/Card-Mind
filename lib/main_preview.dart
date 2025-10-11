@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
+import 'modules/dashboard/screen/dashboard_screen.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -60,7 +62,7 @@ class MyApp extends StatelessWidget {
           themeMode: themeMode,
           onGenerateRoute: Routers.generateRoute,
           routes: Routers.routes,
-          initialRoute: '/',
+          initialRoute: DashboardScreen.routeName,
           navigatorKey: NavigationService.navigatorKey,
           navigatorObservers: [NavigationService.routeObserver],
         ),

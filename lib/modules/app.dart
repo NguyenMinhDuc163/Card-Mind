@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
+import 'dashboard/screen/dashboard_screen.dart';
+
 class App extends StatelessWidget {
   const App({super.key});
 
@@ -40,7 +42,7 @@ class App extends StatelessWidget {
               supportedLocales: context.supportedLocales,
               locale: context.locale,
               routes: Routers.routes,
-              initialRoute: '/',
+              initialRoute: DashboardScreen.routeName,
               onGenerateRoute: Routers.generateRoute,
               navigatorKey: NavigationService.navigatorKey,
               navigatorObservers: [NavigationService.routeObserver],

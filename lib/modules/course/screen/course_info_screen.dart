@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:card_mind/init.dart';
+import 'package:flutter/services.dart';
 import '../widgets/flashcard_carousel_widget.dart';
 import '../widgets/course_info_widget.dart';
 import '../widgets/learning_options_widget.dart';
@@ -97,7 +98,7 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
                 child: FlashcardCarouselWidget(
                   flashcards: _flashcards,
                   onPageChanged: (index) {
-                    // TODO: Handle page change
+
                   },
                   onCardTap: (flashcard) {
                     // TODO: Handle card tap

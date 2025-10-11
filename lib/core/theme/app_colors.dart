@@ -115,6 +115,9 @@ class AppColors {
   static const Color colorD9E3DC = Color(0xFFD9E3DC);
   static const Color color00FFEA = Color(0xFF00FFEA);
   static const Color colorFFFFF3 = Color(0xFFFFFF3);
+  static const Color tealGreen = Color(0xFF00FFEA);
+  static const Color vibrantBlue = Color(0xFF4A60FF);
+  static const Color lightOrange = Color(0xFFFF7043);
 
   // gradient
   static const LinearGradient gradientPrimaryColor = LinearGradient(

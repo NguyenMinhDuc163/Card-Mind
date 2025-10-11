@@ -1,3 +1,4 @@
+import 'package:card_mind/modules/course/screen/course_result_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flip_card/flip_card.dart';
@@ -135,62 +136,58 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
     final currentFlashcard = _mockCourse.flashcards[_currentIndex];
 
     if (details.primaryVelocity! > 0) {
-      // Vuốt sang phải - đã đọc xong
-      setState(() {
-        if (!_learnedCardIds.contains(currentFlashcard.id)) {
-          _learnedCardIds.add(currentFlashcard.id);
-        }
-      });
-      _goToNextCard();
-    } else if (details.primaryVelocity! < 0) {
-      // Vuốt sang trái - chưa đọc/chưa hiểu
+      // Vuốt sang phải - chưa đọc/chưa hiểu
       setState(() {
         if (_learnedCardIds.contains(currentFlashcard.id)) {
           _learnedCardIds.remove(currentFlashcard.id);
         }
       });
       _goToPreviousCard();
+    } else if (details.primaryVelocity! < 0) {
+      // Vuốt sang trái - đã đọc xong
+      setState(() {
+        if (!_learnedCardIds.contains(currentFlashcard.id)) {
+          _learnedCardIds.add(currentFlashcard.id);
+        }
+      });
+      _goToNextCard();
     }
   }
 
   void _goToNextCard() {
+    // Đánh dấu thẻ hiện tại là đã học khi ấn nút next
+    final currentFlashcard = _mockCourse.flashcards[_currentIndex];
+    setState(() {
+      if (!_learnedCardIds.contains(currentFlashcard.id)) {
+        _learnedCardIds.add(currentFlashcard.id);
+      }
+    });
+
     if (_currentIndex < _totalCards - 1) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
     } else {
-      _showCompletionDialog();
+      Navigator.pushNamed(context, CourseResultScreen.routeName);
     }
   }
 
   void _goToPreviousCard() {
+    // Bỏ đánh dấu đã học của thẻ hiện tại khi ấn nút back
+    final currentFlashcard = _mockCourse.flashcards[_currentIndex];
+    setState(() {
+      if (_learnedCardIds.contains(currentFlashcard.id)) {
+        _learnedCardIds.remove(currentFlashcard.id);
+      }
+    });
+
     if (_currentIndex > 0) {
       _pageController.previousPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
     }
-  }
-
-  void _showCompletionDialog() {
-    showDialog(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Chúc mừng!'),
-            content: Text('Bạn đã hoàn thành tất cả ${_totalCards} thẻ học!'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Hoàn thành'),
-              ),
-            ],
-          ),
-    );
   }
 
   @override
@@ -363,6 +360,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
             padding: const EdgeInsets.all(20),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 if (imageUrl != null && imageUrl.isNotEmpty) ...[
                   Container(
@@ -389,46 +387,16 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
                   ),
                   const SizedBox(height: 20),
                 ],
-                Text(
-                  text,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+                Center(
+                  child: Text(
+                    text,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      isFront ? 'Mặt trước' : 'Mặt sau',
-                      style: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          isFront ? 'Chạm để lật' : 'Chạm để lật lại',
-                          style: const TextStyle(
-                            color: Colors.white70,
-                            fontSize: 10,
-                            fontStyle: FontStyle.italic,
-                          ),
-                        ),
-                        const SizedBox(width: 4),
-                        Icon(
-                          isFront ? Icons.touch_app : Icons.flip,
-                          color: Colors.white70,
-                          size: 16,
-                        ),
-                      ],
-                    ),
-                  ],
                 ),
               ],
             ),

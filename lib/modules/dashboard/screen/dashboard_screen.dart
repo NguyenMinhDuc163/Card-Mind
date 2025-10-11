@@ -1,5 +1,7 @@
 import 'package:card_mind/core/theme/theme_extensions.dart';
+import 'package:card_mind/modules/create_course/screen/create_course_screen.dart';
 import 'package:card_mind/modules/home/screen/home_screen.dart';
+import 'package:card_mind/modules/library/screen/library_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,9 +23,8 @@ class DashboardScreen extends StatefulWidget {
 
 final List<TabItem> _tabs = [
   TabItem(widget: HomeScreen(), route: HomeScreen.routeName),
-  TabItem(widget: HomeScreen(), route: HomeScreen.routeName),
-  TabItem(widget: HomeScreen(), route: HomeScreen.routeName),
-  TabItem(widget: HomeScreen(), route: HomeScreen.routeName),
+  TabItem(widget: CreateCourseScreen(), route: CreateCourseScreen.routeName),
+  TabItem(widget: LibraryScreen(), route: LibraryScreen.routeName),
 ];
 
 class _DashboardScreenState extends State<DashboardScreen> {
@@ -67,20 +68,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 activeIcon: SizedBox.shrink(),
               ),
               SalomonBottomBarItem(
-                icon: Icon(Icons.wallet_giftcard,color: context.colors.onSecondary,),
-                title: Text("home_screen.wishlist".tr()),
+                icon: Icon(Icons.add,color: context.colors.onSecondary,),
+                title: Text("home_screen.create".tr()),
                 activeIcon: SizedBox.shrink(),
               ),
               SalomonBottomBarItem(
-                icon: Icon(Icons.shopping_cart, color: context.colors.onSecondary,),
-                title: Text("home_screen.cart".tr()),
+                icon: Icon(Icons.folder_copy_rounded, color: context.colors.onSecondary,),
+                title: Text("home_screen.library".tr()),
                 activeIcon: SizedBox.shrink(),
-              ),
-              SalomonBottomBarItem(
-                icon: Icon(Icons.wallet, color: context.colors.onSecondary,),
-                title: Text("home_screen.wallet".tr()),
-                activeIcon: SizedBox.shrink(),
-              ),
+              )
             ],
           ),
         ),

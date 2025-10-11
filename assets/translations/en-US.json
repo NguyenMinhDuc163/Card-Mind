@@ -1,9 +1,16 @@
 {
+  "common": {
+    "dark_mode": "Dark Mode",
+    "account_information": "Account Information",
+    "change_password": "Change Password",
+    "settings": "Settings",
+    "logout": "Logout",
+    "verified_profile": "Verified Profile"
+  },
   "home_screen": {
     "title": "Home Screen",
     "home": "Home",
-    "wishlist": "Wishlist",
-    "cart": "Cart",
-    "wallet": "Wallet"
+    "create": "Create",
+    "library": "Library"
   }
 }

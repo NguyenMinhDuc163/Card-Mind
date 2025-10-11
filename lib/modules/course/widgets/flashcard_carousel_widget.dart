@@ -139,49 +139,21 @@ class _FlashcardCarouselWidgetState extends State<FlashcardCarouselWidget> {
               ),
               const SizedBox(height: 16),
             ],
-            Text(
-              text,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                height: 1.4,
-              ),
-              textAlign: TextAlign.center,
-              maxLines: 4,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  isFront ? 'Mặt trước' : 'Mặt sau',
+            Expanded(
+              child: Center(
+                child: Text(
+                  text,
                   style: const TextStyle(
-                    color: Colors.white70,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w400,
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    height: 1.4,
                   ),
+                  textAlign: TextAlign.center,
+                  maxLines: 6,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                Row(
-                  children: [
-                    Text(
-                      isFront ? 'Chạm để lật' : 'Chạm để lật lại',
-                      style: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 9,
-                        fontStyle: FontStyle.italic,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Icon(
-                      isFront ? Icons.touch_app : Icons.flip,
-                      color: Colors.white70,
-                      size: 14,
-                    ),
-                  ],
-                ),
-              ],
+              ),
             ),
           ],
         ),
