@@ -186,8 +186,8 @@ class _LibraryScreenState extends State<LibraryScreen>
         children: [
           _buildDateGroup('Tuần này', [
             _buildContentItem(
-              'Thông tin cơ bản về Quizlet',
-              '9 thuật ngữ • Tác giả: Quizlet',
+              'Thông tin cơ bản về Card Mind',
+              '9 thuật ngữ • Tác giả: Card Mind',
               tabType,
             ),
             _buildContentItem(

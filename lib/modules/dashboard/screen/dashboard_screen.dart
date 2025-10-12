@@ -64,18 +64,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
             items: [
               SalomonBottomBarItem(
                 icon: Icon(Icons.home, color: context.colors.onSecondary,),
-                title: Text("home_screen.home".tr()),
-                activeIcon: SizedBox.shrink(),
+                title: Text("Trang chủ".tr()),
+                // activeIcon: SizedBox.shrink(),
               ),
               SalomonBottomBarItem(
                 icon: Icon(Icons.add,color: context.colors.onSecondary,),
-                title: Text("home_screen.create".tr()),
-                activeIcon: SizedBox.shrink(),
+                title: Text("Tạo".tr()),
+                // activeIcon: SizedBox.shrink(),
               ),
               SalomonBottomBarItem(
                 icon: Icon(Icons.folder_copy_rounded, color: context.colors.onSecondary,),
-                title: Text("home_screen.library".tr()),
-                activeIcon: SizedBox.shrink(),
+                title: Text("Thư viện".tr()),
+                // activeIcon: SizedBox.shrink(),
               )
             ],
           ),

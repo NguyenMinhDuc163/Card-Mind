@@ -305,7 +305,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
 
   Widget _buildTermItem(TermItem term, int index) {
     return Dismissible(
-      key: Key('term_$index'),
+      key: Key('term_${term.id}'),
       direction: DismissDirection.horizontal,
       background: Container(
         alignment: Alignment.centerLeft,
@@ -461,6 +461,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
 }
 
 class TermItem {
+  final String id;
   final TextEditingController termController = TextEditingController();
   final TextEditingController definitionController = TextEditingController();
   String language;
@@ -469,7 +470,7 @@ class TermItem {
     required String term,
     required String definition,
     required this.language,
-  }) {
+  }) : id = DateTime.now().millisecondsSinceEpoch.toString() {
     termController.text = term;
     definitionController.text = definition;
   }
