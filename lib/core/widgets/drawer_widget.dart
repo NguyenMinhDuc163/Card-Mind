@@ -61,6 +61,16 @@ class DrawerWidget extends StatelessWidget {
             ),
             _buildDrawerItem(
               context,
+              icon: Icon(Icons.settings, color: Colors.white),
+              title: 'Cài đặt'.tr(),
+              iconColor: Colors.white,
+              textStyle: AppTextStyles.textContent2.copyWith(color: Colors.white),
+              onTap: () async {
+                print("Logout");
+              },
+            ),
+            _buildDrawerItem(
+              context,
               icon: Icon(Icons.logout, color: Colors.red),
               title: 'common.logout'.tr(),
               iconColor: Colors.red,
