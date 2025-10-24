@@ -39,7 +39,10 @@ class CreateCourseNotifier extends ChangeNotifier {
 
   Future<void> completeCourse() async {
     try {
-      final courseKey = _generateCourseKey(_courseData.topic, _courseData.title);
+      final courseKey = _generateCourseKey(
+        _courseData.topic,
+        _courseData.title,
+      );
       print('Generated key: $courseKey');
 
       final now = DateTime.now();
@@ -52,7 +55,8 @@ class CreateCourseNotifier extends ChangeNotifier {
       LocalStorageHelper.setValue(courseKey, newCourseData.toJson());
       print('Saved course data with key: $courseKey');
 
-      final existingKeys = LocalStorageHelper.getValue('course_keys') as List<dynamic>? ?? [];
+      final existingKeys =
+          LocalStorageHelper.getValue('course_keys') as List<dynamic>? ?? [];
       final List<String> courseKeys = existingKeys.cast<String>();
       if (!courseKeys.contains(courseKey)) {
         courseKeys.add(courseKey);
@@ -72,8 +76,16 @@ class CreateCourseNotifier extends ChangeNotifier {
   }
 
   String _generateCourseKey(String topic, String title) {
-    final cleanTopic = topic.replaceAll(RegExp(r'[^\w\s]'), '').replaceAll(' ', '_').toLowerCase();
-    final cleanTitle = title.replaceAll(RegExp(r'[^\w\s]'), '').replaceAll(' ', '_').toLowerCase();
+    final cleanTopic =
+        topic
+            .replaceAll(RegExp(r'[^\w\s]'), '')
+            .replaceAll(' ', '_')
+            .toLowerCase();
+    final cleanTitle =
+        title
+            .replaceAll(RegExp(r'[^\w\s]'), '')
+            .replaceAll(' ', '_')
+            .toLowerCase();
 
     final timestamp = DateTime.now().millisecondsSinceEpoch;
     return 'course_${cleanTopic}_${cleanTitle}_$timestamp';
@@ -123,7 +135,9 @@ class CreateCourseNotifier extends ChangeNotifier {
     return _courseData.topic.isNotEmpty &&
         _courseData.title.isNotEmpty &&
         _courseData.terms.isNotEmpty &&
-        _courseData.terms.every((term) => term.term.isNotEmpty && term.definition.isNotEmpty);
+        _courseData.terms.every(
+          (term) => term.term.isNotEmpty && term.definition.isNotEmpty,
+        );
   }
 
   int get termsCount => _courseData.terms.length;

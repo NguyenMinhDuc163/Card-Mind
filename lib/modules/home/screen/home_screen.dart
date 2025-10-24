@@ -126,7 +126,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               }
 
-              final topPicks = notifier.homeData.courses.take(5).toList();
+              final topPicks =
+                  notifier.homeData.courses.reversed.take(5).toList();
 
               if (topPicks.isEmpty) {
                 return const SliverToBoxAdapter(

@@ -1,13 +1,17 @@
-﻿import 'package:card_mind/core/public/navigation_service.dart';
+﻿import 'package:card_mind/core/helpers/local_storage_helper.dart';
+import 'package:card_mind/core/public/navigation_service.dart';
 import 'package:card_mind/core/routes/routers.dart';
 import 'package:card_mind/core/theme/app_theme.dart';
 import 'package:card_mind/core/theme/theme_cubit.dart';
 import 'package:card_mind/core/theme/theme_service.dart';
+import 'package:card_mind/providers/provider_setup.dart';
 import 'package:device_preview_plus/device_preview_plus.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_ce_flutter/adapters.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import 'package:provider/provider.dart';
 
 import 'modules/dashboard/screen/dashboard_screen.dart';
 
@@ -16,6 +20,8 @@ void main() async {
   // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await EasyLocalization.ensureInitialized();
   await ThemeService.init();
+  await Hive.initFlutter();
+  await LocalStorageHelper.initLocalStorageHelper();
 
   Locale defaultLocale = const Locale('en', 'US');
 
@@ -28,7 +34,9 @@ void main() async {
             path: 'assets/translations',
             fallbackLocale: const Locale('en', 'US'),
             startLocale: defaultLocale,
-            child: const MyApp(),
+            child: MultiProvider(
+                providers: ProviderSetup.getProviders(),
+                child: const MyApp()),
           ),
     ),
   );

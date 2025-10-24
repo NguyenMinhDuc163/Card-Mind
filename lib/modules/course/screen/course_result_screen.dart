@@ -41,7 +41,9 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
           return FunctionScreenTemplate(
             isShowAppBar: false,
             backgroundColor: context.colors.primary,
-            screen: const Center(child: CircularProgressIndicator(color: Colors.white)),
+            screen: const Center(
+              child: CircularProgressIndicator(color: Colors.white),
+            ),
           );
         }
 
@@ -61,7 +63,10 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
-                  ElevatedButton(onPressed: () => _initializeData(), child: const Text('Thử lại')),
+                  ElevatedButton(
+                    onPressed: () => _initializeData(),
+                    child: const Text('Thử lại'),
+                  ),
                 ],
               ),
             ),
@@ -134,7 +139,11 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
                 const SizedBox(height: 8),
                 Text(
                   notifier.descriptionMessage,
-                  style: const TextStyle(color: AppColors.white, fontSize: 14, height: 1.4),
+                  style: const TextStyle(
+                    color: AppColors.white,
+                    fontSize: 14,
+                    height: 1.4,
+                  ),
                 ),
               ],
             ),
@@ -160,7 +169,11 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
         children: [
           const Text(
             'Tiến độ của bạn',
-            style: TextStyle(color: AppColors.white, fontSize: 18, fontWeight: FontWeight.w600),
+            style: TextStyle(
+              color: AppColors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           const SizedBox(height: 20),
           Row(
@@ -223,7 +236,11 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
       children: [
         _buildLegendItem('Biết', AppColors.tealGreen, notifier.knownCount),
         const SizedBox(height: 8),
-        _buildLegendItem('Đang học', AppColors.lightOrange, notifier.learningCount),
+        _buildLegendItem(
+          'Đang học',
+          AppColors.lightOrange,
+          notifier.learningCount,
+        ),
         const SizedBox(height: 8),
         _buildLegendItem('Còn lại', AppColors.gray, notifier.remainingCount),
       ],
@@ -233,7 +250,10 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
   Widget _buildLegendItem(String label, Color color, int count) {
     return Container(
       padding: AppPad.h12v8,
-      decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(20)),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(20),
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -277,7 +297,11 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.credit_card, color: AppColors.white, size: 20),
+                  const Icon(
+                    Icons.credit_card,
+                    color: AppColors.white,
+                    size: 20,
+                  ),
                   const SizedBox(width: 8),
                   const Text(
                     'Tiếp tục ôn thuật ngữ',
@@ -391,12 +415,19 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
 
           Text(
             'Lịch sử học tập',
-            style: TextStyle(color: AppColors.white, fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              color: AppColors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
             notifier.course?.title ?? 'Khóa học',
-            style: TextStyle(color: AppColors.white.withOpacity(0.8), fontSize: 14),
+            style: TextStyle(
+              color: AppColors.white.withOpacity(0.8),
+              fontSize: 14,
+            ),
           ),
           const SizedBox(height: 20),
 
@@ -411,11 +442,17 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.lightOrange,
                 padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
               child: const Text(
                 'Đóng',
-                style: TextStyle(color: AppColors.white, fontSize: 16, fontWeight: FontWeight.w500),
+                style: TextStyle(
+                  color: AppColors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
           ),
@@ -425,11 +462,15 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
   }
 
   Widget _buildHistoryItems(CourseResultNotifier notifier) {
-    final allResults = LocalStorageHelper.getValue('all_learning_results') as List<dynamic>? ?? [];
+    final allResults =
+        LocalStorageHelper.getValue('all_learning_results') as List<dynamic>? ??
+        [];
     final courseResults = <Map<String, dynamic>>[];
 
     for (final resultKey in allResults) {
-      if (resultKey.toString().contains('learning_result_${notifier.courseData?.id}_')) {
+      if (resultKey.toString().contains(
+        'learning_result_${notifier.courseData?.id}_',
+      )) {
         final resultData = LocalStorageHelper.getValue(resultKey.toString());
         if (resultData != null) {
           final Map<String, dynamic> result = Map<String, dynamic>.from(
@@ -455,11 +496,18 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
         ),
         child: Column(
           children: [
-            Icon(Icons.history, color: AppColors.white.withOpacity(0.5), size: 48),
+            Icon(
+              Icons.history,
+              color: AppColors.white.withOpacity(0.5),
+              size: 48,
+            ),
             const SizedBox(height: 12),
             Text(
               'Chưa có lịch sử học tập',
-              style: TextStyle(color: AppColors.white.withOpacity(0.7), fontSize: 16),
+              style: TextStyle(
+                color: AppColors.white.withOpacity(0.7),
+                fontSize: 16,
+              ),
             ),
           ],
         ),
@@ -476,7 +524,8 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
           final completedAt = DateTime.parse(result['completedAt'] as String);
           final learnedCount = result['learnedCount'] as int;
           final totalCards = result['totalCards'] as int;
-          final progressPercentage = (result['progressPercentage'] as double) * 100;
+          final progressPercentage =
+              (result['progressPercentage'] as double) * 100;
 
           return Container(
             margin: const EdgeInsets.only(bottom: 12),
@@ -484,7 +533,10 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white.withOpacity(0.2), width: 1),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.2),
+                width: 1,
+              ),
             ),
             child: Row(
               children: [
@@ -524,15 +576,23 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
                       const SizedBox(height: 4),
                       Text(
                         _formatDateTime(completedAt),
-                        style: TextStyle(color: AppColors.white.withOpacity(0.7), fontSize: 12),
+                        style: TextStyle(
+                          color: AppColors.white.withOpacity(0.7),
+                          fontSize: 12,
+                        ),
                       ),
                     ],
                   ),
                 ),
 
                 Icon(
-                  progressPercentage >= 100 ? Icons.check_circle : Icons.schedule,
-                  color: progressPercentage >= 100 ? AppColors.tealGreen : AppColors.lightOrange,
+                  progressPercentage >= 100
+                      ? Icons.check_circle
+                      : Icons.schedule,
+                  color:
+                      progressPercentage >= 100
+                          ? AppColors.tealGreen
+                          : AppColors.lightOrange,
                   size: 24,
                 ),
               ],

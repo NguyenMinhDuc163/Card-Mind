@@ -14,9 +14,7 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   Bloc.observer = AppBlocObserver();
   await EasyLocalization.ensureInitialized();
   await ThemeService.init();
@@ -30,11 +28,7 @@ void main() async {
       path: 'assets/translations',
       fallbackLocale: const Locale('en', 'US'),
       startLocale: defaultLocale,
-      child: MultiProvider(
-        providers: ProviderSetup.getProviders(),
-
-        child: const App(),
-      ),
+      child: MultiProvider(providers: ProviderSetup.getProviders(), child: const App()),
     ),
   );
 }
