@@ -2,7 +2,6 @@ import 'package:card_mind/core/theme/theme_extensions.dart';
 import 'package:card_mind/core/widgets/app_gap.dart';
 import 'package:card_mind/init.dart';
 import 'package:card_mind/modules/dashboard/screen/dashboard_screen.dart';
-import 'package:card_mind/modules/home/screen/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:card_mind/core/theme/app_colors.dart';
 import 'package:card_mind/core/theme/app_pad.dart';

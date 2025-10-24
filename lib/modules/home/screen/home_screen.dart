@@ -155,6 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               () => Navigator.pushNamed(
                                 context,
                                 CourseInfoScreen.routeName,
+                                arguments: course.id,
                               ),
                           child: Container(
                             decoration: BoxDecoration(
