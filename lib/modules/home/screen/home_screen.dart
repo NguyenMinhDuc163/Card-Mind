@@ -1,12 +1,28 @@
 import 'package:card_mind/core/theme/theme_extensions.dart';
 import 'package:card_mind/init.dart';
 import 'package:card_mind/modules/course/screen/course_info_screen.dart';
+import 'package:card_mind/modules/home/provider/home_notifier.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen();
 
   static const String routeName = '/HomeScreen';
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final notifier = Provider.of<HomeNotifier>(context, listen: false);
+      notifier.initializeData();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +62,9 @@ class HomeScreen extends StatelessWidget {
                           const SizedBox(width: 8),
                           Expanded(
                             child: TextField(
-                              style: AppTextStyles.text.copyWith(color: AppColors.white),
+                              style: AppTextStyles.text.copyWith(
+                                color: AppColors.white,
+                              ),
                               decoration: const InputDecoration(
                                 hintText: 'Tìm kiếm',
                                 hintStyle: TextStyle(color: Colors.white70),
@@ -85,7 +103,9 @@ class HomeScreen extends StatelessWidget {
                       Expanded(
                         child: Text(
                           'Hãy thử các học phần này',
-                          style: AppTextStyles.textHeader3.copyWith(color: AppColors.white),
+                          style: AppTextStyles.textHeader3.copyWith(
+                            color: AppColors.white,
+                          ),
                         ),
                       ),
                       const Icon(Icons.more_vert, color: Colors.white70),
@@ -96,71 +116,113 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 12)),
-          SliverToBoxAdapter(
-            child: SizedBox(
-              height: 160,
-              child: PageView.builder(
-                controller: PageController(viewportFraction: 0.64),
-                padEnds: false,
-                itemCount: 5,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: InkWell(
-                      onTap: () => Navigator.pushNamed(context, CourseInfoScreen.routeName),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: context.colors.secondary.withOpacity(0.8),
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color: context.colors.primary.withOpacity(0.3),
-                              blurRadius: 8,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              width: 36,
-                              height: 36,
-                              decoration: BoxDecoration(
-                                color: context.colors.secondary.withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(10),
+          Consumer<HomeNotifier>(
+            builder: (context, notifier, child) {
+              if (notifier.isLoading) {
+                return const SliverToBoxAdapter(
+                  child: Center(
+                    child: CircularProgressIndicator(color: Colors.white),
+                  ),
+                );
+              }
+
+              final topPicks = notifier.homeData.courses.take(5).toList();
+
+              if (topPicks.isEmpty) {
+                return const SliverToBoxAdapter(
+                  child: Center(
+                    child: Text(
+                      'Chưa có khóa học nào',
+                      style: TextStyle(color: Colors.white70),
+                    ),
+                  ),
+                );
+              }
+
+              return SliverToBoxAdapter(
+                child: SizedBox(
+                  height: 160,
+                  child: PageView.builder(
+                    controller: PageController(viewportFraction: 0.64),
+                    padEnds: false,
+                    itemCount: topPicks.length,
+                    itemBuilder: (context, index) {
+                      final course = topPicks[index];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: InkWell(
+                          onTap:
+                              () => Navigator.pushNamed(
+                                context,
+                                CourseInfoScreen.routeName,
                               ),
-                              child: const Icon(Icons.style, color: Colors.white70),
-                            ),
-                            Text(
-                              'Thông tin cơ bản về Card Mind',
-                              style: AppTextStyles.textContent2.copyWith(color: AppColors.white),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    '9 thẻ · Tác giả: Card Mind',
-                                    style: AppTextStyles.textContent4.copyWith(
-                                      color: Colors.white70,
-                                    ),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: context.colors.secondary.withOpacity(0.8),
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: context.colors.primary.withOpacity(
+                                    0.3,
                                   ),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 4),
                                 ),
-                                const Icon(Icons.more_vert, color: Colors.white70, size: 18),
                               ],
                             ),
-                          ],
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  width: 36,
+                                  height: 36,
+                                  decoration: BoxDecoration(
+                                    color: context.colors.secondary.withOpacity(
+                                      0.2,
+                                    ),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: const Icon(
+                                    Icons.style,
+                                    color: Colors.white70,
+                                  ),
+                                ),
+                                Text(
+                                  course.title,
+                                  style: AppTextStyles.textContent2.copyWith(
+                                    color: AppColors.white,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        '${course.totalTerms} thẻ · Tác giả: ${course.author}',
+                                        style: AppTextStyles.textContent4
+                                            .copyWith(color: Colors.white70),
+                                      ),
+                                    ),
+                                    const Icon(
+                                      Icons.more_vert,
+                                      color: Colors.white70,
+                                      size: 18,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
+                      );
+                    },
+                  ),
+                ),
+              );
+            },
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 16)),
           SliverPadding(
@@ -172,7 +234,11 @@ class HomeScreen extends StatelessWidget {
                 final int index = i ~/ 2;
                 if (index >= itemCount) return null;
                 return GestureDetector(
-                  onTap: () => Navigator.pushNamed(context, CourseInfoScreen.routeName),
+                  onTap:
+                      () => Navigator.pushNamed(
+                        context,
+                        CourseInfoScreen.routeName,
+                      ),
                   child: Container(
                     decoration: BoxDecoration(
                       color: context.colors.secondary.withOpacity(0.9),
@@ -196,10 +262,15 @@ class HomeScreen extends StatelessWidget {
                               width: 36,
                               height: 36,
                               decoration: BoxDecoration(
-                                color: context.colors.secondary.withOpacity(0.25),
+                                color: context.colors.secondary.withOpacity(
+                                  0.25,
+                                ),
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              child: const Icon(Icons.rocket_launch, color: Colors.white70),
+                              child: const Icon(
+                                Icons.rocket_launch,
+                                color: Colors.white70,
+                              ),
                             ),
                             const Spacer(),
                             const Icon(Icons.more_vert, color: Colors.white70),
@@ -208,12 +279,16 @@ class HomeScreen extends StatelessWidget {
                         const SizedBox(height: 10),
                         Text(
                           'Xin chào bằng nhiều thứ tiếng',
-                          style: AppTextStyles.textHeader3.copyWith(color: AppColors.white),
+                          style: AppTextStyles.textHeader3.copyWith(
+                            color: AppColors.white,
+                          ),
                         ),
                         const SizedBox(height: 6),
                         Text(
                           'Bắn vào câu trả lời đúng trước khi hết thời gian',
-                          style: AppTextStyles.textContent3.copyWith(color: Colors.white70),
+                          style: AppTextStyles.textContent3.copyWith(
+                            color: Colors.white70,
+                          ),
                         ),
                         const SizedBox(height: 12),
                         ClipRRect(
@@ -222,7 +297,11 @@ class HomeScreen extends StatelessWidget {
                             height: 140,
                             width: double.infinity,
                             color: context.colors.secondary.withOpacity(0.1),
-                            child: const Icon(Icons.image, color: Colors.white30, size: 48),
+                            child: const Icon(
+                              Icons.image,
+                              color: Colors.white30,
+                              size: 48,
+                            ),
                           ),
                         ),
                       ],
