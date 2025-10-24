@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "154797023123",
+    "project_id": "card-mind",
+    "storage_bucket": "card-mind.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:154797023123:android:9f5b1467c3a854cf589266",
+        "android_client_info": {
+          "package_name": "com.nguyenduc.card_mind"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcIR9YU0gvWV1vKNNC7NU-7C1yPcSrAOc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

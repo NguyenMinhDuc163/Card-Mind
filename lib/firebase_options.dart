@@ -53,10 +53,11 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyD53CMG8A7Jc_iT452CSQSYfZyt6dgG5H8',
-    appId: '1:988421736886:android:cc4d6313fb30b437585917',
-    messagingSenderId: '988421736886',
-    projectId: 'shopping-app-18658',
-    storageBucket: 'shopping-app-18658.firebasestorage.app',
+    apiKey: 'AIzaSyBcIR9YU0gvWV1vKNNC7NU-7C1yPcSrAOc',
+    appId: '1:154797023123:android:9f5b1467c3a854cf589266',
+    messagingSenderId: '154797023123',
+    projectId: 'card-mind',
+    storageBucket: 'card-mind.firebasestorage.app',
   );
+
 }
