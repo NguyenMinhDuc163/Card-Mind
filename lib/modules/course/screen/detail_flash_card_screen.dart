@@ -4,11 +4,14 @@ import 'package:flutter/services.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:card_mind/init.dart';
 import 'package:card_mind/core/theme/theme_extensions.dart';
+import 'package:provider/provider.dart';
+import '../provider/detail_flash_card_notifier.dart';
 import '../../../data/models/flashcard.dart';
 import '../../../data/models/course.dart';
 
 class DetailFlashCardScreen extends StatefulWidget {
   const DetailFlashCardScreen({super.key});
+
   static const String routeName = '/DetailFlashCardScreen';
 
   @override
@@ -18,105 +21,20 @@ class DetailFlashCardScreen extends StatefulWidget {
 class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
   late PageController _pageController;
   int _currentIndex = 0;
-  Set<String> _learnedCardIds = {};
-  late int _totalCards;
-  late Course _mockCourse;
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: _currentIndex);
-    _initializeMockData();
-    _totalCards = _mockCourse.flashcards.length;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeData();
+    });
   }
 
-  void _initializeMockData() {
-    final now = DateTime.now();
-    _mockCourse = Course(
-      id: '1',
-      title: 'Tiếng Anh Cơ Bản',
-      description: 'Học từ vựng tiếng Anh cơ bản',
-      flashcards: [
-        Flashcard(
-          id: '1',
-          frontText: 'Hello',
-          backText: 'Xin chào',
-          category: 'Greetings',
-          createdAt: now,
-          updatedAt: now,
-        ),
-        Flashcard(
-          id: '2',
-          frontText: 'Goodbye',
-          backText: 'Tạm biệt',
-          category: 'Greetings',
-          createdAt: now,
-          updatedAt: now,
-        ),
-        Flashcard(
-          id: '3',
-          frontText: 'Thank you',
-          backText: 'Cảm ơn',
-          category: 'Politeness',
-          createdAt: now,
-          updatedAt: now,
-        ),
-        Flashcard(
-          id: '4',
-          frontText: 'Please',
-          backText: 'Làm ơn',
-          category: 'Politeness',
-          createdAt: now,
-          updatedAt: now,
-        ),
-        Flashcard(
-          id: '5',
-          frontText: 'Sorry',
-          backText: 'Xin lỗi',
-          category: 'Politeness',
-          createdAt: now,
-          updatedAt: now,
-        ),
-        Flashcard(
-          id: '6',
-          frontText: 'Excuse me',
-          backText: 'Xin lỗi (để thu hút sự chú ý)',
-          category: 'Politeness',
-          createdAt: now,
-          updatedAt: now,
-        ),
-        Flashcard(
-          id: '7',
-          frontText: 'Yes',
-          backText: 'Có',
-          category: 'Basic',
-          createdAt: now,
-          updatedAt: now,
-        ),
-        Flashcard(
-          id: '8',
-          frontText: 'No',
-          backText: 'Không',
-          category: 'Basic',
-          createdAt: now,
-          updatedAt: now,
-        ),
-        Flashcard(
-          id: '9',
-          frontText: 'Help',
-          backText: 'Giúp đỡ',
-          category: 'Basic',
-          createdAt: now,
-          updatedAt: now,
-        ),
-      ],
-      totalTerms: 9,
-      isVerified: true,
-      author: 'Card Mind Team',
-      createdAt: now,
-      updatedAt: now,
-      category: 'English',
-    );
+  Future<void> _initializeData() async {
+    final notifier = Provider.of<DetailFlashCardNotifier>(context, listen: false);
+    final courseId = ModalRoute.of(context)?.settings.arguments as String?;
+    await notifier.initializeData(courseId: courseId);
   }
 
   @override
@@ -131,57 +49,34 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
     });
   }
 
-  void _onCardSwiped(DragEndDetails details) {
+  void _onCardSwiped(DragEndDetails details, DetailFlashCardNotifier notifier) {
     HapticFeedback.lightImpact();
-    final currentFlashcard = _mockCourse.flashcards[_currentIndex];
+    final currentFlashcard = notifier.flashcards[_currentIndex];
 
     if (details.primaryVelocity! > 0) {
-      // Vuốt sang phải - chưa đọc/chưa hiểu
-      setState(() {
-        if (_learnedCardIds.contains(currentFlashcard.id)) {
-          _learnedCardIds.remove(currentFlashcard.id);
-        }
-      });
+      notifier.unmarkCardAsLearned(currentFlashcard.id);
       _goToPreviousCard();
     } else if (details.primaryVelocity! < 0) {
-      // Vuốt sang trái - đã đọc xong
-      setState(() {
-        if (!_learnedCardIds.contains(currentFlashcard.id)) {
-          _learnedCardIds.add(currentFlashcard.id);
-        }
-      });
-      _goToNextCard();
+      notifier.markCardAsLearned(currentFlashcard.id);
+      _goToNextCard(notifier);
     }
   }
 
-  void _goToNextCard() {
-    // Đánh dấu thẻ hiện tại là đã học khi ấn nút next
-    final currentFlashcard = _mockCourse.flashcards[_currentIndex];
-    setState(() {
-      if (!_learnedCardIds.contains(currentFlashcard.id)) {
-        _learnedCardIds.add(currentFlashcard.id);
-      }
-    });
+  void _goToNextCard(DetailFlashCardNotifier notifier) {
+    final currentFlashcard = notifier.flashcards[_currentIndex];
+    notifier.markCardAsLearned(currentFlashcard.id);
 
-    if (_currentIndex < _totalCards - 1) {
+    if (_currentIndex < notifier.totalCards - 1) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
     } else {
-      Navigator.pushNamed(context, CourseResultScreen.routeName);
+      Navigator.pushNamed(context, CourseResultScreen.routeName, arguments: notifier.courseId);
     }
   }
 
   void _goToPreviousCard() {
-    // Bỏ đánh dấu đã học của thẻ hiện tại khi ấn nút back
-    final currentFlashcard = _mockCourse.flashcards[_currentIndex];
-    setState(() {
-      if (_learnedCardIds.contains(currentFlashcard.id)) {
-        _learnedCardIds.remove(currentFlashcard.id);
-      }
-    });
-
     if (_currentIndex > 0) {
       _pageController.previousPage(
         duration: const Duration(milliseconds: 300),
@@ -192,37 +87,83 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return FunctionScreenTemplate(
-      screen: Scaffold(
-        backgroundColor: context.colors.primary,
-        body: Stack(
-          children: [
-            // App Bar
-            _buildAppBar(context),
+    return Consumer<DetailFlashCardNotifier>(
+      builder: (context, notifier, child) {
+        if (notifier.isLoading) {
+          return FunctionScreenTemplate(
+            screen: Scaffold(
+              backgroundColor: context.colors.primary,
+              body: const Center(child: CircularProgressIndicator(color: Colors.white)),
+            ),
+          );
+        }
 
-            // Main Content
-            Column(
-              children: [
-                // Progress Indicators
-                Padding(
-                  padding: const EdgeInsets.only(top: 100, left: 16, right: 16),
-                  child: _buildProgressIndicators(context),
+        if (notifier.hasError) {
+          return FunctionScreenTemplate(
+            screen: Scaffold(
+              backgroundColor: context.colors.primary,
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.error, color: Colors.white70, size: 48),
+                    const SizedBox(height: 16),
+                    Text(
+                      notifier.errorMessage ?? 'Có lỗi xảy ra',
+                      style: const TextStyle(color: Colors.white70),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () => _initializeData(),
+                      child: const Text('Thử lại'),
+                    ),
+                  ],
                 ),
+              ),
+            ),
+          );
+        }
 
-                // Flashcard
-                Expanded(child: _buildFlashcardPageView(context)),
+        if (notifier.flashcards.isEmpty) {
+          return FunctionScreenTemplate(
+            screen: Scaffold(
+              backgroundColor: context.colors.primary,
+              body: const Center(
+                child: Text('Không có thẻ học nào', style: TextStyle(color: Colors.white70)),
+              ),
+            ),
+          );
+        }
 
-                // Bottom Navigation
-                _buildBottomNavigationBar(context),
+        return FunctionScreenTemplate(
+          screen: Scaffold(
+            backgroundColor: context.colors.primary,
+            body: Stack(
+              children: [
+                _buildAppBar(context, notifier),
+
+                Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 100, left: 16, right: 16),
+                      child: _buildProgressIndicators(context, notifier),
+                    ),
+
+                    Expanded(child: _buildFlashcardPageView(context, notifier)),
+
+                    _buildBottomNavigationBar(context, notifier),
+                  ],
+                ),
               ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildAppBar(BuildContext context) {
+  Widget _buildAppBar(BuildContext context, DetailFlashCardNotifier notifier) {
     return Container(
       padding: EdgeInsets.only(
         top: MediaQuery.of(context).padding.top + 10,
@@ -233,18 +174,16 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
       color: context.colors.primary,
       child: Row(
         children: [
-          // Close button
           IconButton(
             icon: const Icon(Icons.close, color: Colors.white, size: 24),
             onPressed: () => Navigator.of(context).pop(),
           ),
 
-          // Center progress
           Expanded(
             child: Column(
               children: [
                 Text(
-                  '${_currentIndex + 1} / $_totalCards',
+                  '${_currentIndex + 1} / ${notifier.totalCards}',
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -253,7 +192,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
                 ),
                 const SizedBox(height: 8),
                 LinearProgressIndicator(
-                  value: (_currentIndex + 1) / _totalCards,
+                  value: (_currentIndex + 1) / notifier.totalCards,
                   backgroundColor: Colors.white.withOpacity(0.3),
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
                   minHeight: 4,
@@ -262,27 +201,21 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
             ),
           ),
 
-          // Settings button
           IconButton(
             icon: const Icon(Icons.settings, color: Colors.white, size: 24),
-            onPressed: () {
-              // TODO: Handle settings
-            },
+            onPressed: () {},
           ),
         ],
       ),
     );
   }
 
-  Widget _buildProgressIndicators(BuildContext context) {
-    final unlearnedCount = _totalCards - _learnedCardIds.length;
-    final learnedCount = _learnedCardIds.length;
-
+  Widget _buildProgressIndicators(BuildContext context, DetailFlashCardNotifier notifier) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _buildProgressChip(context, '$unlearnedCount', Colors.orange),
-        _buildProgressChip(context, '$learnedCount', Colors.green),
+        _buildProgressChip(context, '${notifier.unlearnedCount}', Colors.orange),
+        _buildProgressChip(context, '${notifier.learnedCount}', Colors.green),
       ],
     );
   }
@@ -295,22 +228,19 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: color, width: 1),
       ),
-      child: Text(
-        text,
-        style: TextStyle(color: color, fontWeight: FontWeight.bold),
-      ),
+      child: Text(text, style: TextStyle(color: color, fontWeight: FontWeight.bold)),
     );
   }
 
-  Widget _buildFlashcardPageView(BuildContext context) {
+  Widget _buildFlashcardPageView(BuildContext context, DetailFlashCardNotifier notifier) {
     return PageView.builder(
       controller: _pageController,
-      itemCount: _totalCards,
+      itemCount: notifier.totalCards,
       onPageChanged: _onPageChanged,
       itemBuilder: (context, index) {
-        final flashcard = _mockCourse.flashcards[index];
+        final flashcard = notifier.flashcards[index];
         return GestureDetector(
-          onHorizontalDragEnd: _onCardSwiped,
+          onHorizontalDragEnd: (details) => _onCardSwiped(details, notifier),
           child: FlipCard(
             key: ValueKey(flashcard.id),
             direction: FlipDirection.HORIZONTAL,
@@ -406,9 +336,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
             right: 10,
             child: IconButton(
               icon: const Icon(Icons.star_border, color: Colors.white70),
-              onPressed: () {
-                // TODO: Handle favorite action
-              },
+              onPressed: () {},
             ),
           ),
         ],
@@ -416,23 +344,21 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
     );
   }
 
-  Widget _buildBottomNavigationBar(BuildContext context) {
+  Widget _buildBottomNavigationBar(BuildContext context, DetailFlashCardNotifier notifier) {
     return Container(
       padding: const EdgeInsets.only(bottom: 20, top: 10, left: 16, right: 16),
       color: context.colors.primary,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Back button
           IconButton(
             icon: const Icon(Icons.undo, color: Colors.white, size: 32),
             onPressed: _goToPreviousCard,
           ),
 
-          // Next button
           IconButton(
             icon: const Icon(Icons.play_arrow, color: Colors.white, size: 32),
-            onPressed: _goToNextCard,
+            onPressed: () => _goToNextCard(notifier),
           ),
         ],
       ),

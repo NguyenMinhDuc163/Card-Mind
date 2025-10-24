@@ -10,7 +10,9 @@ import 'detail_flash_card_screen.dart';
 
 class CourseInfoScreen extends StatefulWidget {
   const CourseInfoScreen({super.key});
+
   static const String routeName = '/CourseInfoScreen';
+
   @override
   State<CourseInfoScreen> createState() => _CourseInfoScreenState();
 }
@@ -38,9 +40,7 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
           return FunctionScreenTemplate(
             screen: const Scaffold(
               backgroundColor: Color(0xFF0B1D3B),
-              body: Center(
-                child: CircularProgressIndicator(color: Colors.white),
-              ),
+              body: Center(child: CircularProgressIndicator(color: Colors.white)),
             ),
           );
         }
@@ -77,10 +77,7 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
             screen: const Scaffold(
               backgroundColor: Color(0xFF0B1D3B),
               body: Center(
-                child: Text(
-                  'Không tìm thấy khóa học',
-                  style: TextStyle(color: Colors.white70),
-                ),
+                child: Text('Không tìm thấy khóa học', style: TextStyle(color: Colors.white70)),
               ),
             ),
           );
@@ -96,17 +93,12 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
                     padding: const EdgeInsets.only(top: 20),
                     child: FlashcardCarouselWidget(
                       flashcards: notifier.flashcards,
-                      onPageChanged: (index) {
-                        // TODO: Handle page change
-                      },
-                      onCardTap: (flashcard) {
-                        // TODO: Handle card tap
-                      },
+                      onPageChanged: (index) {},
+                      onCardTap: (flashcard) {},
                     ),
                   ),
                 ),
 
-                // Course Info
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.only(top: 20),
@@ -114,7 +106,6 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
                   ),
                 ),
 
-                // Learning Options
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.only(top: 20),
@@ -126,7 +117,6 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
                   ),
                 ),
 
-                // Bottom spacing
                 const SliverToBoxAdapter(child: SizedBox(height: 100)),
               ],
             ),
@@ -137,6 +127,9 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
   }
 
   void _handleLearningModeTap(LearningMode mode) {
-    Navigator.pushNamed(context, DetailFlashCardScreen.routeName);
+    final notifier = Provider.of<CourseInfoNotifier>(context, listen: false);
+    if (notifier.course != null) {
+      Navigator.pushNamed(context, DetailFlashCardScreen.routeName, arguments: notifier.course!.id);
+    }
   }
 }
