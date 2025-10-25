@@ -2,6 +2,9 @@ import 'package:card_mind/core/widgets/template/function_screen_template.dart';
 import 'package:card_mind/core/theme/theme_extensions.dart';
 import 'package:card_mind/core/theme/app_pad.dart';
 import 'package:card_mind/core/theme/app_text_styles.dart';
+import 'package:card_mind/modules/library/widgets/class_screen.dart';
+import 'package:card_mind/modules/library/widgets/content_screen.dart';
+import 'package:card_mind/modules/library/widgets/topic_screen.dart';
 import 'package:flutter/material.dart';
 
 class LibraryScreen extends StatefulWidget {
@@ -171,123 +174,13 @@ class _LibraryScreenState extends State<LibraryScreen>
     return TabBarView(
       controller: _tabController,
       children: [
-        _buildContentList('Học phần'),
-        _buildContentList('Lớp học'),
-        _buildContentList('Thư viện'),
+        ContentScreen(tabType: 'Học phần'),
+        ClassScreen(),
+        TopicScreen(),
       ],
     );
   }
 
-  Widget _buildContentList(String tabType) {
-    return SingleChildScrollView(
-      padding: AppPad.h16v8,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildDateGroup('Tuần này', [
-            _buildContentItem(
-              'Thông tin cơ bản về Card Mind',
-              '9 thuật ngữ • Tác giả: Card Mind',
-              tabType,
-            ),
-            _buildContentItem(
-              'Cơ sở an toàn thông tin - chương 1 - chương 2...',
-              '39 thuật ngữ • Tác giả: huynhuy...',
-              tabType,
-            ),
-          ]),
-          const SizedBox(height: 24),
-          _buildDateGroup('Tháng 4 2024', [
-            _buildContentItem(
-              '(C2W4): Start the UX Design Process: Empathi...',
-              '29 thuật ngữ • Tác giả: SBMRGD',
-              tabType,
-            ),
-          ]),
-          const SizedBox(height: 24),
-          _buildDateGroup('Tháng 2 2024', [
-            _buildContentItem(
-              'Sample Content Item',
-              '15 thuật ngữ • Tác giả: Sample Author',
-              tabType,
-            ),
-          ]),
-          const SizedBox(height: 40),
-        ],
-      ),
-    );
-  }
 
-  Widget _buildDateGroup(String date, List<Widget> items) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          date,
-          style: AppTextStyles.textContent1.copyWith(
-            color: context.colors.onPrimary,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 12),
-        ...items,
-      ],
-    );
-  }
 
-  Widget _buildContentItem(String title, String details, String tabType) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: AppPad.h16v12,
-      decoration: BoxDecoration(
-        color: context.colors.primary,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: context.colors.onPrimary.withOpacity(0.1),
-          width: 1,
-        ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: context.colors.onPrimary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(
-              Icons.credit_card,
-              color: context.colors.onPrimary,
-              size: 24,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: AppTextStyles.textContent2.copyWith(
-                    color: context.colors.onPrimary,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  details,
-                  style: AppTextStyles.textContent3.copyWith(
-                    color: context.colors.onPrimary.withOpacity(0.7),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }

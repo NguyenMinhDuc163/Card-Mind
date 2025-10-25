@@ -3,6 +3,9 @@ import 'package:card_mind/modules/home/provider/home_notifier.dart';
 import 'package:card_mind/modules/course/provider/course_info_notifier.dart';
 import 'package:card_mind/modules/course/provider/course_result_notifier.dart';
 import 'package:card_mind/modules/course/provider/detail_flash_card_notifier.dart';
+import 'package:card_mind/modules/library/provider/content_notifier.dart';
+import 'package:card_mind/modules/library/provider/class_notifier.dart';
+import 'package:card_mind/modules/library/provider/topic_notifier.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -14,6 +17,9 @@ class ProviderSetup {
       ChangeNotifierProvider(create: (_) => CourseInfoNotifier()),
       ChangeNotifierProvider(create: (_) => CourseResultNotifier()),
       ChangeNotifierProvider(create: (_) => DetailFlashCardNotifier()),
+      ChangeNotifierProvider(create: (_) => ContentNotifier()),
+      ChangeNotifierProvider(create: (_) => ClassNotifier()),
+      ChangeNotifierProvider(create: (_) => TopicNotifier()),
     ];
   }
 }
