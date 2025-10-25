@@ -113,9 +113,30 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                 _buildHeader(notifier),
                 const SizedBox(height: 20),
 
-                if (notifier.unlearnedCardsByCourse.isEmpty)
+                // Danh sách học phần đã bookmark
+                if (notifier.bookmarkedCoursesByCourse.isNotEmpty) ...[
+                  DataGroupWidget(
+                    date: 'Học phần đã đánh dấu',
+                    items:
+                        notifier.bookmarkedCoursesByCourse.map((courseData) {
+                          return BookmarkItemWidget(
+                            courseData: courseData,
+                            onTap:
+                                () => _navigateToCourse(
+                                  courseData['courseId'] as String,
+                                ),
+                            isBookmarked: true,
+                          );
+                        }).toList(),
+                  ),
+                  const SizedBox(height: 20),
+                ],
+
+                // Danh sách thẻ chưa thuộc
+                if (notifier.unlearnedCardsByCourse.isEmpty &&
+                    notifier.bookmarkedCoursesByCourse.isEmpty)
                   _buildEmptyState(context)
-                else
+                else if (notifier.unlearnedCardsByCourse.isNotEmpty)
                   DataGroupWidget(
                     date: 'Thẻ chưa thuộc theo học phần',
                     items:
@@ -186,7 +207,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                   'Học phần',
                   '${notifier.coursesWithUnlearnedCards}',
                   Icons.school,
-                  context.colors.secondary,
+                  Colors.white.withOpacity(.7),
                 ),
               ),
             ],

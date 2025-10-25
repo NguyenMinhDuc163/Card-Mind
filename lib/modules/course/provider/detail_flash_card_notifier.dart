@@ -12,6 +12,8 @@ class DetailFlashCardNotifier extends ChangeNotifier {
   List<Flashcard> _learnedCards = []; // Đã học
   List<Flashcard> _unlearnedCards = []; // Chưa học
   Set<String> _learnedCardIds = {};
+  Set<String> _bookmarkedCardIds = {}; // Các thẻ đã bookmark
+  List<Flashcard> _bookmarkedCards = []; // Danh sách thẻ đã bookmark
   bool _isLoading = false;
   String? _errorMessage;
   String? _courseId;
@@ -28,6 +30,10 @@ class DetailFlashCardNotifier extends ChangeNotifier {
   List<Flashcard> get unlearnedCards => _unlearnedCards;
 
   Set<String> get learnedCardIds => _learnedCardIds;
+
+  Set<String> get bookmarkedCardIds => _bookmarkedCardIds;
+
+  List<Flashcard> get bookmarkedCards => _bookmarkedCards;
 
   bool get isLoading => _isLoading;
 
@@ -76,6 +82,39 @@ class DetailFlashCardNotifier extends ChangeNotifier {
     _learnedCards = [];
     _unlearnedCards = [];
     _learnedCardIds = <String>{};
+    _bookmarkedCardIds = <String>{};
+    _bookmarkedCards = [];
+  }
+
+  Future<void> _saveBookmarkedCards() async {
+    try {
+      final now = DateTime.now();
+      final bookmarkedData = {
+        'courseId': _courseData?.id,
+        'courseTitle': _courseData?.title,
+        'courseTopic': _courseData?.topic,
+        'courseDescription': _courseData?.description,
+        'cards':
+            _bookmarkedCards
+                .map(
+                  (card) => {
+                    'id': card.id,
+                    'frontText': card.frontText,
+                    'backText': card.backText,
+                    'frontImage': card.frontImage,
+                    'backImage': card.backImage,
+                    'category': card.category,
+                    'createdAt': card.createdAt.toIso8601String(),
+                    'updatedAt': card.updatedAt.toIso8601String(),
+                  },
+                )
+                .toList(),
+        'lastUpdated': now.toIso8601String(),
+      };
+      LocalStorageHelper.setValue('bookmarked_cards', bookmarkedData);
+    } catch (e) {
+      print('Error saving bookmarked cards: $e');
+    }
   }
 
   Future<void> _loadCourseFromHive(String courseId) async {
@@ -200,13 +239,17 @@ class DetailFlashCardNotifier extends ChangeNotifier {
       final result = {
         'courseId': _courseData!.id,
         'courseTitle': _courseData!.title,
+        'courseTopic': _courseData!.topic,
+        'courseDescription': _courseData!.description,
         'learnedCount': _learnedCards.length,
         'unlearnedCount': _unlearnedCards.length,
+        'bookmarkedCount': _bookmarkedCards.length,
         'totalCards': totalCards,
         'progressPercentage': _learnedCards.length / totalCards,
         'completedAt': now.toIso8601String(),
         'learnedCards': _learnedCards.map((card) => card.id).toList(),
         'unlearnedCards': _unlearnedCards.map((card) => card.id).toList(),
+        'bookmarkedCards': _bookmarkedCards.map((card) => card.id).toList(),
       };
 
       // Lưu kết quả học tập
@@ -341,6 +384,46 @@ class DetailFlashCardNotifier extends ChangeNotifier {
     }
   }
 
+  // Lấy danh sách thẻ đã bookmark
+  static Future<List<Map<String, dynamic>>> getBookmarkedCards() async {
+    try {
+      final data = LocalStorageHelper.getValue('bookmarked_cards');
+      if (data != null) {
+        final Map<String, dynamic> bookmarkedData = Map<String, dynamic>.from(
+          data as Map<dynamic, dynamic>,
+        );
+        return List<Map<String, dynamic>>.from(bookmarkedData['cards'] ?? []);
+      }
+      return [];
+    } catch (e) {
+      print('Error getting bookmarked cards: $e');
+      return [];
+    }
+  }
+
+  // Lấy thông tin khóa học của các thẻ đã bookmark
+  static Future<Map<String, dynamic>?> getBookmarkedCourseInfo() async {
+    try {
+      final data = LocalStorageHelper.getValue('bookmarked_cards');
+      if (data != null) {
+        final Map<String, dynamic> bookmarkedData = Map<String, dynamic>.from(
+          data as Map<dynamic, dynamic>,
+        );
+        return {
+          'courseId': bookmarkedData['courseId'],
+          'courseTitle': bookmarkedData['courseTitle'],
+          'courseTopic': bookmarkedData['courseTopic'],
+          'courseDescription': bookmarkedData['courseDescription'],
+          'lastUpdated': bookmarkedData['lastUpdated'],
+        };
+      }
+      return null;
+    } catch (e) {
+      print('Error getting bookmarked course info: $e');
+      return null;
+    }
+  }
+
   void markCardAsLearned(String cardId) {
     if (!_learnedCardIds.contains(cardId)) {
       _learnedCardIds.add(cardId);
@@ -359,6 +442,23 @@ class DetailFlashCardNotifier extends ChangeNotifier {
 
   bool isCardLearned(String cardId) {
     return _learnedCardIds.contains(cardId);
+  }
+
+  void toggleBookmark(Flashcard card) {
+    final cardId = card.id;
+    if (_bookmarkedCardIds.contains(cardId)) {
+      _bookmarkedCardIds.remove(cardId);
+      _bookmarkedCards.removeWhere((c) => c.id == cardId);
+    } else {
+      _bookmarkedCardIds.add(cardId);
+      _bookmarkedCards.add(card);
+    }
+    _saveBookmarkedCards();
+    notifyListeners();
+  }
+
+  bool isCardBookmarked(String cardId) {
+    return _bookmarkedCardIds.contains(cardId);
   }
 
   dynamic _convertValue(dynamic value) {

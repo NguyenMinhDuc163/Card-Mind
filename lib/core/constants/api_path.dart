@@ -13,15 +13,7 @@ class ApiPath {
   static String registerId = _ApiPath.registerId;
 
   static const String refreshToken = '/refresh-token';
-  static const String login = '/auth/login-on-firebase';
-  static const String register = '/auth/register';
-  static const String products = '/products';
-  static const String verifyOtp = '/auth/verify-otp';
-  static const String resetPassword = '/auth/reset-password';
-  static const String forgotPassword = '/auth/forgot-password';
-  static const String loginSocial = '/auth/login-social';
-  static const String checkUserName = '/auth/check-username-exist';
-  static const String checkMail = '/auth/check-email-exist';
+  static const String chatBot = '/chat/public';
 }
 
 // TODO trong intercepter => ds api can truyen id

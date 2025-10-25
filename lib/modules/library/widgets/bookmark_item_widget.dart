@@ -7,17 +7,21 @@ class BookmarkItemWidget extends StatelessWidget {
     super.key,
     required this.courseData,
     required this.onTap,
+    this.isBookmarked = false,
   });
 
   final Map<String, dynamic> courseData;
   final VoidCallback onTap;
+  final bool isBookmarked;
 
   @override
   Widget build(BuildContext context) {
     final courseTitle = courseData['courseTitle'] as String;
     final courseDescription = courseData['courseDescription'] as String;
-    final courseCategory = courseData['courseCategory'] as String;
-    final unlearnedCount = courseData['unlearnedCount'] as int;
+    final courseCategory = courseData['courseCategory'] as String?;
+    final courseTopic = courseData['courseTopic'] as String?;
+    final unlearnedCount = courseData['unlearnedCount'] as int?;
+    final bookmarkedCount = courseData['bookmarkedCount'] as int?;
     final lastUpdated = courseData['lastUpdated'] as String;
 
     return GestureDetector(
@@ -26,7 +30,7 @@ class BookmarkItemWidget extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: context.colors.surface,
+          color: context.colors.secondary,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: context.colors.outline.withOpacity(0.2),
@@ -45,7 +49,7 @@ class BookmarkItemWidget extends StatelessWidget {
                       Text(
                         courseTitle,
                         style: AppTextStyles.textContent1.copyWith(
-                          color: context.colors.onSurface,
+                          color: Colors.white,
                           fontWeight: FontWeight.w600,
                         ),
                         maxLines: 2,
@@ -56,7 +60,7 @@ class BookmarkItemWidget extends StatelessWidget {
                         Text(
                           courseDescription,
                           style: AppTextStyles.textContent3.copyWith(
-                            color: context.colors.onSurface.withOpacity(0.7),
+                            color: Colors.white,
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -71,19 +75,43 @@ class BookmarkItemWidget extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: context.colors.error.withOpacity(0.1),
+                    color: (isBookmarked
+                            ? AppColors.highlight
+                            : context.colors.error)
+                        .withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: context.colors.error.withOpacity(0.3),
+                      color: (isBookmarked
+                              ? AppColors.highlight
+                              : context.colors.error)
+                          .withOpacity(0.3),
                       width: 1,
                     ),
                   ),
-                  child: Text(
-                    '$unlearnedCount thẻ',
-                    style: AppTextStyles.textContent3.copyWith(
-                      color: context.colors.error,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (isBookmarked) ...[
+                        Icon(
+                          Icons.bookmark,
+                          size: 14,
+                          color: AppColors.highlight,
+                        ),
+                        const SizedBox(width: 4),
+                      ],
+                      Text(
+                        isBookmarked
+                            ? '$bookmarkedCount thẻ đã đánh dấu'
+                            : '$unlearnedCount thẻ',
+                        style: AppTextStyles.textContent3.copyWith(
+                          color:
+                              isBookmarked
+                                  ? AppColors.highlight
+                                  : context.colors.error,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -94,26 +122,26 @@ class BookmarkItemWidget extends StatelessWidget {
                 Icon(
                   Icons.category,
                   size: 16,
-                  color: context.colors.onSurface.withOpacity(0.6),
+                  color: Colors.white.withOpacity(0.7),
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  courseCategory,
+                  courseCategory ?? courseTopic ?? 'Không có',
                   style: AppTextStyles.textContent3.copyWith(
-                    color: context.colors.onSurface.withOpacity(0.6),
+                    color: Colors.white.withOpacity(0.7),
                   ),
                 ),
                 const Spacer(),
                 Icon(
                   Icons.schedule,
                   size: 16,
-                  color: context.colors.onSurface.withOpacity(0.6),
+                  color: Colors.white.withOpacity(0.7),
                 ),
                 const SizedBox(width: 4),
                 Text(
                   _formatDate(lastUpdated),
                   style: AppTextStyles.textContent3.copyWith(
-                    color: context.colors.onSurface.withOpacity(0.6),
+                    color: Colors.white.withOpacity(0.7),
                   ),
                 ),
               ],

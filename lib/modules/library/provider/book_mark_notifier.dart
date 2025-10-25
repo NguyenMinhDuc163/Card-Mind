@@ -6,6 +6,8 @@ import 'package:flutter/foundation.dart';
 class BookMarkNotifier extends ChangeNotifier {
   List<Map<String, dynamic>> _unlearnedCardsByCourse = [];
   List<Map<String, dynamic>> _filteredUnlearnedCardsByCourse = [];
+  List<Map<String, dynamic>> _bookmarkedCoursesByCourse = [];
+  List<Map<String, dynamic>> _filteredBookmarkedCoursesByCourse = [];
   bool _isLoading = false;
   String? _errorMessage;
   String _searchQuery = '';
@@ -14,6 +16,12 @@ class BookMarkNotifier extends ChangeNotifier {
       _searchQuery.isEmpty
           ? _unlearnedCardsByCourse
           : _filteredUnlearnedCardsByCourse;
+
+  List<Map<String, dynamic>> get bookmarkedCoursesByCourse =>
+      _searchQuery.isEmpty
+          ? _bookmarkedCoursesByCourse
+          : _filteredBookmarkedCoursesByCourse;
+
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   bool get hasError => _errorMessage != null;
@@ -23,6 +31,7 @@ class BookMarkNotifier extends ChangeNotifier {
     notifyListeners();
     try {
       await _loadUnlearnedCardsByCourse();
+      await _loadBookmarkedCoursesByCourse();
       _errorMessage = null;
     } catch (e) {
       _errorMessage = 'Không thể tải dữ liệu: $e';
@@ -76,6 +85,39 @@ class BookMarkNotifier extends ChangeNotifier {
     }
   }
 
+  Future<void> _loadBookmarkedCoursesByCourse() async {
+    try {
+      // Lấy danh sách thẻ đã bookmark
+      final bookmarkedCards =
+          await DetailFlashCardNotifier.getBookmarkedCards();
+
+      // Lấy thông tin khóa học của các thẻ đã bookmark
+      final courseInfo =
+          await DetailFlashCardNotifier.getBookmarkedCourseInfo();
+
+      if (bookmarkedCards.isEmpty || courseInfo == null) {
+        _bookmarkedCoursesByCourse = [];
+        return;
+      }
+
+      // Tạo danh sách khóa học đã bookmark
+      _bookmarkedCoursesByCourse = [
+        {
+          'courseId': courseInfo['courseId'],
+          'courseTitle': courseInfo['courseTitle'],
+          'courseTopic': courseInfo['courseTopic'],
+          'courseDescription': courseInfo['courseDescription'],
+          'bookmarkedCount': bookmarkedCards.length,
+          'bookmarkedCards': bookmarkedCards,
+          'lastUpdated': courseInfo['lastUpdated'],
+        },
+      ];
+    } catch (e) {
+      print('Error loading bookmarked courses: $e');
+      _bookmarkedCoursesByCourse = [];
+    }
+  }
+
   Future<Map<String, dynamic>?> _getCourseData(String courseId) async {
     try {
       final courseKeys =
@@ -113,7 +155,9 @@ class BookMarkNotifier extends ChangeNotifier {
     _searchQuery = query;
     if (query.isEmpty) {
       _filteredUnlearnedCardsByCourse = [];
+      _filteredBookmarkedCoursesByCourse = [];
     } else {
+      // Filter unlearned cards
       _filteredUnlearnedCardsByCourse =
           _unlearnedCardsByCourse.where((courseData) {
             final courseTitle = courseData['courseTitle'] as String? ?? '';
@@ -125,6 +169,19 @@ class BookMarkNotifier extends ChangeNotifier {
             return courseTitle.toLowerCase().contains(query.toLowerCase()) ||
                 courseDescription.toLowerCase().contains(query.toLowerCase()) ||
                 courseCategory.toLowerCase().contains(query.toLowerCase());
+          }).toList();
+
+      // Filter bookmarked courses
+      _filteredBookmarkedCoursesByCourse =
+          _bookmarkedCoursesByCourse.where((courseData) {
+            final courseTitle = courseData['courseTitle'] as String? ?? '';
+            final courseDescription =
+                courseData['courseDescription'] as String? ?? '';
+            final courseTopic = courseData['courseTopic'] as String? ?? '';
+
+            return courseTitle.toLowerCase().contains(query.toLowerCase()) ||
+                courseDescription.toLowerCase().contains(query.toLowerCase()) ||
+                courseTopic.toLowerCase().contains(query.toLowerCase());
           }).toList();
     }
     notifyListeners();
