@@ -1,11 +1,14 @@
+import 'dart:async';
 import 'package:card_mind/init.dart';
 import 'package:card_mind/core/helpers/local_storage_helper.dart';
+import 'package:card_mind/core/event_service.dart';
 import 'package:card_mind/modules/home/model/home_data.dart';
 
 class HomeNotifier extends ChangeNotifier {
   HomeData _homeData = const HomeData(courses: []);
   bool _isLoading = false;
   String? _errorMessage;
+  StreamSubscription<CourseEvent>? _courseEventSubscription;
 
   HomeData get homeData => _homeData;
 
@@ -21,6 +24,9 @@ class HomeNotifier extends ChangeNotifier {
     try {
       await _loadCourses();
       _errorMessage = null;
+
+      // Lắng nghe các event về khóa học
+      _setupCourseEventSubscription();
     } catch (e) {
       _errorMessage = 'Không thể tải dữ liệu: $e';
     } finally {
@@ -29,15 +35,37 @@ class HomeNotifier extends ChangeNotifier {
     }
   }
 
+  void _setupCourseEventSubscription() {
+    _courseEventSubscription?.cancel();
+    _courseEventSubscription = EventService().courseEvents.listen((event) {
+      if (event.type == CourseEventType.courseCreated) {
+        // Tự động refresh dữ liệu khi có khóa học mới được tạo
+        _refreshData();
+      }
+    });
+  }
+
+  Future<void> _refreshData() async {
+    try {
+      await _loadCourses();
+      notifyListeners();
+    } catch (e) {
+      print('Error refreshing data: $e');
+    }
+  }
+
   Future<void> _loadCourses() async {
     try {
-      final courseKeys = LocalStorageHelper.getValue('course_keys') as List<dynamic>? ?? [];
+      final courseKeys =
+          LocalStorageHelper.getValue('course_keys') as List<dynamic>? ?? [];
       final List<CourseItem> coursesList = [];
 
       for (final key in courseKeys) {
         final courseData = LocalStorageHelper.getValue(key as String);
         if (courseData != null) {
-          final Map<String, dynamic> jsonData = Map<String, dynamic>.from(courseData);
+          final Map<String, dynamic> jsonData = Map<String, dynamic>.from(
+            courseData,
+          );
 
           final courseItem = CourseItem(
             id: jsonData['id'] as String,
@@ -54,5 +82,11 @@ class HomeNotifier extends ChangeNotifier {
     } catch (e) {
       throw Exception('Không thể load khóa học: $e');
     }
+  }
+
+  @override
+  void dispose() {
+    _courseEventSubscription?.cancel();
+    super.dispose();
   }
 }

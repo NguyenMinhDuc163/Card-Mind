@@ -1,5 +1,6 @@
 import 'package:card_mind/init.dart';
 import 'package:card_mind/core/helpers/local_storage_helper.dart';
+import 'package:card_mind/core/event_service.dart';
 import 'package:card_mind/modules/create_course/model/create_course_data.dart';
 
 class CreateCourseNotifier extends ChangeNotifier {
@@ -65,6 +66,14 @@ class CreateCourseNotifier extends ChangeNotifier {
       }
 
       _clearError();
+
+      // Emit event để thông báo cho các màn hình khác
+      EventService().emitCourseEvent(
+        CourseEvent(
+          type: CourseEventType.courseCreated,
+          courseId: newCourseData.id,
+        ),
+      );
 
       _courseData = CreateCourseData.createNew();
       print('Created new course data for next time');
@@ -146,11 +155,6 @@ class CreateCourseNotifier extends ChangeNotifier {
       _courseData.terms
           .where((term) => term.term.isNotEmpty && term.definition.isNotEmpty)
           .toList();
-
-  void _setLoading(bool loading) {
-    _isLoading = loading;
-    notifyListeners();
-  }
 
   void _setError(String error) {
     _errorMessage = error;
