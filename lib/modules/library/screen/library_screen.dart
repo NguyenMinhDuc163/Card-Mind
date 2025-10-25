@@ -2,9 +2,9 @@ import 'package:card_mind/core/widgets/template/function_screen_template.dart';
 import 'package:card_mind/core/theme/theme_extensions.dart';
 import 'package:card_mind/core/theme/app_pad.dart';
 import 'package:card_mind/core/theme/app_text_styles.dart';
+import 'package:card_mind/modules/library/widgets/bookmark_screen.dart';
 import 'package:card_mind/modules/library/widgets/class_screen.dart';
 import 'package:card_mind/modules/library/widgets/content_screen.dart';
-import 'package:card_mind/modules/library/widgets/topic_screen.dart';
 import 'package:flutter/material.dart';
 
 class LibraryScreen extends StatefulWidget {
@@ -176,7 +176,7 @@ class _LibraryScreenState extends State<LibraryScreen>
       children: [
         ContentScreen(tabType: 'Học phần'),
         ClassScreen(),
-        TopicScreen(),
+        BookmarkScreen(),
       ],
     );
   }

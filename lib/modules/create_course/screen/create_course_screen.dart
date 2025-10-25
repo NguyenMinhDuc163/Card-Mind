@@ -54,7 +54,8 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
     _topicController.text = courseData.topic;
     _titleController.text = courseData.title;
     _descriptionController.text = courseData.description ?? '';
-    _showDescription = courseData.description != null && courseData.description!.isNotEmpty;
+    _showDescription =
+        courseData.description != null && courseData.description!.isNotEmpty;
   }
 
   @override
@@ -73,7 +74,9 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
           return FunctionScreenTemplate(
             isShowAppBar: false,
             backgroundColor: context.colors.primary,
-            screen: const Center(child: CircularProgressIndicator(color: Colors.white)),
+            screen: const Center(
+              child: CircularProgressIndicator(color: Colors.white),
+            ),
           );
         }
 
@@ -89,11 +92,16 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                   const SizedBox(height: 16),
                   Text(
                     notifier.errorMessage ?? 'Có lỗi xảy ra',
-                    style: AppTextStyles.textContent2.copyWith(color: context.colors.onPrimary),
+                    style: AppTextStyles.textContent2.copyWith(
+                      color: context.colors.onPrimary,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
-                  ElevatedButton(onPressed: () => _initializeData(), child: const Text('Thử lại')),
+                  ElevatedButton(
+                    onPressed: () => _initializeData(),
+                    child: const Text('Thử lại'),
+                  ),
                 ],
               ),
             ),
@@ -128,10 +136,15 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: FloatingActionButton(
+                    heroTag: "create_course_fab",
                     onPressed: () => _addNewTerm(notifier),
                     backgroundColor: Colors.blue,
                     shape: const CircleBorder(),
-                    child: Icon(Icons.add, color: context.colors.onPrimary, size: 28),
+                    child: Icon(
+                      Icons.add,
+                      color: context.colors.onPrimary,
+                      size: 28,
+                    ),
                   ),
                 ),
               ),
@@ -150,7 +163,10 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
     notifier.updateCourseInfo(
       topic: _topicController.text,
       title: _titleController.text,
-      description: _descriptionController.text.isNotEmpty ? _descriptionController.text : null,
+      description:
+          _descriptionController.text.isNotEmpty
+              ? _descriptionController.text
+              : null,
     );
     notifier.saveData();
   }
@@ -167,7 +183,9 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
       _showDescription = false;
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Đã lưu khóa học!')));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Đã lưu khóa học!')));
   }
 
   Widget _buildHeader(CreateCourseNotifier notifier) {
@@ -176,7 +194,11 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
       children: [
         GestureDetector(
           onTap: () => Navigator.pop(context),
-          child: Icon(Icons.arrow_back, color: context.colors.onPrimary, size: 24),
+          child: Icon(
+            Icons.arrow_back,
+            color: context.colors.onPrimary,
+            size: 24,
+          ),
         ),
         Text(
           '2/2',
@@ -189,7 +211,11 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
           children: [
             GestureDetector(
               onTap: () {},
-              child: Icon(Icons.settings, color: context.colors.onPrimary, size: 24),
+              child: Icon(
+                Icons.settings,
+                color: context.colors.onPrimary,
+                size: 24,
+              ),
             ),
             const SizedBox(width: 16),
             GestureDetector(
@@ -216,7 +242,9 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
         TextField(
           controller: _topicController,
           onChanged: (value) => _updateCourseInfo(notifier),
-          style: AppTextStyles.textContent2.copyWith(color: context.colors.onPrimary),
+          style: AppTextStyles.textContent2.copyWith(
+            color: context.colors.onPrimary,
+          ),
           decoration: InputDecoration(
             hintText: 'Chủ đề, chương, đơn vị',
             hintStyle: AppTextStyles.textContent2.copyWith(
@@ -277,20 +305,31 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
           TextField(
             controller: _descriptionController,
             onChanged: (value) => _updateCourseInfo(notifier),
-            style: AppTextStyles.textContent2.copyWith(color: context.colors.onPrimary),
+            style: AppTextStyles.textContent2.copyWith(
+              color: context.colors.onPrimary,
+            ),
             decoration: InputDecoration(
               hintText: 'Nhập mô tả cho khóa học...',
               hintStyle: AppTextStyles.textContent2.copyWith(
                 color: context.colors.onPrimary.withOpacity(0.6),
               ),
               border: UnderlineInputBorder(
-                borderSide: BorderSide(color: context.colors.onPrimary, width: 1),
+                borderSide: BorderSide(
+                  color: context.colors.onPrimary,
+                  width: 1,
+                ),
               ),
               enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: context.colors.onPrimary, width: 1),
+                borderSide: BorderSide(
+                  color: context.colors.onPrimary,
+                  width: 1,
+                ),
               ),
               focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: context.colors.onPrimary, width: 2),
+                borderSide: BorderSide(
+                  color: context.colors.onPrimary,
+                  width: 2,
+                ),
               ),
             ),
             maxLines: 3,
@@ -308,11 +347,17 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
             onTap: () {},
             child: Row(
               children: [
-                Icon(Icons.document_scanner, color: context.colors.onPrimary, size: 20),
+                Icon(
+                  Icons.document_scanner,
+                  color: context.colors.onPrimary,
+                  size: 20,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   'Quét tài liệu',
-                  style: AppTextStyles.textContent2.copyWith(color: context.colors.onPrimary),
+                  style: AppTextStyles.textContent2.copyWith(
+                    color: context.colors.onPrimary,
+                  ),
                 ),
               ],
             ),
@@ -320,7 +365,10 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
         ),
         Container(
           padding: AppPad.h12v8,
-          decoration: BoxDecoration(color: Colors.amber, borderRadius: BorderRadius.circular(6)),
+          decoration: BoxDecoration(
+            color: Colors.amber,
+            borderRadius: BorderRadius.circular(6),
+          ),
           child: Icon(Icons.lock, color: context.colors.onPrimary, size: 16),
         ),
         const SizedBox(width: 16),
@@ -354,7 +402,11 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
     );
   }
 
-  Widget _buildTermItem(TermData term, int index, CreateCourseNotifier notifier) {
+  Widget _buildTermItem(
+    TermData term,
+    int index,
+    CreateCourseNotifier notifier,
+  ) {
     final termController = TextEditingController(text: term.term);
     final definitionController = TextEditingController(text: term.definition);
 
@@ -364,13 +416,19 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
       background: Container(
         alignment: Alignment.centerLeft,
         padding: AppPad.h16,
-        decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(12)),
+        decoration: BoxDecoration(
+          color: Colors.red,
+          borderRadius: BorderRadius.circular(12),
+        ),
         child: Icon(Icons.delete, color: context.colors.onPrimary, size: 24),
       ),
       secondaryBackground: Container(
         alignment: Alignment.centerRight,
         padding: AppPad.h16,
-        decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(12)),
+        decoration: BoxDecoration(
+          color: Colors.red,
+          borderRadius: BorderRadius.circular(12),
+        ),
         child: Icon(Icons.delete, color: context.colors.onPrimary, size: 24),
       ),
       onDismissed: (direction) {
@@ -382,7 +440,10 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
         decoration: BoxDecoration(
           color: context.colors.primary.withOpacity(0.8),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: context.colors.onPrimary.withOpacity(0.2), width: 1),
+          border: Border.all(
+            color: context.colors.onPrimary.withOpacity(0.2),
+            width: 1,
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -403,16 +464,27 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                 notifier.updateTerm(index, updatedTerm);
                 notifier.saveData();
               },
-              style: AppTextStyles.textContent2.copyWith(color: context.colors.onPrimary),
+              style: AppTextStyles.textContent2.copyWith(
+                color: context.colors.onPrimary,
+              ),
               decoration: InputDecoration(
                 border: UnderlineInputBorder(
-                  borderSide: BorderSide(color: context.colors.onPrimary, width: 1),
+                  borderSide: BorderSide(
+                    color: context.colors.onPrimary,
+                    width: 1,
+                  ),
                 ),
                 enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: context.colors.onPrimary, width: 1),
+                  borderSide: BorderSide(
+                    color: context.colors.onPrimary,
+                    width: 1,
+                  ),
                 ),
                 focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: context.colors.onPrimary, width: 2),
+                  borderSide: BorderSide(
+                    color: context.colors.onPrimary,
+                    width: 2,
+                  ),
                 ),
               ),
             ),
@@ -434,16 +506,27 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                 notifier.updateTerm(index, updatedTerm);
                 notifier.saveData();
               },
-              style: AppTextStyles.textContent2.copyWith(color: context.colors.onPrimary),
+              style: AppTextStyles.textContent2.copyWith(
+                color: context.colors.onPrimary,
+              ),
               decoration: InputDecoration(
                 border: UnderlineInputBorder(
-                  borderSide: BorderSide(color: context.colors.onPrimary, width: 1),
+                  borderSide: BorderSide(
+                    color: context.colors.onPrimary,
+                    width: 1,
+                  ),
                 ),
                 enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: context.colors.onPrimary, width: 1),
+                  borderSide: BorderSide(
+                    color: context.colors.onPrimary,
+                    width: 1,
+                  ),
                 ),
                 focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: context.colors.onPrimary, width: 2),
+                  borderSide: BorderSide(
+                    color: context.colors.onPrimary,
+                    width: 2,
+                  ),
                 ),
               ),
             ),
@@ -465,14 +548,18 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
               child: Container(
                 padding: AppPad.v12,
                 decoration: BoxDecoration(
-                  border: Border(bottom: BorderSide(color: Colors.blue, width: 1)),
+                  border: Border(
+                    bottom: BorderSide(color: Colors.blue, width: 1),
+                  ),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       term.language,
-                      style: AppTextStyles.textContent2.copyWith(color: Colors.blue),
+                      style: AppTextStyles.textContent2.copyWith(
+                        color: Colors.blue,
+                      ),
                     ),
                     Icon(Icons.arrow_drop_down, color: Colors.blue, size: 20),
                   ],
@@ -485,7 +572,11 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
     );
   }
 
-  void _showLanguagePicker(TermData term, int index, CreateCourseNotifier notifier) {
+  void _showLanguagePicker(
+    TermData term,
+    int index,
+    CreateCourseNotifier notifier,
+  ) {
     final languages = ['Tiếng Việt', 'English', '日本語', '한국어', '中文'];
 
     showModalBottomSheet(
@@ -505,7 +596,10 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                         notifier.saveData();
                         Navigator.pop(context);
                       },
-                      trailing: term.language == language ? const Icon(Icons.check) : null,
+                      trailing:
+                          term.language == language
+                              ? const Icon(Icons.check)
+                              : null,
                     );
                   }).toList(),
             ),

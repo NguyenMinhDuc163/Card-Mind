@@ -8,6 +8,7 @@ import 'package:card_mind/modules/course/screen/detail_flash_card_screen.dart';
 import 'package:card_mind/modules/create_course/screen/create_course_screen.dart';
 import 'package:card_mind/modules/dashboard/screen/dashboard_screen.dart';
 import 'package:card_mind/modules/library/screen/library_screen.dart';
+import 'package:card_mind/modules/library/screen/class_detail_screen.dart';
 import 'package:flutter/material.dart';
 
 //part of in dart
@@ -54,6 +55,11 @@ class Routers {
         return MaterialPageRoute(
           settings: settings,
           builder: (_) => const CreateCourseScreen(),
+        );
+      case ClassDetailScreen.routeName:
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (_) => const ClassDetailScreen(),
         );
 
       default:
