@@ -8,7 +8,9 @@ import 'package:flutter/foundation.dart';
 class DetailFlashCardNotifier extends ChangeNotifier {
   CourseData? _courseData;
   Course? _course;
-  List<Flashcard> _flashcards = [];
+  List<Flashcard> _originalCards = []; // Danh sách gốc
+  List<Flashcard> _learnedCards = []; // Đã học
+  List<Flashcard> _unlearnedCards = []; // Chưa học
   Set<String> _learnedCardIds = {};
   bool _isLoading = false;
   String? _errorMessage;
@@ -18,7 +20,12 @@ class DetailFlashCardNotifier extends ChangeNotifier {
 
   Course? get course => _course;
 
-  List<Flashcard> get flashcards => _flashcards;
+  // Getter cho danh sách hiện tại đang hiển thị
+  List<Flashcard> get currentCards => _originalCards;
+
+  List<Flashcard> get learnedCards => _learnedCards;
+
+  List<Flashcard> get unlearnedCards => _unlearnedCards;
 
   Set<String> get learnedCardIds => _learnedCardIds;
 
@@ -30,11 +37,17 @@ class DetailFlashCardNotifier extends ChangeNotifier {
 
   String? get courseId => _courseId;
 
-  int get totalCards => _flashcards.length;
+  int get totalCards {
+    return _originalCards.length +
+        _learnedCards.length +
+        _unlearnedCards.length;
+  }
 
-  int get learnedCount => _learnedCardIds.length;
+  int get learnedCount => _learnedCards.length;
 
-  int get unlearnedCount => totalCards - learnedCount;
+  int get unlearnedCount => _unlearnedCards.length;
+
+  int get remainingCount => _originalCards.length;
 
   Future<void> initializeData({String? courseId}) async {
     _courseId = courseId;
@@ -42,8 +55,12 @@ class DetailFlashCardNotifier extends ChangeNotifier {
     notifyListeners();
     try {
       if (courseId != null) {
+        // Luôn reset dữ liệu học tập khi vào màn hình học
+        // Người dùng muốn học lại từ đầu mỗi lần vào
+        _resetAllData();
         await _loadCourseFromHive(courseId);
-        await _loadLearnedCards();
+        // Không load dữ liệu cũ nữa - mỗi lần vào học phần mới
+        // await _loadLearnedCards();
       }
       _errorMessage = null;
     } catch (e) {
@@ -54,15 +71,24 @@ class DetailFlashCardNotifier extends ChangeNotifier {
     }
   }
 
+  void _resetAllData() {
+    _originalCards = [];
+    _learnedCards = [];
+    _unlearnedCards = [];
+    _learnedCardIds = <String>{};
+  }
+
   Future<void> _loadCourseFromHive(String courseId) async {
     try {
-      final courseKeys = LocalStorageHelper.getValue('course_keys') as List<dynamic>? ?? [];
+      final courseKeys =
+          LocalStorageHelper.getValue('course_keys') as List<dynamic>? ?? [];
 
       for (final key in courseKeys) {
         final courseData = LocalStorageHelper.getValue(key as String);
         if (courseData != null) {
           final Map<String, dynamic> jsonData = {};
-          final Map<dynamic, dynamic> rawData = courseData as Map<dynamic, dynamic>;
+          final Map<dynamic, dynamic> rawData =
+              courseData as Map<dynamic, dynamic>;
 
           rawData.forEach((key, value) {
             jsonData[key.toString()] = _convertValue(value);
@@ -80,26 +106,19 @@ class DetailFlashCardNotifier extends ChangeNotifier {
     }
   }
 
-  Future<void> _loadLearnedCards() async {
-    try {
-      final learnedCards =
-          LocalStorageHelper.getValue('learned_cards_$_courseId') as List<dynamic>? ?? [];
-      _learnedCardIds = learnedCards.cast<String>().toSet();
-    } catch (e) {
-      _learnedCardIds = <String>{};
-    }
-  }
-
   Future<void> _saveLearnedCards() async {
     try {
-      LocalStorageHelper.setValue('learned_cards_$_courseId', _learnedCardIds.toList());
+      LocalStorageHelper.setValue(
+        'learned_cards_$_courseId',
+        _learnedCardIds.toList(),
+      );
     } catch (e) {}
   }
 
   void _convertToUICourse() {
     if (_courseData == null) return;
 
-    _flashcards =
+    _originalCards =
         _courseData!.terms.map((term) {
           return Flashcard(
             id: term.id,
@@ -115,14 +134,211 @@ class DetailFlashCardNotifier extends ChangeNotifier {
       id: _courseData!.id,
       title: _courseData!.title,
       description: _courseData!.description ?? '',
-      flashcards: _flashcards,
-      totalTerms: _flashcards.length,
+      flashcards: _originalCards,
+      totalTerms: _originalCards.length,
       isVerified: true,
       author: 'User',
       createdAt: _courseData!.createdAt,
       updatedAt: _courseData!.updatedAt,
       category: _courseData!.topic,
     );
+  }
+
+  // Xử lý swipe sang phải (đã học)
+  void onSwipeRight(Flashcard card) {
+    // Xóa khỏi danh sách gốc
+    _originalCards.removeWhere((c) => c.id == card.id);
+    // Thêm vào danh sách đã học
+    _learnedCards.add(card);
+    // Cập nhật learnedCardIds
+    _learnedCardIds.add(card.id);
+    _saveLearnedCards();
+    notifyListeners();
+  }
+
+  // Xử lý swipe sang trái (chưa học)
+  void onSwipeLeft(Flashcard card) {
+    // Xóa khỏi danh sách gốc
+    _originalCards.removeWhere((c) => c.id == card.id);
+    // Thêm vào danh sách chưa học
+    _unlearnedCards.add(card);
+    notifyListeners();
+  }
+
+  // Kiểm tra xem còn thẻ nào để học không
+  bool get hasCardsToStudy => _originalCards.isNotEmpty;
+
+  // Lấy thẻ hiện tại (thẻ đầu tiên trong danh sách gốc)
+  Flashcard? get currentCard =>
+      _originalCards.isNotEmpty ? _originalCards.first : null;
+
+  // Revert thẻ cuối cùng được swipe
+  void revertLastCard() {
+    // Lấy thẻ cuối cùng từ learnedCards hoặc unlearnedCards
+    if (_learnedCards.isNotEmpty) {
+      final lastLearnedCard = _learnedCards.removeLast();
+      _originalCards.insert(0, lastLearnedCard); // Thêm vào đầu danh sách
+      _learnedCardIds.remove(lastLearnedCard.id);
+      _saveLearnedCards();
+    } else if (_unlearnedCards.isNotEmpty) {
+      final lastUnlearnedCard = _unlearnedCards.removeLast();
+      _originalCards.insert(0, lastUnlearnedCard); // Thêm vào đầu danh sách
+    }
+
+    notifyListeners();
+  }
+
+  // Lưu kết quả học tập khi hoàn thành
+  Future<void> saveLearningResult() async {
+    if (_courseData == null) return;
+
+    try {
+      final now = DateTime.now();
+      final resultKey =
+          'learning_result_${_courseData!.id}_${now.millisecondsSinceEpoch}';
+
+      final result = {
+        'courseId': _courseData!.id,
+        'courseTitle': _courseData!.title,
+        'learnedCount': _learnedCards.length,
+        'unlearnedCount': _unlearnedCards.length,
+        'totalCards': totalCards,
+        'progressPercentage': _learnedCards.length / totalCards,
+        'completedAt': now.toIso8601String(),
+        'learnedCards': _learnedCards.map((card) => card.id).toList(),
+        'unlearnedCards': _unlearnedCards.map((card) => card.id).toList(),
+      };
+
+      // Lưu kết quả học tập
+      LocalStorageHelper.setValue(resultKey, result);
+
+      // Lưu danh sách thẻ đã học cho khóa học này
+      final learnedCardsKey = 'learned_cards_${_courseData!.id}';
+      final learnedCardsData = {
+        'courseId': _courseData!.id,
+        'courseTitle': _courseData!.title,
+        'cards':
+            _learnedCards
+                .map(
+                  (card) => {
+                    'id': card.id,
+                    'frontText': card.frontText,
+                    'backText': card.backText,
+                    'frontImage': card.frontImage,
+                    'backImage': card.backImage,
+                    'category': card.category,
+                    'createdAt': card.createdAt.toIso8601String(),
+                    'updatedAt': card.updatedAt.toIso8601String(),
+                  },
+                )
+                .toList(),
+        'lastUpdated': now.toIso8601String(),
+      };
+      LocalStorageHelper.setValue(learnedCardsKey, learnedCardsData);
+
+      // Lưu danh sách thẻ chưa học cho khóa học này
+      final unlearnedCardsKey = 'unlearned_cards_${_courseData!.id}';
+      final unlearnedCardsData = {
+        'courseId': _courseData!.id,
+        'courseTitle': _courseData!.title,
+        'cards':
+            _unlearnedCards
+                .map(
+                  (card) => {
+                    'id': card.id,
+                    'frontText': card.frontText,
+                    'backText': card.backText,
+                    'frontImage': card.frontImage,
+                    'backImage': card.backImage,
+                    'category': card.category,
+                    'createdAt': card.createdAt.toIso8601String(),
+                    'updatedAt': card.updatedAt.toIso8601String(),
+                  },
+                )
+                .toList(),
+        'lastUpdated': now.toIso8601String(),
+      };
+      LocalStorageHelper.setValue(unlearnedCardsKey, unlearnedCardsData);
+
+      // Cập nhật danh sách tất cả kết quả
+      final allResults =
+          LocalStorageHelper.getValue('all_learning_results')
+              as List<dynamic>? ??
+          [];
+      allResults.add(resultKey);
+      LocalStorageHelper.setValue('all_learning_results', allResults);
+
+      // Cập nhật danh sách khóa học có kết quả học tập
+      final coursesWithResults =
+          LocalStorageHelper.getValue('courses_with_results')
+              as List<dynamic>? ??
+          [];
+      if (!coursesWithResults.contains(_courseData!.id)) {
+        coursesWithResults.add(_courseData!.id);
+        LocalStorageHelper.setValue('courses_with_results', coursesWithResults);
+      }
+    } catch (e) {
+      print('Error saving learning result: $e');
+    }
+  }
+
+  // Lấy danh sách thẻ đã học cho khóa học
+  static Future<List<Map<String, dynamic>>> getLearnedCards(
+    String courseId,
+  ) async {
+    try {
+      final learnedCardsKey = 'learned_cards_$courseId';
+      final data = LocalStorageHelper.getValue(learnedCardsKey);
+      if (data != null) {
+        final Map<String, dynamic> learnedData = Map<String, dynamic>.from(
+          data as Map<dynamic, dynamic>,
+        );
+        return List<Map<String, dynamic>>.from(learnedData['cards'] ?? []);
+      }
+      return [];
+    } catch (e) {
+      print('Error getting learned cards: $e');
+      return [];
+    }
+  }
+
+  // Lấy danh sách thẻ chưa học cho khóa học
+  static Future<List<Map<String, dynamic>>> getUnlearnedCards(
+    String courseId,
+  ) async {
+    try {
+      if (courseId.isEmpty) {
+        return [];
+      }
+
+      final unlearnedCardsKey = 'unlearned_cards_$courseId';
+      final data = LocalStorageHelper.getValue(unlearnedCardsKey);
+
+      if (data != null) {
+        final Map<String, dynamic> unlearnedData = Map<String, dynamic>.from(
+          data as Map<dynamic, dynamic>,
+        );
+        return List<Map<String, dynamic>>.from(unlearnedData['cards'] ?? []);
+      }
+      return [];
+    } catch (e) {
+      print('Error getting unlearned cards: $e');
+      return [];
+    }
+  }
+
+  // Lấy tất cả khóa học có kết quả học tập
+  static Future<List<String>> getCoursesWithResults() async {
+    try {
+      final courses =
+          LocalStorageHelper.getValue('courses_with_results')
+              as List<dynamic>? ??
+          [];
+      return courses.cast<String>();
+    } catch (e) {
+      print('Error getting courses with results: $e');
+      return [];
+    }
   }
 
   void markCardAsLearned(String cardId) {

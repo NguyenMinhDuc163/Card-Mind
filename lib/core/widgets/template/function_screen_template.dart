@@ -179,7 +179,7 @@ class _FunctionScreenTemplateState extends State<FunctionScreenTemplate>
                 (e) => Padding(
                   padding: AppPad.a8,
                   child: CircleAvatar(
-                    backgroundColor: AppColors.lightGray,
+                    backgroundColor: widget.backgroundColor,
                     child: e,
                   ),
                 ),

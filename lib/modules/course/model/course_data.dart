@@ -125,4 +125,13 @@ class TermData extends Equatable {
       language: json['language'] as String,
     );
   }
+
+  factory TermData.createNew() {
+    return TermData(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      term: '',
+      definition: '',
+      language: 'Tiếng Việt',
+    );
+  }
 }

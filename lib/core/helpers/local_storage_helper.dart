@@ -1,4 +1,5 @@
 import 'package:hive_ce_flutter/hive_flutter.dart';
+
 // su dung Singleton Method Design Pattern de khoi tao doi tuong dung 1 lan
 class LocalStorageHelper {
   LocalStorageHelper._internal();
@@ -22,6 +23,10 @@ class LocalStorageHelper {
   }
 
   static deleteValue(String key) {
+    _shared.hiveBox?.delete(key);
+  }
+
+  static removeValue(String key) {
     _shared.hiveBox?.delete(key);
   }
 }

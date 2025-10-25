@@ -2,6 +2,8 @@ import 'package:card_mind/core/theme/theme_extensions.dart';
 import 'package:card_mind/init.dart';
 import 'package:card_mind/modules/course/screen/course_info_screen.dart';
 import 'package:card_mind/modules/home/provider/home_notifier.dart';
+import 'package:card_mind/modules/home/screen/global_search_screen.dart';
+import 'package:card_mind/modules/library/screen/class_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -49,31 +51,34 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Row(
                 children: [
                   Expanded(
-                    child: Container(
-                      height: 44,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.12),
-                        borderRadius: BorderRadius.circular(22),
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 14),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.search, color: Colors.white70),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: TextField(
-                              style: AppTextStyles.text.copyWith(
-                                color: AppColors.white,
-                              ),
-                              decoration: const InputDecoration(
-                                hintText: 'Tìm kiếm',
-                                hintStyle: TextStyle(color: Colors.white70),
-                                border: InputBorder.none,
-                                isDense: true,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          GlobalSearchScreen.routeName,
+                        );
+                      },
+                      child: Container(
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.12),
+                          borderRadius: BorderRadius.circular(22),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 14),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.search, color: Colors.white70),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'Tìm kiếm',
+                                style: AppTextStyles.text.copyWith(
+                                  color: Colors.white70,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -227,91 +232,131 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 16)),
-          SliverPadding(
-            padding: AppPad.h16,
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate((context, i) {
-                const int itemCount = 6;
-                if (i.isOdd) return const SizedBox(height: 16);
-                final int index = i ~/ 2;
-                if (index >= itemCount) return null;
-                return GestureDetector(
-                  onTap:
-                      () => Navigator.pushNamed(
-                        context,
-                        CourseInfoScreen.routeName,
-                      ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: context.colors.secondary.withOpacity(0.9),
-                      borderRadius: BorderRadius.circular(22),
-                      boxShadow: [
-                        BoxShadow(
-                          color: context.colors.primary.withOpacity(0.4),
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
+          Consumer<HomeNotifier>(
+            builder: (context, notifier, child) {
+              if (notifier.homeData.classes.isEmpty) {
+                return const SliverToBoxAdapter(child: SizedBox(height: 20));
+              }
+
+              final reversedClasses =
+                  notifier.homeData.classes.reversed.toList();
+
+              return SliverPadding(
+                padding: AppPad.h16,
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate((context, i) {
+                    if (i.isOdd) return const SizedBox(height: 16);
+                    final int index = i ~/ 2;
+                    if (index >= reversedClasses.length) return null;
+
+                    final classItem = reversedClasses[index];
+                    return GestureDetector(
+                      onTap:
+                          () => Navigator.pushNamed(
+                            context,
+                            ClassDetailScreen.routeName,
+                            arguments: classItem.id,
+                          ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: context.colors.secondary.withOpacity(0.9),
+                          borderRadius: BorderRadius.circular(22),
+                          boxShadow: [
+                            BoxShadow(
+                              color: context.colors.primary.withOpacity(0.4),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              width: 36,
-                              height: 36,
-                              decoration: BoxDecoration(
-                                color: context.colors.secondary.withOpacity(
-                                  0.25,
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: 36,
+                                  height: 36,
+                                  decoration: BoxDecoration(
+                                    color: context.colors.secondary.withOpacity(
+                                      0.25,
+                                    ),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: const Icon(
+                                    Icons.class_,
+                                    color: Colors.white70,
+                                  ),
                                 ),
-                                borderRadius: BorderRadius.circular(10),
+                                const Spacer(),
+                                const Icon(
+                                  Icons.more_vert,
+                                  color: Colors.white70,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              classItem.className,
+                              style: AppTextStyles.textHeader3.copyWith(
+                                color: AppColors.white,
                               ),
-                              child: const Icon(
-                                Icons.rocket_launch,
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              classItem.description,
+                              style: AppTextStyles.textContent3.copyWith(
                                 color: Colors.white70,
                               ),
                             ),
-                            const Spacer(),
-                            const Icon(Icons.more_vert, color: Colors.white70),
+                            const SizedBox(height: 12),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    '${classItem.totalStudents} học sinh • ${classItem.instructor}',
+                                    style: AppTextStyles.textContent4.copyWith(
+                                      color: Colors.white60,
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        classItem.status == 'active'
+                                            ? Colors.green.withOpacity(0.2)
+                                            : Colors.orange.withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    classItem.status == 'active'
+                                        ? 'Hoạt động'
+                                        : 'Tạm dừng',
+                                    style: AppTextStyles.textContent4.copyWith(
+                                      color:
+                                          classItem.status == 'active'
+                                              ? Colors.green
+                                              : Colors.orange,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ],
                         ),
-                        const SizedBox(height: 10),
-                        Text(
-                          'Xin chào bằng nhiều thứ tiếng',
-                          style: AppTextStyles.textHeader3.copyWith(
-                            color: AppColors.white,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          'Bắn vào câu trả lời đúng trước khi hết thời gian',
-                          style: AppTextStyles.textContent3.copyWith(
-                            color: Colors.white70,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(14),
-                          child: Container(
-                            height: 140,
-                            width: double.infinity,
-                            color: context.colors.secondary.withOpacity(0.1),
-                            child: const Icon(
-                              Icons.image,
-                              color: Colors.white30,
-                              size: 48,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }, childCount: 6 * 2 - 1),
-            ),
+                      ),
+                    );
+                  }, childCount: reversedClasses.length * 2 - 1),
+                ),
+              );
+            },
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 16)),
         ],

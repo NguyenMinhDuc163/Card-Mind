@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ClassScreen extends StatefulWidget {
-  const ClassScreen({super.key});
+  const ClassScreen({super.key, this.searchQuery = ''});
+  final String searchQuery;
 
   @override
   State<ClassScreen> createState() => _ClassScreenState();
@@ -25,6 +26,18 @@ class _ClassScreenState extends State<ClassScreen> {
     });
   }
 
+  @override
+  void didUpdateWidget(ClassScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.searchQuery != widget.searchQuery) {
+      Future.microtask(() {
+        if (mounted) {
+          _performSearch();
+        }
+      });
+    }
+  }
+
   Future<void> _initializeData() async {
     final notifier = Provider.of<ClassNotifier>(context, listen: false);
     await notifier.initializeData();
@@ -34,6 +47,11 @@ class _ClassScreenState extends State<ClassScreen> {
         _isInitialized = true;
       });
     }
+  }
+
+  void _performSearch() {
+    final notifier = Provider.of<ClassNotifier>(context, listen: false);
+    notifier.searchClasses(widget.searchQuery);
   }
 
   void _showCreateClassBottomSheet() {
@@ -85,9 +103,9 @@ class _ClassScreenState extends State<ClassScreen> {
           );
         }
 
-        return FunctionScreenTemplate(
+        return Scaffold(
           backgroundColor: context.colors.primary,
-          screen: Stack(
+          body: Stack(
             children: [
               SingleChildScrollView(
                 padding: AppPad.h16v8,
@@ -129,7 +147,7 @@ class _ClassScreenState extends State<ClassScreen> {
                       DataGroupWidget(
                         date: 'Lớp học của tôi',
                         items:
-                            notifier.classes.map((classData) {
+                            notifier.classes.reversed.map((classData) {
                               return ClassItemWidget(
                                 classData: classData,
                                 onTap:

@@ -7,8 +7,13 @@ import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
 class ContentScreen extends StatefulWidget {
-  const ContentScreen({super.key, required this.tabType});
+  const ContentScreen({
+    super.key,
+    required this.tabType,
+    this.searchQuery = '',
+  });
   final String tabType;
+  final String searchQuery;
 
   @override
   State<ContentScreen> createState() => _ContentScreenState();
@@ -25,6 +30,18 @@ class _ContentScreenState extends State<ContentScreen> {
     });
   }
 
+  @override
+  void didUpdateWidget(ContentScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.searchQuery != widget.searchQuery) {
+      Future.microtask(() {
+        if (mounted) {
+          _performSearch();
+        }
+      });
+    }
+  }
+
   Future<void> _initializeData() async {
     final notifier = Provider.of<ContentNotifier>(context, listen: false);
     await notifier.initializeData();
@@ -34,6 +51,11 @@ class _ContentScreenState extends State<ContentScreen> {
         _isInitialized = true;
       });
     }
+  }
+
+  void _performSearch() {
+    final notifier = Provider.of<ContentNotifier>(context, listen: false);
+    notifier.searchContents(widget.searchQuery);
   }
 
   @override
@@ -76,9 +98,9 @@ class _ContentScreenState extends State<ContentScreen> {
           );
         }
 
-        return FunctionScreenTemplate(
+        return Scaffold(
           backgroundColor: context.colors.primary,
-          screen: SingleChildScrollView(
+          body: SingleChildScrollView(
             padding: AppPad.h16v8,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

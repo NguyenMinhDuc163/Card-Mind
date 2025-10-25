@@ -3,14 +3,16 @@ import 'package:card_mind/core/helpers/local_storage_helper.dart';
 import 'package:card_mind/modules/course/model/course_data.dart';
 import 'package:card_mind/data/models/course.dart';
 import 'package:flutter/foundation.dart';
+import 'detail_flash_card_notifier.dart';
 
 class CourseResultNotifier extends ChangeNotifier {
   CourseData? _courseData;
   Course? _course;
   Set<String> _learnedCardIds = {};
+  List<Map<String, dynamic>> _learnedCards = [];
+  List<Map<String, dynamic>> _unlearnedCards = [];
   bool _isLoading = false;
   String? _errorMessage;
-  String? _courseId;
 
   CourseData? get courseData => _courseData;
 
@@ -24,13 +26,14 @@ class CourseResultNotifier extends ChangeNotifier {
 
   bool get hasError => _errorMessage != null;
 
-  int get totalCards => _courseData?.terms.length ?? 0;
+  int get totalCards => _learnedCards.length + _unlearnedCards.length;
 
-  int get learnedCount => _learnedCardIds.length;
+  int get learnedCount => _learnedCards.length;
 
-  int get unlearnedCount => totalCards - learnedCount;
+  int get unlearnedCount => _unlearnedCards.length;
 
-  double get progressPercentage => totalCards > 0 ? learnedCount / totalCards : 0.0;
+  double get progressPercentage =>
+      totalCards > 0 ? learnedCount / totalCards : 0.0;
 
   int get knownCount => learnedCount;
 
@@ -38,15 +41,17 @@ class CourseResultNotifier extends ChangeNotifier {
 
   int get remainingCount => unlearnedCount;
 
+  List<Map<String, dynamic>> get learnedCards => _learnedCards;
+
+  List<Map<String, dynamic>> get unlearnedCards => _unlearnedCards;
+
   Future<void> initializeData({String? courseId}) async {
-    _courseId = courseId;
     _isLoading = true;
     notifyListeners();
     try {
       if (courseId != null) {
         await _loadCourseFromHive(courseId);
-        await _loadLearnedCards();
-        await _saveLearningResult();
+        await _loadCardLists(courseId);
       }
       _errorMessage = null;
     } catch (e) {
@@ -59,13 +64,15 @@ class CourseResultNotifier extends ChangeNotifier {
 
   Future<void> _loadCourseFromHive(String courseId) async {
     try {
-      final courseKeys = LocalStorageHelper.getValue('course_keys') as List<dynamic>? ?? [];
+      final courseKeys =
+          LocalStorageHelper.getValue('course_keys') as List<dynamic>? ?? [];
 
       for (final key in courseKeys) {
         final courseData = LocalStorageHelper.getValue(key as String);
         if (courseData != null) {
           final Map<String, dynamic> jsonData = {};
-          final Map<dynamic, dynamic> rawData = courseData as Map<dynamic, dynamic>;
+          final Map<dynamic, dynamic> rawData =
+              courseData as Map<dynamic, dynamic>;
 
           rawData.forEach((key, value) {
             jsonData[key.toString()] = _convertValue(value);
@@ -83,12 +90,22 @@ class CourseResultNotifier extends ChangeNotifier {
     }
   }
 
-  Future<void> _loadLearnedCards() async {
+  Future<void> _loadCardLists(String courseId) async {
     try {
-      final learnedCards =
-          LocalStorageHelper.getValue('learned_cards_$_courseId') as List<dynamic>? ?? [];
-      _learnedCardIds = learnedCards.cast<String>().toSet();
+      // Load danh sách thẻ đã học
+      _learnedCards = await DetailFlashCardNotifier.getLearnedCards(courseId);
+
+      // Load danh sách thẻ chưa học
+      _unlearnedCards = await DetailFlashCardNotifier.getUnlearnedCards(
+        courseId,
+      );
+
+      // Cập nhật learnedCardIds từ danh sách đã học
+      _learnedCardIds =
+          _learnedCards.map((card) => card['id'] as String).toSet();
     } catch (e) {
+      _learnedCards = [];
+      _unlearnedCards = [];
       _learnedCardIds = <String>{};
     }
   }
@@ -108,33 +125,6 @@ class CourseResultNotifier extends ChangeNotifier {
       updatedAt: _courseData!.updatedAt,
       category: _courseData!.topic,
     );
-  }
-
-  Future<void> _saveLearningResult() async {
-    try {
-      final resultData = {
-        'courseId': _courseId,
-        'courseTitle': _courseData?.title ?? '',
-        'totalCards': totalCards,
-        'learnedCount': learnedCount,
-        'unlearnedCount': unlearnedCount,
-        'progressPercentage': progressPercentage,
-        'completedAt': DateTime.now().toIso8601String(),
-        'learnedCardIds': _learnedCardIds.toList(),
-      };
-
-      final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final resultKey = 'learning_result_${_courseId}_$timestamp';
-
-      LocalStorageHelper.setValue(resultKey, resultData);
-
-      LocalStorageHelper.setValue('latest_result_$_courseId', resultData);
-
-      final allResults =
-          LocalStorageHelper.getValue('all_learning_results') as List<dynamic>? ?? [];
-      allResults.add(resultKey);
-      LocalStorageHelper.setValue('all_learning_results', allResults);
-    } catch (e) {}
   }
 
   String get congratulationMessage {

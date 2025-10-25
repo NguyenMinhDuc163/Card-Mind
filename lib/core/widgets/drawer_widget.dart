@@ -1,7 +1,8 @@
+import 'package:card_mind/core/widgets/app_gap.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:card_mind/core/widgets/switch_botton_widget.dart';
-import 'package:card_mind/core/widgets/template/button_widget.dart';
 import 'package:card_mind/core/theme/theme_extensions.dart';
+import 'package:card_mind/core/services/data_management_service.dart';
 import 'package:card_mind/init.dart';
 
 class DrawerWidget extends StatelessWidget {
@@ -61,12 +62,12 @@ class DrawerWidget extends StatelessWidget {
             ),
             _buildDrawerItem(
               context,
-              icon: Icon(Icons.settings, color: Colors.white),
-              title: 'Cài đặt'.tr(),
-              iconColor: Colors.white,
-              textStyle: AppTextStyles.textContent2.copyWith(color: Colors.white),
+              icon: Icon(Icons.delete_forever, color: Colors.red),
+              title: 'Xóa dữ liệu'.tr(),
+              iconColor: Colors.red,
+              textStyle: AppTextStyles.textContent2.copyWith(color: Colors.red),
               onTap: () async {
-                print("Logout");
+                await DataManagementService.handleDeleteData(context);
               },
             ),
             _buildDrawerItem(
@@ -99,7 +100,7 @@ class DrawerWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Nguyen Duc",
+              "Xin chào",
               style: AppTextStyles.textHeader3.copyWith(
                 color: context.colors.onPrimary,
               ),
@@ -112,6 +113,7 @@ class DrawerWidget extends StatelessWidget {
                     color: context.colors.onPrimary.withOpacity(0.7),
                   ),
                 ),
+                AppGap.w12,
                 Icon(
                   Icons.done_outline_outlined,
                   color: context.colors.onPrimary,

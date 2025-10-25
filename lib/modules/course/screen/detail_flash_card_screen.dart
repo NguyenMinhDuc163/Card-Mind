@@ -5,9 +5,8 @@ import 'package:flip_card/flip_card.dart';
 import 'package:card_mind/init.dart';
 import 'package:card_mind/core/theme/theme_extensions.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import '../provider/detail_flash_card_notifier.dart';
-import '../../../data/models/flashcard.dart';
-import '../../../data/models/course.dart';
 
 class DetailFlashCardScreen extends StatefulWidget {
   const DetailFlashCardScreen({super.key});
@@ -19,13 +18,9 @@ class DetailFlashCardScreen extends StatefulWidget {
 }
 
 class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
-  late PageController _pageController;
-  int _currentIndex = 0;
-
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(initialPage: _currentIndex);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initializeData();
     });
@@ -37,52 +32,36 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
     await notifier.initializeData(courseId: courseId);
   }
 
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-
-  void _onPageChanged(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-  }
-
-  void _onCardSwiped(DragEndDetails details, DetailFlashCardNotifier notifier) {
+  bool _onSwipe(
+    DetailFlashCardNotifier notifier,
+    int? previousIndex,
+    int? currentIndex,
+    CardSwiperDirection direction,
+  ) {
     HapticFeedback.lightImpact();
-    final currentFlashcard = notifier.flashcards[_currentIndex];
 
-    if (details.primaryVelocity! > 0) {
-      notifier.unmarkCardAsLearned(currentFlashcard.id);
-      _goToPreviousCard();
-    } else if (details.primaryVelocity! < 0) {
-      notifier.markCardAsLearned(currentFlashcard.id);
-      _goToNextCard(notifier);
+    // Kiểm tra xem có thẻ nào để swipe không
+    if (previousIndex != null &&
+        previousIndex < notifier.currentCards.length &&
+        notifier.currentCards.isNotEmpty) {
+      final card = notifier.currentCards[previousIndex];
+
+      if (direction == CardSwiperDirection.right) {
+        notifier.onSwipeRight(card);
+      } else if (direction == CardSwiperDirection.left) {
+        notifier.onSwipeLeft(card);
+      }
+
+      // Kiểm tra xem còn thẻ nào để học không
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!notifier.hasCardsToStudy) {
+          // Tự động chuyển đến màn hình kết quả
+          _navigateToResult(notifier);
+        }
+      });
     }
-  }
 
-  void _goToNextCard(DetailFlashCardNotifier notifier) {
-    final currentFlashcard = notifier.flashcards[_currentIndex];
-    notifier.markCardAsLearned(currentFlashcard.id);
-
-    if (_currentIndex < notifier.totalCards - 1) {
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    } else {
-      Navigator.pushNamed(context, CourseResultScreen.routeName, arguments: notifier.courseId);
-    }
-  }
-
-  void _goToPreviousCard() {
-    if (_currentIndex > 0) {
-      _pageController.previousPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    }
+    return true;
   }
 
   @override
@@ -125,38 +104,70 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
           );
         }
 
-        if (notifier.flashcards.isEmpty) {
+        if (notifier.currentCards.isEmpty && !notifier.isLoading) {
+          // Chỉ navigate một lần duy nhất
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+            if (mounted) {
+              await notifier.saveLearningResult();
+              Navigator.pushReplacementNamed(
+                context,
+                CourseResultScreen.routeName,
+                arguments: notifier.courseId,
+              );
+            }
+          });
+
           return FunctionScreenTemplate(
             screen: Scaffold(
               backgroundColor: context.colors.primary,
               body: const Center(
-                child: Text('Không có thẻ học nào', style: TextStyle(color: Colors.white70)),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(color: Colors.white),
+                    SizedBox(height: 16),
+                    Text('Đang chuyển đến kết quả...', style: TextStyle(color: Colors.white70)),
+                  ],
+                ),
               ),
             ),
           );
         }
 
         return FunctionScreenTemplate(
-          screen: Scaffold(
-            backgroundColor: context.colors.primary,
-            body: Stack(
-              children: [
-                _buildAppBar(context, notifier),
-
-                Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 100, left: 16, right: 16),
-                      child: _buildProgressIndicators(context, notifier),
-                    ),
-
-                    Expanded(child: _buildFlashcardPageView(context, notifier)),
-
-                    _buildBottomNavigationBar(context, notifier),
-                  ],
-                ),
-              ],
+          actionsWidget: [
+            GestureDetector(
+              onTap: () async {
+                await notifier.saveLearningResult();
+                if (mounted) {
+                  Navigator.pushReplacementNamed(
+                    context,
+                    CourseResultScreen.routeName,
+                    arguments: notifier.courseId,
+                  );
+                }
+              },
+              child: Icon(Icons.check, color: context.colors.onPrimary, size: 24),
             ),
+          ],
+          backgroundColor: context.colors.primary,
+          screen: Stack(
+            children: [
+              _buildAppBar(context, notifier),
+
+              Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 60, left: 16, right: 16),
+                    child: _buildProgressIndicators(context, notifier),
+                  ),
+
+                  Expanded(child: _buildFlashcardPageView(context, notifier)),
+
+                  _buildBottomNavigationBar(context, notifier),
+                ],
+              ),
+            ],
           ),
         );
       },
@@ -165,25 +176,15 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
 
   Widget _buildAppBar(BuildContext context, DetailFlashCardNotifier notifier) {
     return Container(
-      padding: EdgeInsets.only(
-        top: MediaQuery.of(context).padding.top + 10,
-        left: 16,
-        right: 16,
-        bottom: 20,
-      ),
+      padding: EdgeInsets.only(left: 16, right: 16, bottom: 40),
       color: context.colors.primary,
       child: Row(
         children: [
-          IconButton(
-            icon: const Icon(Icons.close, color: Colors.white, size: 24),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-
           Expanded(
             child: Column(
               children: [
                 Text(
-                  '${_currentIndex + 1} / ${notifier.totalCards}',
+                  '${notifier.learnedCount + notifier.unlearnedCount} / ${notifier.totalCards}',
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -192,18 +193,16 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
                 ),
                 const SizedBox(height: 8),
                 LinearProgressIndicator(
-                  value: (_currentIndex + 1) / notifier.totalCards,
+                  value:
+                      notifier.totalCards > 0
+                          ? (notifier.learnedCount + notifier.unlearnedCount) / notifier.totalCards
+                          : 0.0,
                   backgroundColor: Colors.white.withOpacity(0.3),
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
                   minHeight: 4,
                 ),
               ],
             ),
-          ),
-
-          IconButton(
-            icon: const Icon(Icons.settings, color: Colors.white, size: 24),
-            onPressed: () {},
           ),
         ],
       ),
@@ -214,7 +213,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _buildProgressChip(context, '${notifier.unlearnedCount}', Colors.orange),
+        _buildProgressChip(context, '${notifier.unlearnedCount}', Colors.red),
         _buildProgressChip(context, '${notifier.learnedCount}', Colors.green),
       ],
     );
@@ -233,31 +232,40 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
   }
 
   Widget _buildFlashcardPageView(BuildContext context, DetailFlashCardNotifier notifier) {
-    return PageView.builder(
-      controller: _pageController,
-      itemCount: notifier.totalCards,
-      onPageChanged: _onPageChanged,
-      itemBuilder: (context, index) {
-        final flashcard = notifier.flashcards[index];
-        return GestureDetector(
-          onHorizontalDragEnd: (details) => _onCardSwiped(details, notifier),
-          child: FlipCard(
-            key: ValueKey(flashcard.id),
-            direction: FlipDirection.HORIZONTAL,
-            speed: 400,
-            flipOnTouch: true,
-            front: _buildCardSide(
-              context,
-              text: flashcard.frontText,
-              imageUrl: flashcard.frontImage,
-              isFront: true,
-            ),
-            back: _buildCardSide(
-              context,
-              text: flashcard.backText,
-              imageUrl: flashcard.backImage,
-              isFront: false,
-            ),
+    // Kiểm tra an toàn: CardSwiper cần ít nhất 1 thẻ
+    if (notifier.currentCards.isEmpty || notifier.currentCards.length < 1) {
+      return const SizedBox.shrink();
+    }
+
+    return CardSwiper(
+      cardsCount: notifier.currentCards.length,
+      numberOfCardsDisplayed: 1,
+      // Chỉ hiển thị 1 thẻ tại một thời điểm
+      threshold: 50,
+      // Ngưỡng swipe
+      onSwipe: (previousIndex, currentIndex, direction) {
+        return _onSwipe(notifier, previousIndex, currentIndex, direction);
+      },
+      cardBuilder: (context, index, horizontalThreshold, verticalThreshold) {
+        if (index >= notifier.currentCards.length) return null;
+
+        final flashcard = notifier.currentCards[index];
+        return FlipCard(
+          key: ValueKey(flashcard.id),
+          direction: FlipDirection.HORIZONTAL,
+          speed: 400,
+          flipOnTouch: true,
+          front: _buildCardSide(
+            context,
+            text: flashcard.frontText,
+            imageUrl: flashcard.frontImage,
+            isFront: true,
+          ),
+          back: _buildCardSide(
+            context,
+            text: flashcard.backText,
+            imageUrl: flashcard.backImage,
+            isFront: false,
           ),
         );
       },
@@ -353,15 +361,49 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
         children: [
           IconButton(
             icon: const Icon(Icons.undo, color: Colors.white, size: 32),
-            onPressed: _goToPreviousCard,
+            onPressed: () {
+              _revertLastCard(notifier);
+            },
           ),
 
           IconButton(
             icon: const Icon(Icons.play_arrow, color: Colors.white, size: 32),
-            onPressed: () => _goToNextCard(notifier),
+            onPressed: () {
+              _autoPlayCard(notifier);
+            },
           ),
         ],
       ),
     );
+  }
+
+  void _revertLastCard(DetailFlashCardNotifier notifier) {
+    if (notifier.learnedCards.isNotEmpty || notifier.unlearnedCards.isNotEmpty) {
+      notifier.revertLastCard();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Không có thẻ nào để hoàn tác'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+    }
+  }
+
+  void _autoPlayCard(DetailFlashCardNotifier notifier) {
+    if (notifier.currentCard != null) {
+      notifier.onSwipeRight(notifier.currentCard!);
+    }
+  }
+
+  void _navigateToResult(DetailFlashCardNotifier notifier) async {
+    await notifier.saveLearningResult();
+    if (mounted) {
+      Navigator.pushReplacementNamed(
+        context,
+        CourseResultScreen.routeName,
+        arguments: notifier.courseId,
+      );
+    }
   }
 }

@@ -20,6 +20,8 @@ class _LibraryScreenState extends State<LibraryScreen>
     with TickerProviderStateMixin {
   late TabController _tabController;
   int _selectedTabIndex = 0;
+  String _searchQuery = '';
+  late TextEditingController _searchController;
 
   final List<String> _tabs = ['Học phần', 'Lớp học', 'Thư viện'];
 
@@ -27,6 +29,7 @@ class _LibraryScreenState extends State<LibraryScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: _tabs.length, vsync: this);
+    _searchController = TextEditingController();
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) {
         setState(() {
@@ -39,6 +42,7 @@ class _LibraryScreenState extends State<LibraryScreen>
   @override
   void dispose() {
     _tabController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -70,19 +74,19 @@ class _LibraryScreenState extends State<LibraryScreen>
               color: context.colors.onPrimary,
             ),
           ),
-          GestureDetector(
-            onTap: () {
-              // TODO: Implement add new content
-            },
-            child: Container(
-              padding: AppPad.a8,
-              decoration: BoxDecoration(
-                color: context.colors.onSecondary,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(Icons.add, color: context.colors.primary, size: 24),
-            ),
-          ),
+          // GestureDetector(
+          //   onTap: () {
+          //     // TODO: Implement add new content
+          //   },
+          //   child: Container(
+          //     padding: AppPad.a8,
+          //     decoration: BoxDecoration(
+          //       color: context.colors.onSecondary,
+          //       shape: BoxShape.circle,
+          //     ),
+          //     child: Icon(Icons.add, color: context.colors.primary, size: 24),
+          //   ),
+          // ),
         ],
       ),
     );
@@ -158,13 +162,36 @@ class _LibraryScreenState extends State<LibraryScreen>
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: Text(
-              'Tìm kiếm',
+            child: TextField(
+              controller: _searchController,
               style: AppTextStyles.textContent2.copyWith(
-                color: context.colors.onPrimary.withOpacity(0.6),
+                color: context.colors.onPrimary,
               ),
+              decoration: InputDecoration(
+                hintText: _getSearchHint(),
+                hintStyle: AppTextStyles.textContent2.copyWith(
+                  color: context.colors.onPrimary.withOpacity(0.6),
+                ),
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.zero,
+              ),
+              onChanged: (value) {
+                _onSearchChanged(value);
+              },
             ),
           ),
+          if (_searchQuery.isNotEmpty)
+            GestureDetector(
+              onTap: () {
+                _searchController.clear();
+                _onSearchChanged('');
+              },
+              child: Icon(
+                Icons.clear,
+                color: context.colors.onPrimary.withOpacity(0.6),
+                size: 20,
+              ),
+            ),
         ],
       ),
     );
@@ -174,13 +201,29 @@ class _LibraryScreenState extends State<LibraryScreen>
     return TabBarView(
       controller: _tabController,
       children: [
-        ContentScreen(tabType: 'Học phần'),
-        ClassScreen(),
-        BookmarkScreen(),
+        ContentScreen(tabType: 'Học phần', searchQuery: _searchQuery),
+        ClassScreen(searchQuery: _searchQuery),
+        BookmarkScreen(searchQuery: _searchQuery),
       ],
     );
   }
 
+  String _getSearchHint() {
+    switch (_selectedTabIndex) {
+      case 0:
+        return 'Tìm kiếm học phần...';
+      case 1:
+        return 'Tìm kiếm lớp học...';
+      case 2:
+        return 'Tìm kiếm thẻ chưa học...';
+      default:
+        return 'Tìm kiếm...';
+    }
+  }
 
-
+  void _onSearchChanged(String query) {
+    setState(() {
+      _searchQuery = query;
+    });
+  }
 }

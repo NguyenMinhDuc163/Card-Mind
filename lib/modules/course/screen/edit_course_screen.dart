@@ -2,29 +2,31 @@ import 'package:card_mind/init.dart';
 import 'package:card_mind/core/theme/theme_extensions.dart';
 import 'package:card_mind/core/theme/app_pad.dart';
 import 'package:card_mind/core/theme/app_text_styles.dart';
-import 'package:card_mind/modules/create_course/provider/create_course_notifier.dart';
-import 'package:card_mind/modules/create_course/model/create_course_data.dart';
-import 'package:card_mind/modules/create_course/services/course_service.dart';
+import 'package:card_mind/modules/course/provider/course_info_notifier.dart';
+import 'package:card_mind/modules/course/model/course_data.dart';
+import 'package:card_mind/core/helpers/local_storage_helper.dart';
+import 'package:card_mind/core/event_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class CreateCourseScreen extends StatefulWidget {
-  static const String routeName = '/create-course';
+class EditCourseScreen extends StatefulWidget {
+  const EditCourseScreen({super.key});
 
-  const CreateCourseScreen({super.key});
+  static const String routeName = '/EditCourseScreen';
 
   @override
-  State<CreateCourseScreen> createState() => _CreateCourseScreenState();
+  State<EditCourseScreen> createState() => _EditCourseScreenState();
 }
 
-class _CreateCourseScreenState extends State<CreateCourseScreen> {
+class _EditCourseScreenState extends State<EditCourseScreen> {
   final TextEditingController _topicController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final CourseService _courseService = CourseService();
 
   bool _showDescription = false;
   bool _isInitialized = false;
+  String? _courseId;
+  CourseData? _originalCourseData;
 
   @override
   void initState() {
@@ -35,22 +37,26 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
   }
 
   Future<void> _initializeData() async {
-    final notifier = Provider.of<CreateCourseNotifier>(context, listen: false);
-    await notifier.initializeData();
+    _courseId = ModalRoute.of(context)?.settings.arguments as String?;
 
-    if (mounted) {
-      setState(() {
-        _isInitialized = true;
-        _loadDataToControllers(notifier.courseData);
-      });
+    if (_courseId != null) {
+      final notifier = Provider.of<CourseInfoNotifier>(context, listen: false);
+      await notifier.initializeData(courseId: _courseId);
 
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        notifier.notifyListeners();
-      });
+      if (notifier.courseData != null) {
+        _originalCourseData = notifier.courseData;
+        _loadDataToControllers(notifier.courseData!);
+
+        if (mounted) {
+          setState(() {
+            _isInitialized = true;
+          });
+        }
+      }
     }
   }
 
-  void _loadDataToControllers(CreateCourseData courseData) {
+  void _loadDataToControllers(CourseData courseData) {
     _topicController.text = courseData.topic;
     _titleController.text = courseData.title;
     _descriptionController.text = courseData.description ?? '';
@@ -68,7 +74,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<CreateCourseNotifier>(
+    return Consumer<CourseInfoNotifier>(
       builder: (context, notifier, child) {
         if (!_isInitialized || notifier.isLoading) {
           return FunctionScreenTemplate(
@@ -80,7 +86,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
           );
         }
 
-        if (notifier.hasError) {
+        if (notifier.hasError || _originalCourseData == null) {
           return FunctionScreenTemplate(
             isShowAppBar: false,
             backgroundColor: context.colors.primary,
@@ -91,7 +97,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                   Icon(Icons.error, color: context.colors.onPrimary, size: 48),
                   const SizedBox(height: 16),
                   Text(
-                    notifier.errorMessage ?? 'Có lỗi xảy ra',
+                    notifier.errorMessage ?? 'Không thể tải dữ liệu khóa học',
                     style: AppTextStyles.textContent2.copyWith(
                       color: context.colors.onPrimary,
                     ),
@@ -109,30 +115,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
         }
 
         return FunctionScreenTemplate(
-          titleWidget: Text(
-            '${notifier.completedTerms.length}/${notifier.termsCount}',
-            style: AppTextStyles.textContent1.copyWith(
-              color: context.colors.onPrimary,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          leadingWidget: GestureDetector(
-            onTap: () => _showClearDataDialog(notifier),
-            child: Icon(Icons.clear, color: context.colors.onPrimary, size: 24),
-          ),
-          actionsWidget: [
-            GestureDetector(
-              onTap: () => _completeCourse(notifier),
-              child: Icon(
-                Icons.check,
-                color:
-                    notifier.isDataValid
-                        ? context.colors.onPrimary
-                        : context.colors.onPrimary.withOpacity(0.5),
-                size: 24,
-              ),
-            ),
-          ],
+          isShowAppBar: false,
           backgroundColor: context.colors.primary,
           screen: Column(
             children: [
@@ -142,28 +125,13 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildCourseInfo(notifier),
+                      _buildHeader(),
                       const SizedBox(height: 24),
-                      if (!_showDescription)
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _showDescription = true;
-                              });
-                            },
-                            child: Text(
-                              '+ Mô tả',
-                              style: AppTextStyles.textContent2.copyWith(
-                                color: context.colors.onPrimary,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ),
+                      _buildCourseInfo(),
                       const SizedBox(height: 24),
-                      _buildTermsList(notifier),
+                      _buildAdditionalFeatures(),
+                      const SizedBox(height: 24),
+                      _buildTermsList(),
                       const SizedBox(height: 80),
                     ],
                   ),
@@ -174,8 +142,8 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: FloatingActionButton(
-                    heroTag: "create_course_fab",
-                    onPressed: () => _addNewTerm(notifier),
+                    heroTag: "edit_course_fab",
+                    onPressed: () => _addNewTerm(),
                     backgroundColor: Colors.blue,
                     shape: const CircleBorder(),
                     child: Icon(
@@ -193,140 +161,139 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
     );
   }
 
-  void _addNewTerm(CreateCourseNotifier notifier) {
-    notifier.addTerm();
-  }
-
-  void _updateCourseInfo(CreateCourseNotifier notifier) {
-    notifier.updateCourseInfo(
-      topic: _topicController.text,
-      title: _titleController.text,
-      description:
-          _descriptionController.text.isNotEmpty
-              ? _descriptionController.text
-              : null,
-    );
-    notifier.saveData();
-  }
-
-  void _completeCourse(CreateCourseNotifier notifier) async {
-    _updateCourseInfo(notifier);
-
-    // Kiểm tra validation trước khi hoàn thành
-    if (!_validateCourseData(notifier)) {
-      return; // Dừng lại nếu có lỗi validation
-    }
-
-    await notifier.completeCourse();
-
-    _topicController.clear();
-    _titleController.clear();
-    _descriptionController.clear();
+  void _addNewTerm() {
     setState(() {
-      _showDescription = false;
+      _originalCourseData = _originalCourseData!.copyWith(
+        terms: [..._originalCourseData!.terms, TermData.createNew()],
+      );
     });
-
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Đã lưu khóa học!')));
   }
 
-  bool _validateCourseData(CreateCourseNotifier notifier) {
-    // Kiểm tra topic
-    if (notifier.courseData.topic.trim().isEmpty) {
-      _showValidationError('Vui lòng nhập chủ đề khóa học');
-      return false;
-    }
+  void _updateCourseInfo() {
+    setState(() {
+      _originalCourseData = _originalCourseData!.copyWith(
+        topic: _topicController.text,
+        title: _titleController.text,
+        description:
+            _descriptionController.text.isNotEmpty
+                ? _descriptionController.text
+                : null,
+        updatedAt: DateTime.now(),
+      );
+    });
+  }
 
-    // Kiểm tra title
-    if (notifier.courseData.title.trim().isEmpty) {
-      _showValidationError('Vui lòng nhập tiêu đề khóa học');
-      return false;
-    }
+  void _saveCourse() async {
+    if (_originalCourseData == null) return;
 
-    // Kiểm tra terms
-    if (notifier.courseData.terms.isEmpty) {
-      _showValidationError('Vui lòng thêm ít nhất một thuật ngữ');
-      return false;
-    }
+    try {
+      // Tìm key thực tế của khóa học
+      final courseKeys =
+          LocalStorageHelper.getValue('course_keys') as List<dynamic>? ?? [];
+      String? actualCourseKey;
 
-    // Kiểm tra từng term
-    for (int i = 0; i < notifier.courseData.terms.length; i++) {
-      final term = notifier.courseData.terms[i];
-
-      if (term.term.trim().isEmpty) {
-        _showValidationError('Thuật ngữ ${i + 1}: Vui lòng nhập thuật ngữ');
-        return false;
+      for (final key in courseKeys) {
+        final courseData = LocalStorageHelper.getValue(key as String);
+        if (courseData != null) {
+          final Map<String, dynamic> jsonData = Map<String, dynamic>.from(
+            courseData,
+          );
+          if (jsonData['id'] == _courseId) {
+            actualCourseKey = key.toString();
+            break;
+          }
+        }
       }
 
-      if (term.definition.trim().isEmpty) {
-        _showValidationError('Thuật ngữ ${i + 1}: Vui lòng nhập định nghĩa');
-        return false;
-      }
-    }
+      if (actualCourseKey != null) {
+        // Cập nhật dữ liệu khóa học
+        await LocalStorageHelper.setValue(
+          actualCourseKey,
+          _originalCourseData!.toJson(),
+        );
 
-    return true;
-  }
-
-  void _showValidationError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-        duration: const Duration(seconds: 3),
-      ),
-    );
-  }
-
-  void _showClearDataDialog(CreateCourseNotifier notifier) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Xóa dữ liệu'),
-          content: const Text(
-            'Bạn có chắc chắn muốn xóa tất cả dữ liệu đã nhập?',
+        // Emit event để thông báo cho các màn hình khác
+        EventService().emitCourseEvent(
+          CourseEvent(
+            type: CourseEventType.courseUpdated,
+            courseId: _courseId!,
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Hủy'),
+        );
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Đã cập nhật khóa học!')),
+          );
+
+          // Quay về màn hình trước
+          Navigator.of(context).pop();
+        }
+      } else {
+        throw Exception('Không tìm thấy khóa học để cập nhật');
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Lỗi: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
+  }
+
+  Widget _buildHeader() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: Icon(
+            Icons.arrow_back,
+            color: context.colors.onPrimary,
+            size: 24,
+          ),
+        ),
+        Text(
+          'Sửa khóa học',
+          style: AppTextStyles.textContent1.copyWith(
+            color: context.colors.onPrimary,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        Row(
+          children: [
+            GestureDetector(
+              onTap: () {},
+              child: Icon(
+                Icons.settings,
+                color: context.colors.onPrimary,
+                size: 24,
+              ),
             ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _clearAllData(notifier);
-              },
-              child: const Text('Xóa', style: TextStyle(color: Colors.red)),
+            const SizedBox(width: 16),
+            GestureDetector(
+              onTap: _isDataValid() ? _saveCourse : null,
+              child: Icon(
+                Icons.check,
+                color:
+                    _isDataValid()
+                        ? context.colors.onPrimary
+                        : context.colors.onPrimary.withOpacity(0.5),
+                size: 24,
+              ),
             ),
           ],
-        );
-      },
+        ),
+      ],
     );
   }
 
-  void _clearAllData(CreateCourseNotifier notifier) {
-    // Clear controllers
-    _topicController.clear();
-    _titleController.clear();
-    _descriptionController.clear();
-
-    // Clear notifier data
-    notifier.clearData();
-
-    // Reset UI state
-    setState(() {
-      _showDescription = false;
-    });
-  }
-
-  Widget _buildCourseInfo(CreateCourseNotifier notifier) {
+  Widget _buildCourseInfo() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TextField(
           controller: _topicController,
-          onChanged: (value) => _updateCourseInfo(notifier),
+          onChanged: (value) => _updateCourseInfo(),
           style: AppTextStyles.textContent2.copyWith(
             color: context.colors.onPrimary,
           ),
@@ -359,7 +326,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
         const SizedBox(height: 8),
         TextField(
           controller: _titleController,
-          onChanged: (value) => _updateCourseInfo(notifier),
+          onChanged: (value) => _updateCourseInfo(),
           style: AppTextStyles.textContent1.copyWith(
             color: context.colors.onPrimary,
             fontWeight: FontWeight.w500,
@@ -389,7 +356,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
           const SizedBox(height: 8),
           TextField(
             controller: _descriptionController,
-            onChanged: (value) => _updateCourseInfo(notifier),
+            onChanged: (value) => _updateCourseInfo(),
             style: AppTextStyles.textContent2.copyWith(
               color: context.colors.onPrimary,
             ),
@@ -424,22 +391,72 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
     );
   }
 
-  Widget _buildTermsList(CreateCourseNotifier notifier) {
+  Widget _buildAdditionalFeatures() {
+    return Row(
+      children: [
+        Expanded(
+          child: GestureDetector(
+            onTap: () {},
+            child: Row(
+              children: [
+                Icon(
+                  Icons.document_scanner,
+                  color: context.colors.onPrimary,
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Quét tài liệu',
+                  style: AppTextStyles.textContent2.copyWith(
+                    color: context.colors.onPrimary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        Container(
+          padding: AppPad.h12v8,
+          decoration: BoxDecoration(
+            color: Colors.amber,
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Icon(Icons.lock, color: context.colors.onPrimary, size: 16),
+        ),
+        const SizedBox(width: 16),
+        if (!_showDescription)
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                _showDescription = true;
+              });
+            },
+            child: Text(
+              '+ Mô tả',
+              style: AppTextStyles.textContent2.copyWith(
+                color: context.colors.onPrimary,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildTermsList() {
+    if (_originalCourseData == null) return const SizedBox.shrink();
+
     return Column(
       children:
-          notifier.courseData.terms.asMap().entries.map((entry) {
+          _originalCourseData!.terms.asMap().entries.map((entry) {
             int index = entry.key;
             TermData term = entry.value;
-            return _buildTermItem(term, index, notifier);
+            return _buildTermItem(term, index);
           }).toList(),
     );
   }
 
-  Widget _buildTermItem(
-    TermData term,
-    int index,
-    CreateCourseNotifier notifier,
-  ) {
+  Widget _buildTermItem(TermData term, int index) {
     final termController = TextEditingController(text: term.term);
     final definitionController = TextEditingController(text: term.definition);
 
@@ -465,7 +482,13 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
         child: Icon(Icons.delete, color: context.colors.onPrimary, size: 24),
       ),
       onDismissed: (direction) {
-        notifier.removeTerm(index);
+        setState(() {
+          final updatedTerms = List<TermData>.from(_originalCourseData!.terms);
+          updatedTerms.removeAt(index);
+          _originalCourseData = _originalCourseData!.copyWith(
+            terms: updatedTerms,
+          );
+        });
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
@@ -494,8 +517,15 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
               controller: termController,
               onChanged: (value) {
                 final updatedTerm = term.copyWith(term: value);
-                notifier.updateTerm(index, updatedTerm);
-                notifier.saveData();
+                setState(() {
+                  final updatedTerms = List<TermData>.from(
+                    _originalCourseData!.terms,
+                  );
+                  updatedTerms[index] = updatedTerm;
+                  _originalCourseData = _originalCourseData!.copyWith(
+                    terms: updatedTerms,
+                  );
+                });
               },
               style: AppTextStyles.textContent2.copyWith(
                 color: context.colors.onPrimary,
@@ -536,8 +566,15 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
               controller: definitionController,
               onChanged: (value) {
                 final updatedTerm = term.copyWith(definition: value);
-                notifier.updateTerm(index, updatedTerm);
-                notifier.saveData();
+                setState(() {
+                  final updatedTerms = List<TermData>.from(
+                    _originalCourseData!.terms,
+                  );
+                  updatedTerms[index] = updatedTerm;
+                  _originalCourseData = _originalCourseData!.copyWith(
+                    terms: updatedTerms,
+                  );
+                });
               },
               style: AppTextStyles.textContent2.copyWith(
                 color: context.colors.onPrimary,
@@ -576,7 +613,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
             const SizedBox(height: 8),
             GestureDetector(
               onTap: () {
-                _showLanguagePicker(term, index, notifier);
+                _showLanguagePicker(term, index);
               },
               child: Container(
                 padding: AppPad.v12,
@@ -605,11 +642,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
     );
   }
 
-  void _showLanguagePicker(
-    TermData term,
-    int index,
-    CreateCourseNotifier notifier,
-  ) {
+  void _showLanguagePicker(TermData term, int index) {
     final languages = ['Tiếng Việt', 'English', '日本語', '한국어', '中文'];
 
     showModalBottomSheet(
@@ -625,8 +658,15 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                       title: Text(language),
                       onTap: () {
                         final updatedTerm = term.copyWith(language: language);
-                        notifier.updateTerm(index, updatedTerm);
-                        notifier.saveData();
+                        setState(() {
+                          final updatedTerms = List<TermData>.from(
+                            _originalCourseData!.terms,
+                          );
+                          updatedTerms[index] = updatedTerm;
+                          _originalCourseData = _originalCourseData!.copyWith(
+                            terms: updatedTerms,
+                          );
+                        });
                         Navigator.pop(context);
                       },
                       trailing:
@@ -638,5 +678,16 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
             ),
           ),
     );
+  }
+
+  bool _isDataValid() {
+    if (_originalCourseData == null) return false;
+
+    return _originalCourseData!.topic.isNotEmpty &&
+        _originalCourseData!.title.isNotEmpty &&
+        _originalCourseData!.terms.isNotEmpty &&
+        _originalCourseData!.terms.every(
+          (term) => term.term.isNotEmpty && term.definition.isNotEmpty,
+        );
   }
 }

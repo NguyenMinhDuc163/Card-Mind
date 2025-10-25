@@ -1,8 +1,10 @@
 import 'package:card_mind/modules/create_course/provider/create_course_notifier.dart';
 import 'package:card_mind/modules/home/provider/home_notifier.dart';
+import 'package:card_mind/modules/home/provider/global_search_notifier.dart';
 import 'package:card_mind/modules/course/provider/course_info_notifier.dart';
 import 'package:card_mind/modules/course/provider/course_result_notifier.dart';
 import 'package:card_mind/modules/course/provider/detail_flash_card_notifier.dart';
+import 'package:card_mind/modules/course/provider/test_notifier.dart';
 import 'package:card_mind/modules/library/provider/book_mark_notifier.dart';
 import 'package:card_mind/modules/library/provider/content_notifier.dart';
 import 'package:card_mind/modules/library/provider/class_notifier.dart';
@@ -14,9 +16,11 @@ class ProviderSetup {
     return [
       ChangeNotifierProvider(create: (_) => CreateCourseNotifier()),
       ChangeNotifierProvider(create: (_) => HomeNotifier()),
+      ChangeNotifierProvider(create: (_) => GlobalSearchNotifier()),
       ChangeNotifierProvider(create: (_) => CourseInfoNotifier()),
       ChangeNotifierProvider(create: (_) => CourseResultNotifier()),
       ChangeNotifierProvider(create: (_) => DetailFlashCardNotifier()),
+      ChangeNotifierProvider(create: (_) => TestNotifier()),
       ChangeNotifierProvider(create: (_) => ContentNotifier()),
       ChangeNotifierProvider(create: (_) => ClassNotifier()),
       ChangeNotifierProvider(create: (_) => BookMarkNotifier()),

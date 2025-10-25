@@ -7,12 +7,15 @@ import 'package:card_mind/modules/library/model/content_data.dart';
 
 class ClassNotifier extends ChangeNotifier {
   List<ClassData> _classes = [];
+  List<ClassData> _filteredClasses = [];
   List<ContentData> _availableContents = [];
   bool _isLoading = false;
   String? _errorMessage;
+  String _searchQuery = '';
   StreamSubscription<CourseEvent>? _courseEventSubscription;
 
-  List<ClassData> get classes => _classes;
+  List<ClassData> get classes =>
+      _searchQuery.isEmpty ? _classes : _filteredClasses;
 
   List<ContentData> get availableContents => _availableContents;
 
@@ -60,7 +63,8 @@ class ClassNotifier extends ChangeNotifier {
 
   Future<void> _loadClasses() async {
     try {
-      final classesData = LocalStorageHelper.getValue('library_classes') as List<dynamic>?;
+      final classesData =
+          LocalStorageHelper.getValue('library_classes') as List<dynamic>?;
 
       if (classesData == null) {
         print('DEBUG: No classes data found, initializing empty list');
@@ -76,7 +80,9 @@ class ClassNotifier extends ChangeNotifier {
             print('DEBUG: json type: ${json.runtimeType}');
             print('DEBUG: json content: $json');
 
-            final Map<String, dynamic> jsonMap = Map<String, dynamic>.from(json);
+            final Map<String, dynamic> jsonMap = Map<String, dynamic>.from(
+              json,
+            );
             return ClassData.fromJson(jsonMap);
           }).toList();
 
@@ -89,7 +95,8 @@ class ClassNotifier extends ChangeNotifier {
 
   Future<void> _loadAvailableContents() async {
     try {
-      final courseKeys = LocalStorageHelper.getValue('course_keys') as List<dynamic>?;
+      final courseKeys =
+          LocalStorageHelper.getValue('course_keys') as List<dynamic>?;
 
       if (courseKeys == null) {
         print('DEBUG: No course keys found, initializing empty list');
@@ -102,7 +109,9 @@ class ClassNotifier extends ChangeNotifier {
       for (final key in courseKeys) {
         final courseData = LocalStorageHelper.getValue(key as String);
         if (courseData != null) {
-          final Map<String, dynamic> jsonData = Map<String, dynamic>.from(courseData);
+          final Map<String, dynamic> jsonData = Map<String, dynamic>.from(
+            courseData,
+          );
 
           final contentData = ContentData(
             id: jsonData['id'] as String,
@@ -128,6 +137,8 @@ class ClassNotifier extends ChangeNotifier {
   Future<void> saveClass(ClassData classData) async {
     try {
       final existingIndex = _classes.indexWhere((c) => c.id == classData.id);
+      final bool isNewClass = existingIndex < 0;
+
       if (existingIndex >= 0) {
         _classes[existingIndex] = classData;
       } else {
@@ -136,13 +147,25 @@ class ClassNotifier extends ChangeNotifier {
 
       await _saveClassesToStorage();
       notifyListeners();
+
+      // Emit event để thông báo cho các màn hình khác
+      EventService().emitClassEvent(
+        ClassEvent(
+          type:
+              isNewClass
+                  ? ClassEventType.classCreated
+                  : ClassEventType.classUpdated,
+          classId: classData.id,
+        ),
+      );
     } catch (e) {
       _setError('Không thể lưu lớp học: $e');
     }
   }
 
   Future<void> _saveClassesToStorage() async {
-    final classesJson = _classes.map((classData) => classData.toJson()).toList();
+    final classesJson =
+        _classes.map((classData) => classData.toJson()).toList();
     LocalStorageHelper.setValue('library_classes', classesJson);
   }
 
@@ -151,6 +174,11 @@ class ClassNotifier extends ChangeNotifier {
       _classes.removeWhere((classData) => classData.id == classId);
       await _saveClassesToStorage();
       notifyListeners();
+
+      // Emit event để thông báo cho các màn hình khác
+      EventService().emitClassEvent(
+        ClassEvent(type: ClassEventType.classDeleted, classId: classId),
+      );
     } catch (e) {
       _setError('Không thể xóa lớp học: $e');
     }
@@ -158,6 +186,27 @@ class ClassNotifier extends ChangeNotifier {
 
   void _setError(String error) {
     _errorMessage = error;
+    notifyListeners();
+  }
+
+  void searchClasses(String query) {
+    _searchQuery = query;
+    if (query.isEmpty) {
+      _filteredClasses = [];
+    } else {
+      _filteredClasses =
+          _classes.where((classData) {
+            return classData.className.toLowerCase().contains(
+                  query.toLowerCase(),
+                ) ||
+                classData.description.toLowerCase().contains(
+                  query.toLowerCase(),
+                ) ||
+                classData.instructor.toLowerCase().contains(
+                  query.toLowerCase(),
+                );
+          }).toList();
+    }
     notifyListeners();
   }
 
