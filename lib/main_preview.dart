@@ -7,6 +7,7 @@ import 'package:card_mind/core/theme/theme_service.dart';
 import 'package:card_mind/providers/provider_setup.dart';
 import 'package:device_preview_plus/device_preview_plus.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_ce_flutter/adapters.dart';
@@ -35,8 +36,9 @@ void main() async {
             fallbackLocale: const Locale('en', 'US'),
             startLocale: defaultLocale,
             child: MultiProvider(
-                providers: ProviderSetup.getProviders(),
-                child: const MyApp()),
+              providers: ProviderSetup.getProviders(),
+              child: const MyApp(),
+            ),
           ),
     ),
   );
@@ -49,31 +51,36 @@ class MyApp extends StatelessWidget {
     return BlocProvider(
       create: (context) => ThemeCubit(),
       child: BlocBuilder<ThemeCubit, ThemeMode>(
-        builder: (context, themeMode) => MaterialApp(
-          builder: (context, child) {
-            return ResponsiveBreakpoints.builder(
-              child: DevicePreview.appBuilder(context, child),
-              breakpoints: [
-                const Breakpoint(start: 0, end: 450, name: MOBILE),
-                const Breakpoint(start: 451, end: 800, name: TABLET),
-                const Breakpoint(start: 801, end: 1920, name: DESKTOP),
-                const Breakpoint(start: 1921, end: double.infinity, name: '4K'),
-              ],
-            );
-          },
-          debugShowCheckedModeBanner: false,
-          localizationsDelegates: context.localizationDelegates,
-          supportedLocales: context.supportedLocales,
-          locale: DevicePreview.locale(context),
-          theme: AppTheme.light(),
-          darkTheme: AppTheme.dark(),
-          themeMode: themeMode,
-          onGenerateRoute: Routers.generateRoute,
-          routes: Routers.routes,
-          initialRoute: DashboardScreen.routeName,
-          navigatorKey: NavigationService.navigatorKey,
-          navigatorObservers: [NavigationService.routeObserver],
-        ),
+        builder:
+            (context, themeMode) => MaterialApp(
+              builder: (context, child) {
+                return ResponsiveBreakpoints.builder(
+                  child: DevicePreview.appBuilder(context, child),
+                  breakpoints: [
+                    const Breakpoint(start: 0, end: 450, name: MOBILE),
+                    const Breakpoint(start: 451, end: 800, name: TABLET),
+                    const Breakpoint(start: 801, end: 1920, name: DESKTOP),
+                    const Breakpoint(
+                      start: 1921,
+                      end: double.infinity,
+                      name: '4K',
+                    ),
+                  ],
+                );
+              },
+              debugShowCheckedModeBanner: false,
+              localizationsDelegates: context.localizationDelegates,
+              supportedLocales: context.supportedLocales,
+              locale: DevicePreview.locale(context),
+              theme: AppTheme.light(),
+              darkTheme: AppTheme.dark(),
+              themeMode: themeMode,
+              onGenerateRoute: Routers.generateRoute,
+              routes: Routers.routes,
+              initialRoute: DashboardScreen.routeName,
+              navigatorKey: NavigationService.navigatorKey,
+              navigatorObservers: [NavigationService.routeObserver],
+            ),
       ),
     );
   }

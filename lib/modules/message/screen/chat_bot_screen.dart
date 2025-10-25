@@ -88,16 +88,39 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
               // Hiển thị error message
               if (notifier.hasError && notifier.errorMessage != null)
                 Container(
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 4,
+                  ),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
-                    vertical: 8,
+                    vertical: 12,
                   ),
-                  child: Text(
-                    notifier.errorMessage!,
-                    style: AppTextStyles.textContent3.copyWith(
-                      color: Colors.red.shade300,
+                  decoration: BoxDecoration(
+                    color: AppColors.highlight.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: AppColors.highlight.withOpacity(0.3),
+                      width: 1,
                     ),
-                    textAlign: TextAlign.center,
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.info_outline,
+                        size: 20,
+                        color: AppColors.highlight,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          notifier.errorMessage!,
+                          style: AppTextStyles.textContent3.copyWith(
+                            color: AppColors.highlight,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               const SizedBox(height: 4),

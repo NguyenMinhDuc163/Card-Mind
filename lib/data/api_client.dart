@@ -86,19 +86,25 @@ class ApiClient {
           CurlLoggerDioInterceptor(printOnSuccess: true, convertFormData: true),
           ApiTokenInterceptor(),
         ]) {
-    // Cấu hình SSL cho môi trường dev (chỉ dùng cho development)
-    (_dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
-      final client = HttpClient();
-      client.badCertificateCallback = (
-        X509Certificate cert,
-        String host,
-        int port,
-      ) {
-        return true;
-
-      };
-      return client;
-    };
+    // Chỉ cấu hình SSL cho mobile/desktop, không phải web
+    if (!kIsWeb) {
+      try {
+        // Cấu hình SSL cho môi trường dev (chỉ dùng cho development)
+        (_dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
+          final client = HttpClient();
+          client.badCertificateCallback = (
+            X509Certificate cert,
+            String host,
+            int port,
+          ) {
+            return true;
+          };
+          return client;
+        };
+      } catch (e) {
+        // Bỏ qua nếu không phải IOHttpClientAdapter
+      }
+    }
   }
 
   static String buildBearerAuthorizationHeaderValue(String token) {
