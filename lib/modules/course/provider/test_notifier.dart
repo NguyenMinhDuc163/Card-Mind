@@ -15,26 +15,31 @@ class TestNotifier extends ChangeNotifier {
   String? _courseId;
 
   List<TestQuestion> get questions => _questions;
-  List<TestAnswer> get answers => _answers;
-  int get currentQuestionIndex => _currentQuestionIndex;
-  bool get isLoading => _isLoading;
-  String? get errorMessage => _errorMessage;
-  bool get hasError => _errorMessage != null;
-  String? get courseId => _courseId;
-  TestQuestion? get currentQuestion =>
-      _currentQuestionIndex < _questions.length
-          ? _questions[_currentQuestionIndex]
-          : null;
-  bool get isTestCompleted => _currentQuestionIndex >= _questions.length;
-  int get totalQuestions => _questions.length;
-  int get correctAnswers => _answers.where((answer) => answer.isCorrect).length;
-  double get score =>
-      totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0.0;
 
-  Future<void> initializeTest({
-    String? courseId,
-    List<Flashcard>? flashcards,
-  }) async {
+  List<TestAnswer> get answers => _answers;
+
+  int get currentQuestionIndex => _currentQuestionIndex;
+
+  bool get isLoading => _isLoading;
+
+  String? get errorMessage => _errorMessage;
+
+  bool get hasError => _errorMessage != null;
+
+  String? get courseId => _courseId;
+
+  TestQuestion? get currentQuestion =>
+      _currentQuestionIndex < _questions.length ? _questions[_currentQuestionIndex] : null;
+
+  bool get isTestCompleted => _currentQuestionIndex >= _questions.length;
+
+  int get totalQuestions => _questions.length;
+
+  int get correctAnswers => _answers.where((answer) => answer.isCorrect).length;
+
+  double get score => totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0.0;
+
+  Future<void> initializeTest({String? courseId, List<Flashcard>? flashcards}) async {
     _isLoading = true;
     _errorMessage = null;
     _courseId = courseId;
@@ -53,10 +58,7 @@ class TestNotifier extends ChangeNotifier {
     }
   }
 
-  Future<void> _generateTestQuestions(
-    String courseId,
-    List<Flashcard> flashcards,
-  ) async {
+  Future<void> _generateTestQuestions(String courseId, List<Flashcard> flashcards) async {
     if (flashcards.isEmpty) {
       throw Exception('Không có thẻ học để tạo bài kiểm tra');
     }
@@ -65,21 +67,15 @@ class TestNotifier extends ChangeNotifier {
     _answers.clear();
     _currentQuestionIndex = 0;
 
-    // Tạo câu hỏi từ flashcards
     final List<Flashcard> shuffledCards = List.from(flashcards)..shuffle();
-    final int questionCount = min(10, flashcards.length); // Tối đa 10 câu hỏi
+    final int questionCount = min(10, flashcards.length);
 
     for (int i = 0; i < questionCount; i++) {
       final flashcard = shuffledCards[i];
-      final question = _createQuestionFromFlashcard(
-        flashcard,
-        shuffledCards,
-        i,
-      );
+      final question = _createQuestionFromFlashcard(flashcard, shuffledCards, i);
       _questions.add(question);
     }
 
-    // Xáo trộn câu hỏi
     _questions.shuffle();
   }
 
@@ -88,17 +84,14 @@ class TestNotifier extends ChangeNotifier {
     List<Flashcard> allCards,
     int index,
   ) {
-    // Tạo danh sách đáp án sai
     final List<String> wrongAnswers = [];
     final List<Flashcard> otherCards =
         allCards.where((card) => card.id != flashcard.id).toList()..shuffle();
 
-    // Lấy 3 đáp án sai
     for (int i = 0; i < min(3, otherCards.length); i++) {
       wrongAnswers.add(otherCards[i].backText);
     }
 
-    // Tạo danh sách đáp án (bao gồm đáp án đúng)
     final List<String> options = [flashcard.backText, ...wrongAnswers];
     options.shuffle();
 
@@ -139,7 +132,6 @@ class TestNotifier extends ChangeNotifier {
       timeSpent: DateTime.now().difference(_testStartTime!),
     );
 
-    // Lưu kết quả vào local storage
     _saveTestResult(testResult);
 
     return testResult;
@@ -150,9 +142,7 @@ class TestNotifier extends ChangeNotifier {
       final resultKey = 'test_result_${result.testId}';
       await LocalStorageHelper.setValue(resultKey, result.toJson());
 
-      // Thêm vào danh sách kết quả
-      final existingResults =
-          LocalStorageHelper.getValue('test_results') as List<dynamic>? ?? [];
+      final existingResults = LocalStorageHelper.getValue('test_results') as List<dynamic>? ?? [];
       final List<String> updatedResults = existingResults.cast<String>();
       updatedResults.add(resultKey);
       await LocalStorageHelper.setValue('test_results', updatedResults);
@@ -167,7 +157,7 @@ class TestNotifier extends ChangeNotifier {
     _currentQuestionIndex = 0;
     _testStartTime = null;
     _errorMessage = null;
-    // Không xóa _courseId để có thể làm lại test
+
     notifyListeners();
   }
 

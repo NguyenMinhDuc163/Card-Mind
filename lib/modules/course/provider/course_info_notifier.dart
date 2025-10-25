@@ -50,9 +50,7 @@ class CourseInfoNotifier extends ChangeNotifier {
   void _setupEventListeners() {
     _eventSubscription?.cancel();
     _eventSubscription = EventService().courseEvents.listen((event) {
-      if (event.type == CourseEventType.courseUpdated &&
-          event.courseId == _currentCourseId) {
-        // Reload dữ liệu khi có cập nhật
+      if (event.type == CourseEventType.courseUpdated && event.courseId == _currentCourseId) {
         _loadCourseFromHive(_currentCourseId!);
         notifyListeners();
       }
@@ -67,15 +65,13 @@ class CourseInfoNotifier extends ChangeNotifier {
 
   Future<void> _loadCourseFromHive(String courseId) async {
     try {
-      final courseKeys =
-          LocalStorageHelper.getValue('course_keys') as List<dynamic>? ?? [];
+      final courseKeys = LocalStorageHelper.getValue('course_keys') as List<dynamic>? ?? [];
 
       for (final key in courseKeys) {
         final courseData = LocalStorageHelper.getValue(key as String);
         if (courseData != null) {
           final Map<String, dynamic> jsonData = {};
-          final Map<dynamic, dynamic> rawData =
-              courseData as Map<dynamic, dynamic>;
+          final Map<dynamic, dynamic> rawData = courseData as Map<dynamic, dynamic>;
 
           rawData.forEach((key, value) {
             jsonData[key.toString()] = _convertValue(value);
@@ -122,20 +118,15 @@ class CourseInfoNotifier extends ChangeNotifier {
     );
   }
 
-  // Xóa khóa học khỏi Hive storage
   Future<bool> deleteCourse(String courseId) async {
     try {
-      // 1. Tìm key thực tế của khóa học trong course_keys
-      final courseKeys =
-          LocalStorageHelper.getValue('course_keys') as List<dynamic>? ?? [];
+      final courseKeys = LocalStorageHelper.getValue('course_keys') as List<dynamic>? ?? [];
       String? actualCourseKey;
 
       for (final key in courseKeys) {
         final courseData = LocalStorageHelper.getValue(key as String);
         if (courseData != null) {
-          final Map<String, dynamic> jsonData = Map<String, dynamic>.from(
-            courseData,
-          );
+          final Map<String, dynamic> jsonData = Map<String, dynamic>.from(courseData);
           if (jsonData['id'] == courseId) {
             actualCourseKey = key.toString();
             break;
@@ -147,39 +138,27 @@ class CourseInfoNotifier extends ChangeNotifier {
         return false;
       }
 
-      // 2. Xóa dữ liệu khóa học chính
       await LocalStorageHelper.removeValue(actualCourseKey);
 
-      // 3. Xóa khỏi danh sách course_keys
       final List<String> updatedKeys = courseKeys.cast<String>();
       updatedKeys.remove(actualCourseKey);
       LocalStorageHelper.setValue('course_keys', updatedKeys);
 
-      // 4. Xóa dữ liệu học tập liên quan
       await LocalStorageHelper.removeValue('learned_cards_$courseId');
       await LocalStorageHelper.removeValue('unlearned_cards_$courseId');
 
-      // 5. Xóa khỏi danh sách courses_with_results
       final coursesWithResults =
-          LocalStorageHelper.getValue('courses_with_results')
-              as List<dynamic>? ??
-          [];
+          LocalStorageHelper.getValue('courses_with_results') as List<dynamic>? ?? [];
       final List<String> updatedResults = coursesWithResults.cast<String>();
       updatedResults.remove(courseId);
       LocalStorageHelper.setValue('courses_with_results', updatedResults);
 
-      // 6. Xóa tất cả kết quả học tập của khóa học này
       final allResults =
-          LocalStorageHelper.getValue('all_learning_results')
-              as List<dynamic>? ??
-          [];
+          LocalStorageHelper.getValue('all_learning_results') as List<dynamic>? ?? [];
       final List<String> updatedAllResults = allResults.cast<String>();
-      updatedAllResults.removeWhere(
-        (key) => key.contains('learning_result_${courseId}_'),
-      );
+      updatedAllResults.removeWhere((key) => key.contains('learning_result_${courseId}_'));
       LocalStorageHelper.setValue('all_learning_results', updatedAllResults);
 
-      // 7. Emit event để thông báo cho các màn hình khác
       EventService().emitCourseEvent(
         CourseEvent(type: CourseEventType.courseDeleted, courseId: courseId),
       );

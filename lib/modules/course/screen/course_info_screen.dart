@@ -42,9 +42,7 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
           return FunctionScreenTemplate(
             screen: const Scaffold(
               backgroundColor: Color(0xFF0B1D3B),
-              body: Center(
-                child: CircularProgressIndicator(color: Colors.white),
-              ),
+              body: Center(child: CircularProgressIndicator(color: Colors.white)),
             ),
           );
         }
@@ -81,10 +79,7 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
             screen: const Scaffold(
               backgroundColor: Color(0xFF0B1D3B),
               body: Center(
-                child: Text(
-                  'Không tìm thấy khóa học',
-                  style: TextStyle(color: Colors.white70),
-                ),
+                child: Text('Không tìm thấy khóa học', style: TextStyle(color: Colors.white70)),
               ),
             ),
           );
@@ -139,17 +134,9 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
       if (mode == LearningMode.delete) {
         _showDeleteConfirmationDialog(notifier.course!.id);
       } else if (mode == LearningMode.test) {
-        Navigator.pushNamed(
-          context,
-          TestScreen.routeName,
-          arguments: notifier.course!.id,
-        );
+        Navigator.pushNamed(context, TestScreen.routeName, arguments: notifier.course!.id);
       } else if (mode == LearningMode.learn) {
-        Navigator.pushNamed(
-          context,
-          EditCourseScreen.routeName,
-          arguments: notifier.course!.id,
-        );
+        Navigator.pushNamed(context, EditCourseScreen.routeName, arguments: notifier.course!.id);
       } else {
         Navigator.pushNamed(
           context,
@@ -166,10 +153,7 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: const Color(0xFF0E2B5C),
-          title: const Text(
-            'Xóa học phần',
-            style: TextStyle(color: Colors.white),
-          ),
+          title: const Text('Xóa học phần', style: TextStyle(color: Colors.white)),
           content: const Text(
             'Bạn có chắc chắn muốn xóa học phần này không? Hành động này không thể hoàn tác.',
             style: TextStyle(color: Colors.white70),
@@ -195,7 +179,6 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
   Future<void> _deleteCourse(String courseId) async {
     final notifier = Provider.of<CourseInfoNotifier>(context, listen: false);
 
-    // Hiển thị loading
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -207,10 +190,7 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
             children: [
               CircularProgressIndicator(color: Colors.white),
               SizedBox(width: 16),
-              Text(
-                'Đang xóa học phần...',
-                style: TextStyle(color: Colors.white),
-              ),
+              Text('Đang xóa học phần...', style: TextStyle(color: Colors.white)),
             ],
           ),
         );
@@ -220,11 +200,9 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
     try {
       final success = await notifier.deleteCourse(courseId);
 
-      // Đóng loading dialog
       Navigator.of(context).pop();
 
       if (success) {
-        // Hiển thị thông báo thành công và quay về dashboard
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Đã xóa học phần thành công'),
@@ -232,29 +210,18 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
           ),
         );
 
-        // Quay về dashboard
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          '/dashboardScreen',
-          (route) => false,
-        );
+        Navigator.pushNamedAndRemoveUntil(context, '/dashboardScreen', (route) => false);
       } else {
-        // Hiển thị thông báo lỗi
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Không thể xóa học phần'),
-            backgroundColor: Colors.red,
-          ),
+          const SnackBar(content: Text('Không thể xóa học phần'), backgroundColor: Colors.red),
         );
       }
     } catch (e) {
-      // Đóng loading dialog
       Navigator.of(context).pop();
 
-      // Hiển thị thông báo lỗi
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Lỗi: $e'), backgroundColor: Colors.red),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Lỗi: $e'), backgroundColor: Colors.red));
     }
   }
 }

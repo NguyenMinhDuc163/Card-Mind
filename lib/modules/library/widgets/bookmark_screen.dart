@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 
 class BookmarkScreen extends StatefulWidget {
   const BookmarkScreen({super.key, this.searchQuery = ''});
+
   final String searchQuery;
 
   @override
@@ -55,11 +56,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
   }
 
   void _navigateToCourse(String courseId) {
-    Navigator.pushNamed(
-      context,
-      DetailFlashCardScreen.routeName,
-      arguments: courseId,
-    );
+    Navigator.pushNamed(context, DetailFlashCardScreen.routeName, arguments: courseId);
   }
 
   @override
@@ -69,9 +66,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
         if (!_isInitialized || notifier.isLoading) {
           return FunctionScreenTemplate(
             backgroundColor: context.colors.primary,
-            screen: const Center(
-              child: CircularProgressIndicator(color: Colors.white),
-            ),
+            screen: const Center(child: CircularProgressIndicator(color: Colors.white)),
           );
         }
 
@@ -86,16 +81,11 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                   const SizedBox(height: 16),
                   Text(
                     notifier.errorMessage ?? 'Có lỗi xảy ra',
-                    style: AppTextStyles.textContent2.copyWith(
-                      color: context.colors.onPrimary,
-                    ),
+                    style: AppTextStyles.textContent2.copyWith(color: context.colors.onPrimary),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () => _initializeData(),
-                    child: const Text('Thử lại'),
-                  ),
+                  ElevatedButton(onPressed: () => _initializeData(), child: const Text('Thử lại')),
                 ],
               ),
             ),
@@ -109,11 +99,9 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header với thống kê
                 _buildHeader(notifier),
                 const SizedBox(height: 20),
 
-                // Danh sách học phần đã bookmark
                 if (notifier.bookmarkedCoursesByCourse.isNotEmpty) ...[
                   DataGroupWidget(
                     date: 'Học phần đã đánh dấu',
@@ -121,10 +109,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                         notifier.bookmarkedCoursesByCourse.map((courseData) {
                           return BookmarkItemWidget(
                             courseData: courseData,
-                            onTap:
-                                () => _navigateToCourse(
-                                  courseData['courseId'] as String,
-                                ),
+                            onTap: () => _navigateToCourse(courseData['courseId'] as String),
                             isBookmarked: true,
                           );
                         }).toList(),
@@ -132,7 +117,6 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                   const SizedBox(height: 20),
                 ],
 
-                // Danh sách thẻ chưa thuộc
                 if (notifier.unlearnedCardsByCourse.isEmpty &&
                     notifier.bookmarkedCoursesByCourse.isEmpty)
                   _buildEmptyState(context)
@@ -143,10 +127,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                         notifier.unlearnedCardsByCourse.map((courseData) {
                           return BookmarkItemWidget(
                             courseData: courseData,
-                            onTap:
-                                () => _navigateToCourse(
-                                  courseData['courseId'] as String,
-                                ),
+                            onTap: () => _navigateToCourse(courseData['courseId'] as String),
                           );
                         }).toList(),
                   ),
@@ -165,21 +146,14 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
       decoration: BoxDecoration(
         color: context.colors.surface.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: context.colors.outline.withOpacity(0.2),
-          width: 1,
-        ),
+        border: Border.all(color: context.colors.outline.withOpacity(0.2), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(
-                Icons.bookmark_border,
-                color: context.colors.onPrimary,
-                size: 24,
-              ),
+              Icon(Icons.bookmark_border, color: context.colors.onPrimary, size: 24),
               const SizedBox(width: 8),
               Text(
                 'Tổng hợp thẻ chưa thuộc',
@@ -217,12 +191,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
     );
   }
 
-  Widget _buildStatCard(
-    String label,
-    String value,
-    IconData icon,
-    Color color,
-  ) {
+  Widget _buildStatCard(String label, String value, IconData icon, Color color) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -236,17 +205,9 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
           const SizedBox(height: 4),
           Text(
             value,
-            style: AppTextStyles.textContent1.copyWith(
-              color: color,
-              fontWeight: FontWeight.bold,
-            ),
+            style: AppTextStyles.textContent1.copyWith(color: color, fontWeight: FontWeight.bold),
           ),
-          Text(
-            label,
-            style: AppTextStyles.textContent3.copyWith(
-              color: color.withOpacity(0.8),
-            ),
-          ),
+          Text(label, style: AppTextStyles.textContent3.copyWith(color: color.withOpacity(0.8))),
         ],
       ),
     );

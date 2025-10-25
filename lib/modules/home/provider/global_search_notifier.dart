@@ -43,16 +43,16 @@ class GlobalSearchNotifier extends ChangeNotifier {
   Future<List<SearchResult>> _performGlobalSearch(String query) async {
     final List<SearchResult> results = [];
 
-    // Search trong courses (học phần)
+    
     await _searchCourses(query, results);
 
-    // Search trong classes (lớp học)
+    
     await _searchClasses(query, results);
 
-    // Search trong bookmarks (thẻ chưa học)
+    
     await _searchBookmarks(query, results);
 
-    // Sắp xếp kết quả theo relevance
+    
     results.sort(
       (a, b) => _calculateRelevance(
         b,
@@ -141,7 +141,7 @@ class GlobalSearchNotifier extends ChangeNotifier {
     List<SearchResult> results,
   ) async {
     try {
-      // Lấy danh sách khóa học có thẻ chưa học
+      
       final coursesWithResults =
           await DetailFlashCardNotifier.getCoursesWithResults();
 
@@ -215,22 +215,22 @@ class GlobalSearchNotifier extends ChangeNotifier {
     final lowerQuery = query.toLowerCase();
     double score = 0.0;
 
-    // Title match gets highest score
+    
     if (result.title.toLowerCase().contains(lowerQuery)) {
       score += 10.0;
     }
 
-    // Description match
+    
     if (result.description.toLowerCase().contains(lowerQuery)) {
       score += 5.0;
     }
 
-    // Category match
+    
     if (result.category.toLowerCase().contains(lowerQuery)) {
       score += 3.0;
     }
 
-    // Subtitle match
+    
     if (result.subtitle.toLowerCase().contains(lowerQuery)) {
       score += 2.0;
     }

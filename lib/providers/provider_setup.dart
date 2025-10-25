@@ -8,6 +8,7 @@ import 'package:card_mind/modules/course/provider/test_notifier.dart';
 import 'package:card_mind/modules/library/provider/book_mark_notifier.dart';
 import 'package:card_mind/modules/library/provider/content_notifier.dart';
 import 'package:card_mind/modules/library/provider/class_notifier.dart';
+import 'package:card_mind/modules/message/provider/chat_notifier.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -24,6 +25,7 @@ class ProviderSetup {
       ChangeNotifierProvider(create: (_) => ContentNotifier()),
       ChangeNotifierProvider(create: (_) => ClassNotifier()),
       ChangeNotifierProvider(create: (_) => BookMarkNotifier()),
+      ChangeNotifierProvider(create: (_) => ChatNotifier()),
     ];
   }
 }

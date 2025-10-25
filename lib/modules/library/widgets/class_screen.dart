@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 
 class ClassScreen extends StatefulWidget {
   const ClassScreen({super.key, this.searchQuery = ''});
+
   final String searchQuery;
 
   @override
@@ -70,9 +71,7 @@ class _ClassScreenState extends State<ClassScreen> {
         if (!_isInitialized || notifier.isLoading) {
           return FunctionScreenTemplate(
             backgroundColor: context.colors.primary,
-            screen: const Center(
-              child: CircularProgressIndicator(color: Colors.white),
-            ),
+            screen: const Center(child: CircularProgressIndicator(color: Colors.white)),
           );
         }
 
@@ -87,16 +86,11 @@ class _ClassScreenState extends State<ClassScreen> {
                   const SizedBox(height: 16),
                   Text(
                     notifier.errorMessage ?? 'Có lỗi xảy ra',
-                    style: AppTextStyles.textContent2.copyWith(
-                      color: context.colors.onPrimary,
-                    ),
+                    style: AppTextStyles.textContent2.copyWith(color: context.colors.onPrimary),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () => _initializeData(),
-                    child: const Text('Thử lại'),
-                  ),
+                  ElevatedButton(onPressed: () => _initializeData(), child: const Text('Thử lại')),
                 ],
               ),
             ),
@@ -126,18 +120,14 @@ class _ClassScreenState extends State<ClassScreen> {
                             Text(
                               'Chưa có lớp học nào',
                               style: AppTextStyles.textContent2.copyWith(
-                                color: context.colors.onPrimary.withOpacity(
-                                  0.7,
-                                ),
+                                color: context.colors.onPrimary.withOpacity(0.7),
                               ),
                             ),
                             const SizedBox(height: 8),
                             Text(
                               'Tạo lớp học đầu tiên của bạn',
                               style: AppTextStyles.textContent3.copyWith(
-                                color: context.colors.onPrimary.withOpacity(
-                                  0.5,
-                                ),
+                                color: context.colors.onPrimary.withOpacity(0.5),
                               ),
                             ),
                           ],
@@ -150,8 +140,7 @@ class _ClassScreenState extends State<ClassScreen> {
                             notifier.classes.reversed.map((classData) {
                               return ClassItemWidget(
                                 classData: classData,
-                                onTap:
-                                    null, // Default navigation handled in ClassItemWidget
+                                onTap: null,
                                 onDelete: () {
                                   _showDeleteDialog(classData.id);
                                 },
@@ -211,15 +200,12 @@ class _ClassScreenState extends State<ClassScreen> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  final notifier = Provider.of<ClassNotifier>(
-                    context,
-                    listen: false,
-                  );
+                  final notifier = Provider.of<ClassNotifier>(context, listen: false);
                   notifier.deleteClass(classId);
                   Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Đã xóa lớp học')),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(const SnackBar(content: Text('Đã xóa lớp học')));
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,

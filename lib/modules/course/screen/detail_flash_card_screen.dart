@@ -29,10 +29,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
   }
 
   Future<void> _initializeData() async {
-    final notifier = Provider.of<DetailFlashCardNotifier>(
-      context,
-      listen: false,
-    );
+    final notifier = Provider.of<DetailFlashCardNotifier>(context, listen: false);
     final courseId = ModalRoute.of(context)?.settings.arguments as String?;
     await notifier.initializeData(courseId: courseId);
   }
@@ -45,7 +42,6 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
   ) {
     HapticFeedback.lightImpact();
 
-    // Kiểm tra xem có thẻ nào để swipe không
     if (previousIndex != null &&
         previousIndex < notifier.currentCards.length &&
         notifier.currentCards.isNotEmpty) {
@@ -57,10 +53,8 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
         notifier.onSwipeLeft(card);
       }
 
-      // Kiểm tra xem còn thẻ nào để học không
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!notifier.hasCardsToStudy) {
-          // Tự động chuyển đến màn hình kết quả
           _navigateToResult(notifier);
         }
       });
@@ -77,9 +71,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
           return FunctionScreenTemplate(
             screen: Scaffold(
               backgroundColor: context.colors.primary,
-              body: const Center(
-                child: CircularProgressIndicator(color: Colors.white),
-              ),
+              body: const Center(child: CircularProgressIndicator(color: Colors.white)),
             ),
           );
         }
@@ -112,7 +104,6 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
         }
 
         if (notifier.currentCards.isEmpty && !notifier.isLoading) {
-          // Chỉ navigate một lần duy nhất
           WidgetsBinding.instance.addPostFrameCallback((_) async {
             if (mounted) {
               await notifier.saveLearningResult();
@@ -133,10 +124,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
                   children: [
                     CircularProgressIndicator(color: Colors.white),
                     SizedBox(height: 16),
-                    Text(
-                      'Đang chuyển đến kết quả...',
-                      style: TextStyle(color: Colors.white70),
-                    ),
+                    Text('Đang chuyển đến kết quả...', style: TextStyle(color: Colors.white70)),
                   ],
                 ),
               ),
@@ -157,11 +145,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
                   );
                 }
               },
-              child: Icon(
-                Icons.check,
-                color: context.colors.onPrimary,
-                size: 24,
-              ),
+              child: Icon(Icons.check, color: context.colors.onPrimary, size: 24),
             ),
           ],
           backgroundColor: context.colors.primary,
@@ -172,11 +156,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
               Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(
-                      top: 60,
-                      left: 16,
-                      right: 16,
-                    ),
+                    padding: const EdgeInsets.only(top: 60, left: 16, right: 16),
                     child: _buildProgressIndicators(context, notifier),
                   ),
 
@@ -213,8 +193,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
                 LinearProgressIndicator(
                   value:
                       notifier.totalCards > 0
-                          ? (notifier.learnedCount + notifier.unlearnedCount) /
-                              notifier.totalCards
+                          ? (notifier.learnedCount + notifier.unlearnedCount) / notifier.totalCards
                           : 0.0,
                   backgroundColor: Colors.white.withOpacity(0.3),
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
@@ -228,10 +207,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
     );
   }
 
-  Widget _buildProgressIndicators(
-    BuildContext context,
-    DetailFlashCardNotifier notifier,
-  ) {
+  Widget _buildProgressIndicators(BuildContext context, DetailFlashCardNotifier notifier) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -249,18 +225,11 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: color, width: 1),
       ),
-      child: Text(
-        text,
-        style: TextStyle(color: color, fontWeight: FontWeight.bold),
-      ),
+      child: Text(text, style: TextStyle(color: color, fontWeight: FontWeight.bold)),
     );
   }
 
-  Widget _buildFlashcardPageView(
-    BuildContext context,
-    DetailFlashCardNotifier notifier,
-  ) {
-    // Kiểm tra an toàn: CardSwiper cần ít nhất 1 thẻ
+  Widget _buildFlashcardPageView(BuildContext context, DetailFlashCardNotifier notifier) {
     if (notifier.currentCards.isEmpty || notifier.currentCards.length < 1) {
       return const SizedBox.shrink();
     }
@@ -268,9 +237,9 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
     return CardSwiper(
       cardsCount: notifier.currentCards.length,
       numberOfCardsDisplayed: 1,
-      // Chỉ hiển thị 1 thẻ tại một thời điểm
+
       threshold: 50,
-      // Ngưỡng swipe
+
       onSwipe: (previousIndex, currentIndex, direction) {
         return _onSwipe(notifier, previousIndex, currentIndex, direction);
       },
@@ -396,10 +365,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
     );
   }
 
-  Widget _buildBottomNavigationBar(
-    BuildContext context,
-    DetailFlashCardNotifier notifier,
-  ) {
+  Widget _buildBottomNavigationBar(BuildContext context, DetailFlashCardNotifier notifier) {
     return Container(
       padding: const EdgeInsets.only(bottom: 20, top: 10, left: 16, right: 16),
       color: context.colors.primary,
@@ -425,8 +391,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
   }
 
   void _revertLastCard(DetailFlashCardNotifier notifier) {
-    if (notifier.learnedCards.isNotEmpty ||
-        notifier.unlearnedCards.isNotEmpty) {
+    if (notifier.learnedCards.isNotEmpty || notifier.unlearnedCards.isNotEmpty) {
       notifier.revertLastCard();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

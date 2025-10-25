@@ -32,8 +32,7 @@ class CourseResultNotifier extends ChangeNotifier {
 
   int get unlearnedCount => _unlearnedCards.length;
 
-  double get progressPercentage =>
-      totalCards > 0 ? learnedCount / totalCards : 0.0;
+  double get progressPercentage => totalCards > 0 ? learnedCount / totalCards : 0.0;
 
   int get knownCount => learnedCount;
 
@@ -64,15 +63,13 @@ class CourseResultNotifier extends ChangeNotifier {
 
   Future<void> _loadCourseFromHive(String courseId) async {
     try {
-      final courseKeys =
-          LocalStorageHelper.getValue('course_keys') as List<dynamic>? ?? [];
+      final courseKeys = LocalStorageHelper.getValue('course_keys') as List<dynamic>? ?? [];
 
       for (final key in courseKeys) {
         final courseData = LocalStorageHelper.getValue(key as String);
         if (courseData != null) {
           final Map<String, dynamic> jsonData = {};
-          final Map<dynamic, dynamic> rawData =
-              courseData as Map<dynamic, dynamic>;
+          final Map<dynamic, dynamic> rawData = courseData as Map<dynamic, dynamic>;
 
           rawData.forEach((key, value) {
             jsonData[key.toString()] = _convertValue(value);
@@ -92,17 +89,11 @@ class CourseResultNotifier extends ChangeNotifier {
 
   Future<void> _loadCardLists(String courseId) async {
     try {
-      // Load danh sách thẻ đã học
       _learnedCards = await DetailFlashCardNotifier.getLearnedCards(courseId);
 
-      // Load danh sách thẻ chưa học
-      _unlearnedCards = await DetailFlashCardNotifier.getUnlearnedCards(
-        courseId,
-      );
+      _unlearnedCards = await DetailFlashCardNotifier.getUnlearnedCards(courseId);
 
-      // Cập nhật learnedCardIds từ danh sách đã học
-      _learnedCardIds =
-          _learnedCards.map((card) => card['id'] as String).toSet();
+      _learnedCardIds = _learnedCards.map((card) => card['id'] as String).toSet();
     } catch (e) {
       _learnedCards = [];
       _unlearnedCards = [];

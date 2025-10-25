@@ -27,7 +27,6 @@ class HomeNotifier extends ChangeNotifier {
       await _loadClasses();
       _errorMessage = null;
 
-      // Lắng nghe các event về khóa học và lớp học
       _setupCourseEventSubscription();
       _setupClassEventSubscription();
     } catch (e) {
@@ -44,7 +43,6 @@ class HomeNotifier extends ChangeNotifier {
       if (event.type == CourseEventType.courseCreated ||
           event.type == CourseEventType.courseUpdated ||
           event.type == CourseEventType.courseDeleted) {
-        // Tự động refresh dữ liệu khi có khóa học mới được tạo, cập nhật hoặc bị xóa
         _refreshData();
       }
     });
@@ -56,7 +54,6 @@ class HomeNotifier extends ChangeNotifier {
       if (event.type == ClassEventType.classCreated ||
           event.type == ClassEventType.classUpdated ||
           event.type == ClassEventType.classDeleted) {
-        // Tự động refresh dữ liệu khi có lớp học mới được tạo, cập nhật hoặc bị xóa
         _refreshData();
       }
     });
@@ -74,25 +71,20 @@ class HomeNotifier extends ChangeNotifier {
 
   Future<void> _loadCourses() async {
     try {
-      final courseKeys =
-          LocalStorageHelper.getValue('course_keys') as List<dynamic>? ?? [];
+      final courseKeys = LocalStorageHelper.getValue('course_keys') as List<dynamic>? ?? [];
       final List<CourseItem> coursesList = [];
 
       for (final key in courseKeys) {
         final courseData = LocalStorageHelper.getValue(key as String);
         if (courseData != null) {
-          final Map<String, dynamic> jsonData = Map<String, dynamic>.from(
-            courseData,
-          );
+          final Map<String, dynamic> jsonData = Map<String, dynamic>.from(courseData);
 
           final courseItem = CourseItem(
             id: jsonData['id'] as String,
             title: jsonData['title'] as String,
             description: jsonData['description'] as String? ?? '',
             totalTerms: (jsonData['terms'] as List<dynamic>).length,
-            author:
-                jsonData['topic'] as String? ??
-                'Unknown', // Sử dụng topic thay vì author
+            author: jsonData['topic'] as String? ?? 'Unknown',
           );
 
           coursesList.add(courseItem);
@@ -107,15 +99,12 @@ class HomeNotifier extends ChangeNotifier {
 
   Future<void> _loadClasses() async {
     try {
-      final classesData =
-          LocalStorageHelper.getValue('library_classes') as List<dynamic>?;
+      final classesData = LocalStorageHelper.getValue('library_classes') as List<dynamic>?;
       final List<ClassItem> classesList = [];
 
       if (classesData != null) {
         for (final classJson in classesData) {
-          final Map<String, dynamic> jsonMap = Map<String, dynamic>.from(
-            classJson,
-          );
+          final Map<String, dynamic> jsonMap = Map<String, dynamic>.from(classJson);
 
           final classItem = ClassItem(
             id: jsonMap['id'] as String,

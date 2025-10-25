@@ -67,7 +67,7 @@ class CreateCourseNotifier extends ChangeNotifier {
 
       _clearError();
 
-      // Emit event để thông báo cho các màn hình khác
+      
       EventService().emitCourseEvent(
         CourseEvent(
           type: CourseEventType.courseCreated,

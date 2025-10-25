@@ -31,11 +31,9 @@ class TestResultScreen extends StatelessWidget {
           );
         }
 
-        final correctAnswers =
-            answers.where((answer) => answer.isCorrect).length;
+        final correctAnswers = answers.where((answer) => answer.isCorrect).length;
         final totalQuestions = answers.length;
-        final score =
-            totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0.0;
+        final score = totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0.0;
 
         return FunctionScreenTemplate(
           title: "Kết quả kiểm tra",
@@ -45,7 +43,6 @@ class TestResultScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Score summary
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(20),
@@ -88,117 +85,84 @@ class TestResultScreen extends StatelessWidget {
 
                 const SizedBox(height: 24),
 
-                // Detailed results
                 const Text(
                   'Chi tiết câu trả lời',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
                 ),
 
                 const SizedBox(height: 16),
 
-                // Answer details
                 ...answers.asMap().entries.map((entry) {
                   final index = entry.key;
                   final answer = entry.value;
                   final question =
-                  notifier.questions.isNotEmpty &&
-                      index < notifier.questions.length
-                      ? notifier.questions[index]
-                      : null;
+                      notifier.questions.isNotEmpty && index < notifier.questions.length
+                          ? notifier.questions[index]
+                          : null;
                   return _buildAnswerDetail(index + 1, answer, question);
                 }).toList(),
 
                 const SizedBox(height: 24),
 
-                // Action buttons
                 Row(
                   children: [
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () async {
-                          // Reset test và khởi tạo lại
                           notifier.resetTest();
 
-                          // Lấy courseId từ TestNotifier
                           final courseId = notifier.courseId;
                           if (courseId != null) {
-                            // Lấy dữ liệu flashcards từ CourseInfoNotifier
-                            final courseNotifier =
-                            Provider.of<CourseInfoNotifier>(
+                            final courseNotifier = Provider.of<CourseInfoNotifier>(
                               context,
                               listen: false,
                             );
 
-                            // Kiểm tra xem có flashcards không
                             if (courseNotifier.flashcards.isNotEmpty) {
                               await notifier.initializeTest(
                                 courseId: courseId,
                                 flashcards: courseNotifier.flashcards,
                               );
                             } else {
-                              // Nếu không có flashcards, hiển thị thông báo lỗi
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text(
-                                    'Không có dữ liệu để tạo bài kiểm tra',
-                                  ),
+                                  content: Text('Không có dữ liệu để tạo bài kiểm tra'),
                                   backgroundColor: Colors.red,
                                 ),
                               );
                               return;
                             }
                           } else {
-                            // Nếu không có courseId, hiển thị thông báo lỗi
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text(
-                                  'Không tìm thấy thông tin khóa học',
-                                ),
+                                content: Text('Không tìm thấy thông tin khóa học'),
                                 backgroundColor: Colors.red,
                               ),
                             );
                             return;
                           }
 
-                          // Quay lại TestScreen để làm lại bài kiểm tra
-                          Navigator.of(
-                            context,
-                          ).pop(); // Đóng TestResultScreen
+                          Navigator.of(context).pop();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue,
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
-                        child: const Text(
-                          'Làm lại',
-                          style: TextStyle(color: Colors.white),
-                        ),
+                        child: const Text('Làm lại', style: TextStyle(color: Colors.white)),
                       ),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
-                          // Quay về màn hình CourseInfoScreen (2 lần pop)
-                          Navigator.of(
-                            context,
-                          ).pop(); // Đóng TestResultScreen
-                          Navigator.of(
-                            context,
-                          ).pop(); // Đóng TestScreen, quay về CourseInfoScreen
+                          Navigator.of(context).pop();
+                          Navigator.of(context).pop();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green,
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
-                        child: const Text(
-                          'Hoàn thành',
-                          style: TextStyle(color: Colors.white),
-                        ),
+                        child: const Text('Hoàn thành', style: TextStyle(color: Colors.white)),
                       ),
                     ),
                   ],
@@ -211,25 +175,15 @@ class TestResultScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAnswerDetail(
-    int questionNumber,
-    TestAnswer answer,
-    TestQuestion? question,
-  ) {
+  Widget _buildAnswerDetail(int questionNumber, TestAnswer answer, TestQuestion? question) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color:
-            answer.isCorrect
-                ? Colors.green.withOpacity(0.1)
-                : Colors.red.withOpacity(0.1),
+        color: answer.isCorrect ? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color:
-              answer.isCorrect
-                  ? Colors.green.withOpacity(0.3)
-                  : Colors.red.withOpacity(0.3),
+          color: answer.isCorrect ? Colors.green.withOpacity(0.3) : Colors.red.withOpacity(0.3),
         ),
       ),
       child: Row(
@@ -265,10 +219,7 @@ class TestResultScreen extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   'Đáp án của bạn: ${answer.selectedAnswer}',
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.8),
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 14),
                 ),
                 if (!answer.isCorrect && question != null) ...[
                   const SizedBox(height: 4),

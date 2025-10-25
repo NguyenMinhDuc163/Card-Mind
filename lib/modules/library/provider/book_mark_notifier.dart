@@ -43,20 +43,20 @@ class BookMarkNotifier extends ChangeNotifier {
 
   Future<void> _loadUnlearnedCardsByCourse() async {
     try {
-      // Lấy danh sách tất cả khóa học có kết quả học tập
+      
       final coursesWithResults =
           await DetailFlashCardNotifier.getCoursesWithResults();
 
       final List<Map<String, dynamic>> unlearnedCardsList = [];
 
       for (final courseId in coursesWithResults) {
-        // Lấy danh sách thẻ chưa học của khóa học này
+        
         final unlearnedCards = await DetailFlashCardNotifier.getUnlearnedCards(
           courseId,
         );
 
         if (unlearnedCards.isNotEmpty) {
-          // Lấy thông tin khóa học
+          
           final courseData = await _getCourseData(courseId);
 
           if (courseData != null) {
@@ -73,7 +73,7 @@ class BookMarkNotifier extends ChangeNotifier {
         }
       }
 
-      // Sắp xếp theo số lượng thẻ chưa học (nhiều nhất trước)
+      
       unlearnedCardsList.sort(
         (a, b) =>
             (b['unlearnedCount'] as int).compareTo(a['unlearnedCount'] as int),
@@ -87,11 +87,11 @@ class BookMarkNotifier extends ChangeNotifier {
 
   Future<void> _loadBookmarkedCoursesByCourse() async {
     try {
-      // Lấy danh sách thẻ đã bookmark
+      
       final bookmarkedCards =
           await DetailFlashCardNotifier.getBookmarkedCards();
 
-      // Lấy thông tin khóa học của các thẻ đã bookmark
+      
       final courseInfo =
           await DetailFlashCardNotifier.getBookmarkedCourseInfo();
 
@@ -100,7 +100,7 @@ class BookMarkNotifier extends ChangeNotifier {
         return;
       }
 
-      // Tạo danh sách khóa học đã bookmark
+      
       _bookmarkedCoursesByCourse = [
         {
           'courseId': courseInfo['courseId'],
@@ -140,7 +140,7 @@ class BookMarkNotifier extends ChangeNotifier {
     }
   }
 
-  // Lấy tổng số thẻ chưa học
+  
   int get totalUnlearnedCards {
     return _unlearnedCardsByCourse.fold(
       0,
@@ -148,7 +148,7 @@ class BookMarkNotifier extends ChangeNotifier {
     );
   }
 
-  // Lấy số khóa học có thẻ chưa học
+  
   int get coursesWithUnlearnedCards => _unlearnedCardsByCourse.length;
 
   void searchBookmarks(String query) {
@@ -157,7 +157,7 @@ class BookMarkNotifier extends ChangeNotifier {
       _filteredUnlearnedCardsByCourse = [];
       _filteredBookmarkedCoursesByCourse = [];
     } else {
-      // Filter unlearned cards
+      
       _filteredUnlearnedCardsByCourse =
           _unlearnedCardsByCourse.where((courseData) {
             final courseTitle = courseData['courseTitle'] as String? ?? '';
@@ -171,7 +171,7 @@ class BookMarkNotifier extends ChangeNotifier {
                 courseCategory.toLowerCase().contains(query.toLowerCase());
           }).toList();
 
-      // Filter bookmarked courses
+      
       _filteredBookmarkedCoursesByCourse =
           _bookmarkedCoursesByCourse.where((courseData) {
             final courseTitle = courseData['courseTitle'] as String? ?? '';

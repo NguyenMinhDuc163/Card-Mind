@@ -28,11 +28,9 @@ class _TestScreenState extends State<TestScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Kiểm tra nếu test đã được reset và cần khởi tạo lại
+
     final notifier = Provider.of<TestNotifier>(context, listen: false);
-    if (notifier.questions.isEmpty &&
-        !notifier.isLoading &&
-        notifier.courseId != null) {
+    if (notifier.questions.isEmpty && !notifier.isLoading && notifier.courseId != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _initializeTest();
       });
@@ -44,19 +42,11 @@ class _TestScreenState extends State<TestScreen> {
     final courseId = ModalRoute.of(context)?.settings.arguments as String?;
 
     if (courseId != null) {
-      // Lấy dữ liệu flashcards từ CourseInfoNotifier
-      final courseNotifier = Provider.of<CourseInfoNotifier>(
-        context,
-        listen: false,
-      );
+      final courseNotifier = Provider.of<CourseInfoNotifier>(context, listen: false);
 
-      // Reset test hoàn toàn trước khi khởi tạo lần đầu
       notifier.resetTestCompletely();
 
-      await notifier.initializeTest(
-        courseId: courseId,
-        flashcards: courseNotifier.flashcards,
-      );
+      await notifier.initializeTest(courseId: courseId, flashcards: courseNotifier.flashcards);
     }
   }
 
@@ -74,10 +64,7 @@ class _TestScreenState extends State<TestScreen> {
                   children: [
                     CircularProgressIndicator(color: Colors.white),
                     SizedBox(height: 16),
-                    Text(
-                      'Đang tạo bài kiểm tra...',
-                      style: TextStyle(color: Colors.white70),
-                    ),
+                    Text('Đang tạo bài kiểm tra...', style: TextStyle(color: Colors.white70)),
                   ],
                 ),
               ),
@@ -137,15 +124,13 @@ class _TestScreenState extends State<TestScreen> {
 
   Widget _buildTestInterface(TestNotifier notifier) {
     final currentQuestion = notifier.currentQuestion!;
-    final progress =
-        (notifier.currentQuestionIndex + 1) / notifier.totalQuestions;
+    final progress = (notifier.currentQuestionIndex + 1) / notifier.totalQuestions;
 
     return FunctionScreenTemplate(
       title: 'Kiểm tra - Câu ${notifier.currentQuestionIndex + 1}/${notifier.totalQuestions}',
       backgroundColor: context.colors.primary,
       screen: Column(
         children: [
-          // Progress bar
           Container(
             width: double.infinity,
             height: 4,
@@ -166,22 +151,18 @@ class _TestScreenState extends State<TestScreen> {
             ),
           ),
 
-          // Question
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-                  // Question text
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       color: const Color(0xFF0E2B5C),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: Colors.white.withOpacity(0.2),
-                      ),
+                      border: Border.all(color: Colors.white.withOpacity(0.2)),
                     ),
                     child: Text(
                       currentQuestion.question,
@@ -196,7 +177,6 @@ class _TestScreenState extends State<TestScreen> {
 
                   const SizedBox(height: 24),
 
-                  // Instructions
                   const Text(
                     'Chọn đáp án đúng:',
                     style: TextStyle(
@@ -208,10 +188,7 @@ class _TestScreenState extends State<TestScreen> {
 
                   const SizedBox(height: 16),
 
-                  // Answer options
-                  Expanded(
-                    child: _buildAnswerOptions(currentQuestion, notifier),
-                  ),
+                  Expanded(child: _buildAnswerOptions(currentQuestion, notifier)),
                 ],
               ),
             ),
@@ -282,11 +259,7 @@ class _TestScreenState extends State<TestScreen> {
               const SizedBox(height: 16),
               const Text(
                 'Hoàn thành bài kiểm tra!',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               Consumer<TestNotifier>(
@@ -302,10 +275,7 @@ class _TestScreenState extends State<TestScreen> {
                 onPressed: () => _showResults(),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 32,
-                    vertical: 12,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                 ),
                 child: const Text(
                   'Xem kết quả chi tiết',
@@ -324,51 +294,12 @@ class _TestScreenState extends State<TestScreen> {
 
     if (notifier.isTestCompleted) {
       final result = notifier.completeTest();
-      if (result != null) {
-        // Không hiển thị SnackBar để tránh che mất nút
-        // Thông báo sẽ hiển thị trong màn hình hoàn thành
-      }
+      if (result != null) {}
     }
-  }
-
-  void _showExitConfirmation() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: const Color(0xFF0E2B5C),
-          title: const Text(
-            'Thoát bài kiểm tra',
-            style: TextStyle(color: Colors.white),
-          ),
-          content: const Text(
-            'Bạn có chắc chắn muốn thoát bài kiểm tra? Tiến độ hiện tại sẽ bị mất.',
-            style: TextStyle(color: Colors.white70),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Hủy', style: TextStyle(color: Colors.white70)),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-              },
-              child: const Text('Thoát', style: TextStyle(color: Colors.red)),
-            ),
-          ],
-        );
-      },
-    );
   }
 
   void _showResults() {
     final notifier = Provider.of<TestNotifier>(context, listen: false);
-    Navigator.pushNamed(
-      context,
-      TestResultScreen.routeName,
-      arguments: notifier.answers,
-    );
+    Navigator.pushNamed(context, TestResultScreen.routeName, arguments: notifier.answers);
   }
 }

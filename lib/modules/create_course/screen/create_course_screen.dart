@@ -54,8 +54,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
     _topicController.text = courseData.topic;
     _titleController.text = courseData.title;
     _descriptionController.text = courseData.description ?? '';
-    _showDescription =
-        courseData.description != null && courseData.description!.isNotEmpty;
+    _showDescription = courseData.description != null && courseData.description!.isNotEmpty;
   }
 
   @override
@@ -74,9 +73,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
           return FunctionScreenTemplate(
             isShowAppBar: false,
             backgroundColor: context.colors.primary,
-            screen: const Center(
-              child: CircularProgressIndicator(color: Colors.white),
-            ),
+            screen: const Center(child: CircularProgressIndicator(color: Colors.white)),
           );
         }
 
@@ -92,16 +89,11 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                   const SizedBox(height: 16),
                   Text(
                     notifier.errorMessage ?? 'Có lỗi xảy ra',
-                    style: AppTextStyles.textContent2.copyWith(
-                      color: context.colors.onPrimary,
-                    ),
+                    style: AppTextStyles.textContent2.copyWith(color: context.colors.onPrimary),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () => _initializeData(),
-                    child: const Text('Thử lại'),
-                  ),
+                  ElevatedButton(onPressed: () => _initializeData(), child: const Text('Thử lại')),
                 ],
               ),
             ),
@@ -178,11 +170,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                     onPressed: () => _addNewTerm(notifier),
                     backgroundColor: Colors.blue,
                     shape: const CircleBorder(),
-                    child: Icon(
-                      Icons.add,
-                      color: context.colors.onPrimary,
-                      size: 28,
-                    ),
+                    child: Icon(Icons.add, color: context.colors.onPrimary, size: 28),
                   ),
                 ),
               ),
@@ -201,10 +189,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
     notifier.updateCourseInfo(
       topic: _topicController.text,
       title: _titleController.text,
-      description:
-          _descriptionController.text.isNotEmpty
-              ? _descriptionController.text
-              : null,
+      description: _descriptionController.text.isNotEmpty ? _descriptionController.text : null,
     );
     notifier.saveData();
   }
@@ -212,9 +197,8 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
   void _completeCourse(CreateCourseNotifier notifier) async {
     _updateCourseInfo(notifier);
 
-    // Kiểm tra validation trước khi hoàn thành
     if (!_validateCourseData(notifier)) {
-      return; // Dừng lại nếu có lỗi validation
+      return;
     }
 
     await notifier.completeCourse();
@@ -226,31 +210,25 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
       _showDescription = false;
     });
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Đã lưu khóa học!')));
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Đã lưu khóa học!')));
   }
 
   bool _validateCourseData(CreateCourseNotifier notifier) {
-    // Kiểm tra topic
     if (notifier.courseData.topic.trim().isEmpty) {
       _showValidationError('Vui lòng nhập chủ đề khóa học');
       return false;
     }
 
-    // Kiểm tra title
     if (notifier.courseData.title.trim().isEmpty) {
       _showValidationError('Vui lòng nhập tiêu đề khóa học');
       return false;
     }
 
-    // Kiểm tra terms
     if (notifier.courseData.terms.isEmpty) {
       _showValidationError('Vui lòng thêm ít nhất một thuật ngữ');
       return false;
     }
 
-    // Kiểm tra từng term
     for (int i = 0; i < notifier.courseData.terms.length; i++) {
       final term = notifier.courseData.terms[i];
 
@@ -284,14 +262,9 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Xóa dữ liệu'),
-          content: const Text(
-            'Bạn có chắc chắn muốn xóa tất cả dữ liệu đã nhập?',
-          ),
+          content: const Text('Bạn có chắc chắn muốn xóa tất cả dữ liệu đã nhập?'),
           actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Hủy'),
-            ),
+            TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Hủy')),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
@@ -306,15 +279,12 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
   }
 
   void _clearAllData(CreateCourseNotifier notifier) {
-    // Clear controllers
     _topicController.clear();
     _titleController.clear();
     _descriptionController.clear();
 
-    // Clear notifier data
     notifier.clearData();
 
-    // Reset UI state
     setState(() {
       _showDescription = false;
     });
@@ -327,9 +297,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
         TextField(
           controller: _topicController,
           onChanged: (value) => _updateCourseInfo(notifier),
-          style: AppTextStyles.textContent2.copyWith(
-            color: context.colors.onPrimary,
-          ),
+          style: AppTextStyles.textContent2.copyWith(color: context.colors.onPrimary),
           decoration: InputDecoration(
             hintText: 'Chủ đề, chương, đơn vị',
             hintStyle: AppTextStyles.textContent2.copyWith(
@@ -390,31 +358,20 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
           TextField(
             controller: _descriptionController,
             onChanged: (value) => _updateCourseInfo(notifier),
-            style: AppTextStyles.textContent2.copyWith(
-              color: context.colors.onPrimary,
-            ),
+            style: AppTextStyles.textContent2.copyWith(color: context.colors.onPrimary),
             decoration: InputDecoration(
               hintText: 'Nhập mô tả cho khóa học...',
               hintStyle: AppTextStyles.textContent2.copyWith(
                 color: context.colors.onPrimary.withOpacity(0.6),
               ),
               border: UnderlineInputBorder(
-                borderSide: BorderSide(
-                  color: context.colors.onPrimary,
-                  width: 1,
-                ),
+                borderSide: BorderSide(color: context.colors.onPrimary, width: 1),
               ),
               enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(
-                  color: context.colors.onPrimary,
-                  width: 1,
-                ),
+                borderSide: BorderSide(color: context.colors.onPrimary, width: 1),
               ),
               focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(
-                  color: context.colors.onPrimary,
-                  width: 2,
-                ),
+                borderSide: BorderSide(color: context.colors.onPrimary, width: 2),
               ),
             ),
             maxLines: 3,
@@ -435,11 +392,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
     );
   }
 
-  Widget _buildTermItem(
-    TermData term,
-    int index,
-    CreateCourseNotifier notifier,
-  ) {
+  Widget _buildTermItem(TermData term, int index, CreateCourseNotifier notifier) {
     final termController = TextEditingController(text: term.term);
     final definitionController = TextEditingController(text: term.definition);
 
@@ -449,19 +402,13 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
       background: Container(
         alignment: Alignment.centerLeft,
         padding: AppPad.h16,
-        decoration: BoxDecoration(
-          color: Colors.red,
-          borderRadius: BorderRadius.circular(12),
-        ),
+        decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(12)),
         child: Icon(Icons.delete, color: context.colors.onPrimary, size: 24),
       ),
       secondaryBackground: Container(
         alignment: Alignment.centerRight,
         padding: AppPad.h16,
-        decoration: BoxDecoration(
-          color: Colors.red,
-          borderRadius: BorderRadius.circular(12),
-        ),
+        decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(12)),
         child: Icon(Icons.delete, color: context.colors.onPrimary, size: 24),
       ),
       onDismissed: (direction) {
@@ -473,10 +420,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
         decoration: BoxDecoration(
           color: context.colors.primary.withOpacity(0.8),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: context.colors.onPrimary.withOpacity(0.2),
-            width: 1,
-          ),
+          border: Border.all(color: context.colors.onPrimary.withOpacity(0.2), width: 1),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -497,27 +441,16 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                 notifier.updateTerm(index, updatedTerm);
                 notifier.saveData();
               },
-              style: AppTextStyles.textContent2.copyWith(
-                color: context.colors.onPrimary,
-              ),
+              style: AppTextStyles.textContent2.copyWith(color: context.colors.onPrimary),
               decoration: InputDecoration(
                 border: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                    color: context.colors.onPrimary,
-                    width: 1,
-                  ),
+                  borderSide: BorderSide(color: context.colors.onPrimary, width: 1),
                 ),
                 enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                    color: context.colors.onPrimary,
-                    width: 1,
-                  ),
+                  borderSide: BorderSide(color: context.colors.onPrimary, width: 1),
                 ),
                 focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                    color: context.colors.onPrimary,
-                    width: 2,
-                  ),
+                  borderSide: BorderSide(color: context.colors.onPrimary, width: 2),
                 ),
               ),
             ),
@@ -539,27 +472,16 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                 notifier.updateTerm(index, updatedTerm);
                 notifier.saveData();
               },
-              style: AppTextStyles.textContent2.copyWith(
-                color: context.colors.onPrimary,
-              ),
+              style: AppTextStyles.textContent2.copyWith(color: context.colors.onPrimary),
               decoration: InputDecoration(
                 border: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                    color: context.colors.onPrimary,
-                    width: 1,
-                  ),
+                  borderSide: BorderSide(color: context.colors.onPrimary, width: 1),
                 ),
                 enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                    color: context.colors.onPrimary,
-                    width: 1,
-                  ),
+                  borderSide: BorderSide(color: context.colors.onPrimary, width: 1),
                 ),
                 focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                    color: context.colors.onPrimary,
-                    width: 2,
-                  ),
+                  borderSide: BorderSide(color: context.colors.onPrimary, width: 2),
                 ),
               ),
             ),
@@ -581,18 +503,14 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
               child: Container(
                 padding: AppPad.v12,
                 decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(color: Colors.blue, width: 1),
-                  ),
+                  border: Border(bottom: BorderSide(color: Colors.blue, width: 1)),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       term.language,
-                      style: AppTextStyles.textContent2.copyWith(
-                        color: Colors.blue,
-                      ),
+                      style: AppTextStyles.textContent2.copyWith(color: Colors.blue),
                     ),
                     Icon(Icons.arrow_drop_down, color: Colors.blue, size: 20),
                   ],
@@ -605,11 +523,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
     );
   }
 
-  void _showLanguagePicker(
-    TermData term,
-    int index,
-    CreateCourseNotifier notifier,
-  ) {
+  void _showLanguagePicker(TermData term, int index, CreateCourseNotifier notifier) {
     final languages = ['Tiếng Việt', 'English', '日本語', '한국어', '中文'];
 
     showModalBottomSheet(
@@ -629,10 +543,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                         notifier.saveData();
                         Navigator.pop(context);
                       },
-                      trailing:
-                          term.language == language
-                              ? const Icon(Icons.check)
-                              : null,
+                      trailing: term.language == language ? const Icon(Icons.check) : null,
                     );
                   }).toList(),
             ),

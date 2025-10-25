@@ -148,7 +148,7 @@ class ClassNotifier extends ChangeNotifier {
       await _saveClassesToStorage();
       notifyListeners();
 
-      // Emit event để thông báo cho các màn hình khác
+      
       EventService().emitClassEvent(
         ClassEvent(
           type:
@@ -175,7 +175,7 @@ class ClassNotifier extends ChangeNotifier {
       await _saveClassesToStorage();
       notifyListeners();
 
-      // Emit event để thông báo cho các màn hình khác
+      
       EventService().emitClassEvent(
         ClassEvent(type: ClassEventType.classDeleted, classId: classId),
       );

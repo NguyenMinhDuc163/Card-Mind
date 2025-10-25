@@ -77,7 +77,7 @@ class CreateCourseData extends Equatable {
     );
   }
 
-  // Tạo instance mới với dữ liệu mặc định
+  
   factory CreateCourseData.createNew() {
     final now = DateTime.now();
     return CreateCourseData(

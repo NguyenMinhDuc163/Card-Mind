@@ -45,18 +45,17 @@ class _FlipFlashcardWidgetState extends State<FlipFlashcardWidget> {
         });
       },
       onTap: () {
-        // Haptic feedback để tăng trải nghiệm
         HapticFeedback.lightImpact();
         _cardKey.currentState?.toggleCard();
         widget.onTap?.call();
       },
-      // Chỉ cho phép tap, không cho phép drag để tránh xung đột với PageView
+
       behavior: HitTestBehavior.opaque,
       child: FlipCard(
         key: _cardKey,
         direction: FlipDirection.HORIZONTAL,
-        speed: 400, // Tăng lên 400ms cho mượt mà hơn
-        flipOnTouch: false, // Tắt flip on touch để tránh xung đột
+        speed: 400,
+        flipOnTouch: false,
         front: _buildCardSide(
           context,
           text: widget.flashcard.frontText,
@@ -80,28 +79,19 @@ class _FlipFlashcardWidgetState extends State<FlipFlashcardWidget> {
     required bool isFront,
   }) {
     return AnimatedContainer(
-      duration: const Duration(
-        milliseconds: 150,
-      ), // Animation nhanh cho feedback
+      duration: const Duration(milliseconds: 150),
       curve: Curves.easeInOut,
       height: widget.height ?? 280,
       width: widget.width ?? double.infinity,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color:
-            _isPressed
-                ? context.colors.secondary.withOpacity(
-                  0.8,
-                ) // Màu sáng hơn khi nhấn
-                : context.colors.secondary,
+        color: _isPressed ? context.colors.secondary.withOpacity(0.8) : context.colors.secondary,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color:
                 _isPressed
-                    ? context.colors.primary.withOpacity(
-                      0.3,
-                    ) // Shadow đậm hơn khi nhấn
+                    ? context.colors.primary.withOpacity(0.3)
                     : context.colors.primary.withOpacity(0.2),
             blurRadius: _isPressed ? 12 : 8,
             offset: Offset(0, _isPressed ? 6 : 4),
@@ -127,11 +117,7 @@ class _FlipFlashcardWidgetState extends State<FlipFlashcardWidget> {
                     imageUrl,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
-                      return const Icon(
-                        Icons.image_not_supported,
-                        color: Colors.white70,
-                        size: 48,
-                      );
+                      return const Icon(Icons.image_not_supported, color: Colors.white70, size: 48);
                     },
                   ),
                 ),
@@ -173,11 +159,7 @@ class _FlipFlashcardWidgetState extends State<FlipFlashcardWidget> {
                       ),
                     ),
                     const SizedBox(width: 4),
-                    Icon(
-                      isFront ? Icons.touch_app : Icons.flip,
-                      color: Colors.white70,
-                      size: 16,
-                    ),
+                    Icon(isFront ? Icons.touch_app : Icons.flip, color: Colors.white70, size: 16),
                   ],
                 ),
               ],

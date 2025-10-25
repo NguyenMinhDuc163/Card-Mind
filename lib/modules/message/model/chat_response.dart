@@ -1,53 +1,16 @@
 class ChatResponse {
-  ChatResponse({
-    required this.status,
-    required this.message,
-    required this.data,
-  });
-
-  final num? status;
-  final String? message;
-  final ChatResponseData? data;
-
-  factory ChatResponse.fromJson(Map<String, dynamic> json){
-    return ChatResponse(
-      status: json["status"],
-      message: json["message"],
-      data: json["data"] == null ? null : ChatResponseData.fromJson(json["data"]),
-    );
-  }
-
-  Map<String, dynamic> toJson() => {
-    "status": status,
-    "message": message,
-    "data": data?.toJson(),
-  };
-
-  @override
-  String toString(){
-    return "$status, $message, $data, ";
-  }
-}
-
-class ChatResponseData {
-  ChatResponseData({
-    required this.code,
-    required this.message,
-    required this.data,
-    required this.error,
-  });
+  ChatResponse({required this.code, required this.message, required this.data});
 
   final num? code;
   final String? message;
-  final DataData? data;
-  final dynamic error;
+  final ChatResponseData? data;
 
-  factory ChatResponseData.fromJson(Map<String, dynamic> json){
-    return ChatResponseData(
+  factory ChatResponse.fromJson(Map<String, dynamic> json) {
+    return ChatResponse(
       code: json["code"],
       message: json["message"],
-      data: json["data"] == null ? null : DataData.fromJson(json["data"]),
-      error: json["error"],
+      data:
+          json["data"] == null ? null : ChatResponseData.fromJson(json["data"]),
     );
   }
 
@@ -55,38 +18,31 @@ class ChatResponseData {
     "code": code,
     "message": message,
     "data": data?.toJson(),
-    "error": error,
   };
 
   @override
-  String toString(){
-    return "$code, $message, $data, $error, ";
+  String toString() {
+    return "$code, $message, $data, ";
   }
 }
 
-class DataData {
-  DataData({
-    required this.answer,
-    required this.rawAnswer,
-  });
+class ChatResponseData {
+  ChatResponseData({required this.answer, required this.rawAnswer});
 
   final String? answer;
   final String? rawAnswer;
 
-  factory DataData.fromJson(Map<String, dynamic> json){
-    return DataData(
+  factory ChatResponseData.fromJson(Map<String, dynamic> json) {
+    return ChatResponseData(
       answer: json["answer"],
       rawAnswer: json["rawAnswer"],
     );
   }
 
-  Map<String, dynamic> toJson() => {
-    "answer": answer,
-    "rawAnswer": rawAnswer,
-  };
+  Map<String, dynamic> toJson() => {"answer": answer, "rawAnswer": rawAnswer};
 
   @override
-  String toString(){
+  String toString() {
     return "$answer, $rawAnswer, ";
   }
 }
