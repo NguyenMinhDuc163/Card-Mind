@@ -4,6 +4,7 @@ import 'package:card_mind/core/routes/routers.dart';
 import 'package:card_mind/core/theme/app_theme.dart';
 import 'package:card_mind/core/theme/theme_cubit.dart';
 import 'package:card_mind/core/theme/theme_service.dart';
+import 'package:card_mind/core/services/sample_data_service.dart';
 import 'package:card_mind/providers/provider_setup.dart';
 import 'package:device_preview_plus/device_preview_plus.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -24,6 +25,8 @@ void main() async {
   await Hive.initFlutter();
   await LocalStorageHelper.initLocalStorageHelper();
 
+  await SampleDataService.initializeSampleData();
+
   Locale defaultLocale = const Locale('en', 'US');
 
   runApp(
@@ -35,10 +38,7 @@ void main() async {
             path: 'assets/translations',
             fallbackLocale: const Locale('en', 'US'),
             startLocale: defaultLocale,
-            child: MultiProvider(
-              providers: ProviderSetup.getProviders(),
-              child: const MyApp(),
-            ),
+            child: MultiProvider(providers: ProviderSetup.getProviders(), child: const MyApp()),
           ),
     ),
   );
@@ -46,6 +46,7 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -60,11 +61,7 @@ class MyApp extends StatelessWidget {
                     const Breakpoint(start: 0, end: 450, name: MOBILE),
                     const Breakpoint(start: 451, end: 800, name: TABLET),
                     const Breakpoint(start: 801, end: 1920, name: DESKTOP),
-                    const Breakpoint(
-                      start: 1921,
-                      end: double.infinity,
-                      name: '4K',
-                    ),
+                    const Breakpoint(start: 1921, end: double.infinity, name: '4K'),
                   ],
                 );
               },

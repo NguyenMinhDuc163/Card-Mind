@@ -70,8 +70,10 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
           return FunctionScreenTemplate(
             isShowAppBar: false,
             backgroundColor: context.colors.primary,
-            screen: const Center(
-              child: CircularProgressIndicator(color: Colors.white),
+            screen: Center(
+              child: CircularProgressIndicator(
+                color: context.brandColors.textPrimary,
+              ),
             ),
           );
         }
@@ -84,12 +86,16 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.error, color: context.colors.onPrimary, size: 48),
+                  Icon(
+                    Icons.error,
+                    color: context.brandColors.textSecondary,
+                    size: 48,
+                  ),
                   const SizedBox(height: 16),
                   Text(
                     notifier.errorMessage ?? 'Có lỗi xảy ra',
                     style: AppTextStyles.textContent2.copyWith(
-                      color: context.colors.onPrimary,
+                      color: context.brandColors.textSecondary,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -105,26 +111,31 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
         }
 
         return FunctionScreenTemplate(
+          isShowDrawer: true,
           titleWidget: Text(
             '${notifier.completedTerms.length}/${notifier.termsCount}',
             style: AppTextStyles.textContent1.copyWith(
-              color: context.colors.onPrimary,
+              color: context.brandColors.textPrimary,
               fontWeight: FontWeight.w600,
             ),
           ),
-          leadingWidget: GestureDetector(
-            onTap: () => _showClearDataDialog(notifier),
-            child: Icon(Icons.clear, color: context.colors.onPrimary, size: 24),
-          ),
           actionsWidget: [
+            GestureDetector(
+              onTap: () => _showClearDataDialog(notifier),
+              child: Icon(
+                Icons.delete,
+                color: context.brandColors.textPrimary,
+                size: 24,
+              ),
+            ),
             GestureDetector(
               onTap: () => _completeCourse(notifier),
               child: Icon(
                 Icons.check,
                 color:
                     notifier.isDataValid
-                        ? context.colors.onPrimary
-                        : context.colors.onPrimary.withOpacity(0.5),
+                        ? context.brandColors.textPrimary
+                        : context.brandColors.textPrimary.withOpacity(0.5),
                 size: 24,
               ),
             ),
@@ -148,12 +159,11 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                             child: Container(
                               padding: AppPad.h12v8,
                               decoration: BoxDecoration(
-                                color: context.colors.primary.withOpacity(0.8),
+                                color: context.brandColors.searchBarBackground,
                                 borderRadius: BorderRadius.circular(8),
                                 border: Border.all(
-                                  color: context.colors.onPrimary.withOpacity(
-                                    0.2,
-                                  ),
+                                  color: context.brandColors.borderColor
+                                      .withOpacity(0.3),
                                   width: 1,
                                 ),
                               ),
@@ -162,14 +172,14 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                                 children: [
                                   Icon(
                                     Icons.upload_file,
-                                    color: context.colors.onPrimary,
+                                    color: context.brandColors.searchBarIcon,
                                     size: 16,
                                   ),
                                   const SizedBox(width: 6),
                                   Text(
                                     'Nhập',
                                     style: AppTextStyles.textContent2.copyWith(
-                                      color: context.colors.onPrimary,
+                                      color: context.brandColors.searchBarText,
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
@@ -187,21 +197,19 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                               child: Container(
                                 padding: AppPad.h12v8,
                                 decoration: BoxDecoration(
-                                  color: context.colors.primary.withOpacity(
-                                    0.8,
-                                  ),
+                                  color:
+                                      context.brandColors.searchBarBackground,
                                   borderRadius: BorderRadius.circular(8),
                                   border: Border.all(
-                                    color: context.colors.onPrimary.withOpacity(
-                                      0.2,
-                                    ),
+                                    color: context.brandColors.borderColor
+                                        .withOpacity(0.3),
                                     width: 1,
                                   ),
                                 ),
                                 child: Text(
                                   '+ Mô tả',
                                   style: AppTextStyles.textContent2.copyWith(
-                                    color: context.colors.onPrimary,
+                                    color: context.brandColors.searchBarText,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -223,11 +231,11 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                   child: FloatingActionButton(
                     heroTag: "create_course_fab",
                     onPressed: () => _addNewTerm(notifier),
-                    backgroundColor: Colors.blue,
+                    backgroundColor: context.brandColors.buttonPrimary,
                     shape: const CircleBorder(),
                     child: Icon(
                       Icons.add,
-                      color: context.colors.onPrimary,
+                      color: context.brandColors.textPrimary,
                       size: 28,
                     ),
                   ),
@@ -272,9 +280,12 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
       _showDescription = false;
     });
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Đã lưu khóa học!')));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Đã lưu khóa học!'),
+        backgroundColor: context.brandColors.progressValue,
+      ),
+    );
   }
 
   bool _validateCourseData(CreateCourseNotifier notifier) {
@@ -330,18 +341,32 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: context.brandColors.cardBackground,
           title: Row(
             children: [
-              Icon(Icons.error, color: Colors.red, size: 24),
+              Icon(
+                Icons.error,
+                color: context.brandColors.buttonDestructive,
+                size: 24,
+              ),
               const SizedBox(width: 8),
-              const Text('Lỗi xác thực'),
+              Text(
+                'Lỗi xác thực',
+                style: TextStyle(color: context.brandColors.textPrimary),
+              ),
             ],
           ),
-          content: Text(message),
+          content: Text(
+            message,
+            style: TextStyle(color: context.brandColors.textSecondary),
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Đóng'),
+              child: Text(
+                'Đóng',
+                style: TextStyle(color: context.brandColors.buttonPrimary),
+              ),
             ),
           ],
         );
@@ -354,21 +379,32 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Xóa dữ liệu'),
-          content: const Text(
+          backgroundColor: context.brandColors.cardBackground,
+          title: Text(
+            'Xóa dữ liệu',
+            style: TextStyle(color: context.brandColors.textPrimary),
+          ),
+          content: Text(
             'Bạn có chắc chắn muốn xóa tất cả dữ liệu đã nhập?',
+            style: TextStyle(color: context.brandColors.textSecondary),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Hủy'),
+              child: Text(
+                'Hủy',
+                style: TextStyle(color: context.brandColors.buttonPrimary),
+              ),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
                 _clearAllData(notifier);
               },
-              child: const Text('Xóa', style: TextStyle(color: Colors.red)),
+              child: Text(
+                'Xóa',
+                style: TextStyle(color: context.brandColors.buttonDestructive),
+              ),
             ),
           ],
         );
@@ -396,21 +432,30 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
           controller: _topicController,
           onChanged: (value) => _updateCourseInfo(notifier),
           style: AppTextStyles.textContent2.copyWith(
-            color: context.colors.onPrimary,
+            color: context.brandColors.searchBarText,
           ),
           decoration: InputDecoration(
             hintText: 'Chủ đề, chương, đơn vị',
             hintStyle: AppTextStyles.textContent2.copyWith(
-              color: context.colors.onPrimary.withOpacity(0.6),
+              color: context.brandColors.searchBarText.withOpacity(0.6),
             ),
             border: UnderlineInputBorder(
-              borderSide: BorderSide(color: context.colors.onPrimary, width: 1),
+              borderSide: BorderSide(
+                color: context.brandColors.borderColor,
+                width: 1,
+              ),
             ),
             enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: context.colors.onPrimary, width: 1),
+              borderSide: BorderSide(
+                color: context.brandColors.borderColor,
+                width: 1,
+              ),
             ),
             focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: context.colors.onPrimary, width: 2),
+              borderSide: BorderSide(
+                color: context.brandColors.buttonPrimary,
+                width: 2,
+              ),
             ),
           ),
         ),
@@ -419,7 +464,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
         Text(
           'TIÊU ĐỀ',
           style: AppTextStyles.textContent3.copyWith(
-            color: context.colors.onPrimary,
+            color: context.brandColors.textPrimary,
             fontWeight: FontWeight.w600,
             letterSpacing: 1.2,
           ),
@@ -429,18 +474,27 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
           controller: _titleController,
           onChanged: (value) => _updateCourseInfo(notifier),
           style: AppTextStyles.textContent1.copyWith(
-            color: context.colors.onPrimary,
+            color: context.brandColors.searchBarText,
             fontWeight: FontWeight.w500,
           ),
           decoration: InputDecoration(
             border: UnderlineInputBorder(
-              borderSide: BorderSide(color: context.colors.onPrimary, width: 1),
+              borderSide: BorderSide(
+                color: context.brandColors.borderColor,
+                width: 1,
+              ),
             ),
             enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: context.colors.onPrimary, width: 1),
+              borderSide: BorderSide(
+                color: context.brandColors.borderColor,
+                width: 1,
+              ),
             ),
             focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: context.colors.onPrimary, width: 2),
+              borderSide: BorderSide(
+                color: context.brandColors.buttonPrimary,
+                width: 2,
+              ),
             ),
           ),
         ),
@@ -449,7 +503,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
           Text(
             'MÔ TẢ',
             style: AppTextStyles.textContent3.copyWith(
-              color: context.colors.onPrimary,
+              color: context.brandColors.textPrimary,
               fontWeight: FontWeight.w600,
               letterSpacing: 1.2,
             ),
@@ -459,28 +513,28 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
             controller: _descriptionController,
             onChanged: (value) => _updateCourseInfo(notifier),
             style: AppTextStyles.textContent2.copyWith(
-              color: context.colors.onPrimary,
+              color: context.brandColors.searchBarText,
             ),
             decoration: InputDecoration(
               hintText: 'Nhập mô tả cho khóa học...',
               hintStyle: AppTextStyles.textContent2.copyWith(
-                color: context.colors.onPrimary.withOpacity(0.6),
+                color: context.brandColors.searchBarText.withOpacity(0.6),
               ),
               border: UnderlineInputBorder(
                 borderSide: BorderSide(
-                  color: context.colors.onPrimary,
+                  color: context.brandColors.borderColor,
                   width: 1,
                 ),
               ),
               enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(
-                  color: context.colors.onPrimary,
+                  color: context.brandColors.borderColor,
                   width: 1,
                 ),
               ),
               focusedBorder: UnderlineInputBorder(
                 borderSide: BorderSide(
-                  color: context.colors.onPrimary,
+                  color: context.brandColors.buttonPrimary,
                   width: 2,
                 ),
               ),
@@ -518,19 +572,27 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
         alignment: Alignment.centerLeft,
         padding: AppPad.h16,
         decoration: BoxDecoration(
-          color: Colors.red,
+          color: context.brandColors.buttonDestructive,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Icon(Icons.delete, color: context.colors.onPrimary, size: 24),
+        child: Icon(
+          Icons.delete,
+          color: context.brandColors.textPrimary,
+          size: 24,
+        ),
       ),
       secondaryBackground: Container(
         alignment: Alignment.centerRight,
         padding: AppPad.h16,
         decoration: BoxDecoration(
-          color: Colors.red,
+          color: context.brandColors.buttonDestructive,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Icon(Icons.delete, color: context.colors.onPrimary, size: 24),
+        child: Icon(
+          Icons.delete,
+          color: context.brandColors.textPrimary,
+          size: 24,
+        ),
       ),
       onDismissed: (direction) {
         notifier.removeTerm(index);
@@ -539,10 +601,10 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
         margin: const EdgeInsets.only(bottom: 16),
         padding: AppPad.h16v20,
         decoration: BoxDecoration(
-          color: context.colors.primary.withOpacity(0.8),
+          color: context.brandColors.cardBackground,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: context.colors.onPrimary.withOpacity(0.2),
+            color: context.brandColors.borderColor.withOpacity(0.2),
             width: 1,
           ),
         ),
@@ -552,7 +614,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
             Text(
               'THUẬT NGỮ',
               style: AppTextStyles.textContent3.copyWith(
-                color: context.colors.onPrimary,
+                color: context.brandColors.textPrimary,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 1.2,
               ),
@@ -566,24 +628,24 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                 notifier.saveData();
               },
               style: AppTextStyles.textContent2.copyWith(
-                color: context.colors.onPrimary,
+                color: context.brandColors.searchBarText,
               ),
               decoration: InputDecoration(
                 border: UnderlineInputBorder(
                   borderSide: BorderSide(
-                    color: context.colors.onPrimary,
+                    color: context.brandColors.borderColor,
                     width: 1,
                   ),
                 ),
                 enabledBorder: UnderlineInputBorder(
                   borderSide: BorderSide(
-                    color: context.colors.onPrimary,
+                    color: context.brandColors.borderColor,
                     width: 1,
                   ),
                 ),
                 focusedBorder: UnderlineInputBorder(
                   borderSide: BorderSide(
-                    color: context.colors.onPrimary,
+                    color: context.brandColors.buttonPrimary,
                     width: 2,
                   ),
                 ),
@@ -594,7 +656,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
             Text(
               'ĐỊNH NGHĨA',
               style: AppTextStyles.textContent3.copyWith(
-                color: context.colors.onPrimary,
+                color: context.brandColors.textPrimary,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 1.2,
               ),
@@ -608,24 +670,24 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                 notifier.saveData();
               },
               style: AppTextStyles.textContent2.copyWith(
-                color: context.colors.onPrimary,
+                color: context.brandColors.searchBarText,
               ),
               decoration: InputDecoration(
                 border: UnderlineInputBorder(
                   borderSide: BorderSide(
-                    color: context.colors.onPrimary,
+                    color: context.brandColors.borderColor,
                     width: 1,
                   ),
                 ),
                 enabledBorder: UnderlineInputBorder(
                   borderSide: BorderSide(
-                    color: context.colors.onPrimary,
+                    color: context.brandColors.borderColor,
                     width: 1,
                   ),
                 ),
                 focusedBorder: UnderlineInputBorder(
                   borderSide: BorderSide(
-                    color: context.colors.onPrimary,
+                    color: context.brandColors.buttonPrimary,
                     width: 2,
                   ),
                 ),
@@ -636,7 +698,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
             Text(
               'CHỌN NGÔN NGỮ',
               style: AppTextStyles.textContent3.copyWith(
-                color: context.colors.onPrimary,
+                color: context.brandColors.textPrimary,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 1.2,
               ),
@@ -650,7 +712,10 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                 padding: AppPad.v12,
                 decoration: BoxDecoration(
                   border: Border(
-                    bottom: BorderSide(color: Colors.blue, width: 1),
+                    bottom: BorderSide(
+                      color: context.brandColors.buttonPrimary,
+                      width: 1,
+                    ),
                   ),
                 ),
                 child: Row(
@@ -659,10 +724,14 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                     Text(
                       term.language,
                       style: AppTextStyles.textContent2.copyWith(
-                        color: Colors.blue,
+                        color: context.brandColors.buttonPrimary,
                       ),
                     ),
-                    Icon(Icons.arrow_drop_down, color: Colors.blue, size: 20),
+                    Icon(
+                      Icons.arrow_drop_down,
+                      color: context.brandColors.buttonPrimary,
+                      size: 20,
+                    ),
                   ],
                 ),
               ),
@@ -728,9 +797,9 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
   ) {
     if (parsedTerms.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Không có dữ liệu để import'),
-          backgroundColor: Colors.orange,
+        SnackBar(
+          content: const Text('Không có dữ liệu để import'),
+          backgroundColor: context.brandColors.warning,
         ),
       );
       return;
@@ -754,7 +823,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Đã import ${parsedTerms.length} thuật ngữ thành công!'),
-        backgroundColor: Colors.green,
+        backgroundColor: context.brandColors.progressValue,
       ),
     );
   }

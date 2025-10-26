@@ -76,9 +76,9 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
     // Check if user has entered any data
     if (_dataController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Vui lòng nhập dữ liệu trước khi import'),
-          backgroundColor: Colors.red,
+        SnackBar(
+          content: const Text('Vui lòng nhập dữ liệu trước khi import'),
+          backgroundColor: context.brandColors.buttonDestructive,
         ),
       );
       return;
@@ -93,7 +93,7 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
           content: Text(
             _parseResult?.errorMessage ?? 'Không thể parse dữ liệu',
           ),
-          backgroundColor: Colors.red,
+          backgroundColor: context.brandColors.buttonDestructive,
         ),
       );
       return;
@@ -149,7 +149,7 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
         Text(
           'Chép và dán dữ liệu ở đây (từ Word, Excel, Google Docs, v.v.)',
           style: AppTextStyles.textContent2.copyWith(
-            color: context.colors.onPrimary,
+            color: context.brandColors.textPrimary,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -157,10 +157,10 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
         Container(
           height: 200,
           decoration: BoxDecoration(
-            color: context.colors.primary.withOpacity(0.8),
+            color: context.brandColors.searchBarBackground,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: context.colors.onPrimary.withOpacity(0.2),
+              color: context.brandColors.borderColor.withOpacity(0.3),
               width: 1,
             ),
           ),
@@ -168,12 +168,12 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
             controller: _dataController,
             onChanged: (value) => _parseData(),
             style: AppTextStyles.textContent2.copyWith(
-              color: context.colors.onPrimary,
+              color: context.brandColors.searchBarText,
             ),
             decoration: InputDecoration(
               hintText: 'Dán dữ liệu...',
               hintStyle: AppTextStyles.textContent2.copyWith(
-                color: context.colors.onPrimary.withOpacity(0.6),
+                color: context.brandColors.searchBarText.withOpacity(0.6),
               ),
               border: InputBorder.none,
               contentPadding: AppPad.h16v12,
@@ -194,7 +194,7 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
         Text(
           'ĐỊNH DẠNG DỮ LIỆU',
           style: AppTextStyles.textContent3.copyWith(
-            color: context.colors.onPrimary,
+            color: context.brandColors.textPrimary,
             fontWeight: FontWeight.w600,
             letterSpacing: 1.2,
           ),
@@ -222,7 +222,7 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
         Text(
           'Giữa thuật ngữ và định nghĩa',
           style: AppTextStyles.textContent2.copyWith(
-            color: context.colors.onPrimary,
+            color: context.brandColors.textPrimary,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -256,7 +256,7 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
         Text(
           'Giữa các thẻ',
           style: AppTextStyles.textContent2.copyWith(
-            color: context.colors.onPrimary,
+            color: context.brandColors.textPrimary,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -310,12 +310,12 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
                         onChanged(newValue);
                       }
                     },
-                    activeColor: Colors.blue,
+                    activeColor: context.brandColors.buttonPrimary,
                   ),
                   Text(
                     label,
                     style: AppTextStyles.textContent2.copyWith(
-                      color: context.colors.onPrimary,
+                      color: context.brandColors.textPrimary,
                     ),
                   ),
                 ],
@@ -329,27 +329,36 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
                     controller: customController,
                     onChanged: onCustomChanged,
                     style: AppTextStyles.textContent2.copyWith(
-                      color: context.colors.onPrimary,
+                      color: context.brandColors.searchBarText,
                     ),
                     decoration: InputDecoration(
                       hintText: 'Nhập delimiter tùy chỉnh...',
                       hintStyle: AppTextStyles.textContent2.copyWith(
-                        color: context.colors.onPrimary.withOpacity(0.6),
+                        color: context.brandColors.searchBarText.withOpacity(
+                          0.6,
+                        ),
                       ),
                       border: UnderlineInputBorder(
                         borderSide: BorderSide(
-                          color: context.colors.onPrimary.withOpacity(0.3),
+                          color: context.brandColors.borderColor.withOpacity(
+                            0.3,
+                          ),
                           width: 1,
                         ),
                       ),
                       enabledBorder: UnderlineInputBorder(
                         borderSide: BorderSide(
-                          color: context.colors.onPrimary.withOpacity(0.3),
+                          color: context.brandColors.borderColor.withOpacity(
+                            0.3,
+                          ),
                           width: 1,
                         ),
                       ),
                       focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.blue, width: 2),
+                        borderSide: BorderSide(
+                          color: context.brandColors.buttonPrimary,
+                          width: 2,
+                        ),
                       ),
                     ),
                   ),
@@ -369,7 +378,7 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
         Text(
           'XEM TRƯỚC',
           style: AppTextStyles.textContent3.copyWith(
-            color: context.colors.onPrimary,
+            color: context.brandColors.textPrimary,
             fontWeight: FontWeight.w600,
             letterSpacing: 1.2,
           ),
@@ -379,18 +388,18 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
           width: double.infinity,
           padding: AppPad.h16v12,
           decoration: BoxDecoration(
-            color: context.colors.primary.withOpacity(0.8),
+            color: context.brandColors.cardBackground,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: context.colors.onPrimary.withOpacity(0.2),
+              color: context.brandColors.borderColor.withOpacity(0.2),
               width: 1,
             ),
           ),
           child:
               _isLoading
-                  ? const Center(
+                  ? Center(
                     child: CircularProgressIndicator(
-                      color: Colors.white,
+                      color: context.brandColors.textPrimary,
                       strokeWidth: 2,
                     ),
                   )
@@ -398,21 +407,21 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
                   ? Text(
                     'Chưa có dữ liệu để xem trước',
                     style: AppTextStyles.textContent2.copyWith(
-                      color: context.colors.onPrimary.withOpacity(0.6),
+                      color: context.brandColors.textSecondary,
                     ),
                   )
                   : _parseResult!.hasError
                   ? Text(
                     'Lỗi: ${_parseResult!.errorMessage}',
                     style: AppTextStyles.textContent2.copyWith(
-                      color: Colors.red,
+                      color: context.brandColors.buttonDestructive,
                     ),
                   )
                   : _parseResult!.terms.isEmpty
                   ? Text(
                     'Không tìm thấy thuật ngữ nào',
                     style: AppTextStyles.textContent2.copyWith(
-                      color: context.colors.onPrimary.withOpacity(0.6),
+                      color: context.brandColors.textSecondary,
                     ),
                   )
                   : Column(
@@ -421,7 +430,7 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
                       Text(
                         'Tìm thấy ${_parseResult!.terms.length} thuật ngữ:',
                         style: AppTextStyles.textContent2.copyWith(
-                          color: context.colors.onPrimary,
+                          color: context.brandColors.textPrimary,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -437,12 +446,12 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
                               margin: const EdgeInsets.only(bottom: 12),
                               padding: AppPad.h16v12,
                               decoration: BoxDecoration(
-                                color: context.colors.primary.withOpacity(0.8),
+                                color: context.brandColors.cardBackground
+                                    .withOpacity(0.8),
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: context.colors.onPrimary.withOpacity(
-                                    0.2,
-                                  ),
+                                  color: context.brandColors.borderColor
+                                      .withOpacity(0.2),
                                   width: 1,
                                 ),
                               ),
@@ -453,7 +462,7 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
                                     width: 24,
                                     height: 24,
                                     decoration: BoxDecoration(
-                                      color: Colors.blue,
+                                      color: context.brandColors.buttonPrimary,
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: Center(
@@ -461,7 +470,10 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
                                         '${index + 1}',
                                         style: AppTextStyles.textContent3
                                             .copyWith(
-                                              color: Colors.white,
+                                              color:
+                                                  context
+                                                      .brandColors
+                                                      .textPrimary,
                                               fontWeight: FontWeight.w600,
                                             ),
                                       ),
@@ -483,10 +495,10 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
                                                 style: AppTextStyles
                                                     .textContent3
                                                     .copyWith(
-                                                      color: context
-                                                          .colors
-                                                          .onPrimary
-                                                          .withOpacity(0.7),
+                                                      color:
+                                                          context
+                                                              .brandColors
+                                                              .textMuted,
                                                       fontWeight:
                                                           FontWeight.w500,
                                                     ),
@@ -497,7 +509,10 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
                                                 style: AppTextStyles
                                                     .textContent2
                                                     .copyWith(
-                                                      color: Colors.blue,
+                                                      color:
+                                                          context
+                                                              .brandColors
+                                                              .buttonPrimary,
                                                       fontWeight:
                                                           FontWeight.w600,
                                                     ),
@@ -517,10 +532,10 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
                                                 style: AppTextStyles
                                                     .textContent3
                                                     .copyWith(
-                                                      color: context
-                                                          .colors
-                                                          .onPrimary
-                                                          .withOpacity(0.7),
+                                                      color:
+                                                          context
+                                                              .brandColors
+                                                              .textMuted,
                                                       fontWeight:
                                                           FontWeight.w500,
                                                     ),
@@ -533,8 +548,8 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
                                                     .copyWith(
                                                       color:
                                                           context
-                                                              .colors
-                                                              .onPrimary,
+                                                              .brandColors
+                                                              .textPrimary,
                                                     ),
                                               ),
                                             ],
@@ -563,7 +578,7 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
         color: context.colors.primary,
         border: Border(
           top: BorderSide(
-            color: context.colors.onPrimary.withOpacity(0.2),
+            color: context.brandColors.borderColor.withOpacity(0.2),
             width: 1,
           ),
         ),
@@ -574,8 +589,8 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
             child: ElevatedButton(
               onPressed: () => Navigator.of(context).pop(),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.grey[700],
-                foregroundColor: Colors.white,
+                backgroundColor: context.brandColors.buttonSecondary,
+                foregroundColor: context.brandColors.textPrimary,
                 padding: AppPad.v12,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
@@ -589,8 +604,8 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
             child: ElevatedButton(
               onPressed: _onImport,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
+                backgroundColor: context.brandColors.buttonPrimary,
+                foregroundColor: context.brandColors.textPrimary,
                 padding: AppPad.v12,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
