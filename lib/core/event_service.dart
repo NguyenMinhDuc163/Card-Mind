@@ -15,7 +15,7 @@ class EventService {
   /// Stream để lắng nghe các event liên quan đến khóa học
   Stream<CourseEvent> get courseEvents => _courseEventController.stream;
 
-  /// Stream để lắng nghe các event liên quan đến lớp học
+  /// Stream để lắng nghe các event liên quan đến Chủ đề
   Stream<ClassEvent> get classEvents => _classEventController.stream;
 
   /// Emit event khi có thay đổi về khóa học
@@ -23,7 +23,7 @@ class EventService {
     _courseEventController.add(event);
   }
 
-  /// Emit event khi có thay đổi về lớp học
+  /// Emit event khi có thay đổi về Chủ đề
   void emitClassEvent(ClassEvent event) {
     _classEventController.add(event);
   }
@@ -38,7 +38,7 @@ class EventService {
 /// Các loại event liên quan đến khóa học
 enum CourseEventType { courseCreated, courseUpdated, courseDeleted }
 
-/// Các loại event liên quan đến lớp học
+/// Các loại event liên quan đến Chủ đề
 enum ClassEventType { classCreated, classUpdated, classDeleted }
 
 /// Event object cho khóa học
@@ -51,7 +51,7 @@ class CourseEvent {
     : timestamp = timestamp ?? DateTime.now();
 }
 
-/// Event object cho lớp học
+/// Event object cho Chủ đề
 class ClassEvent {
   final ClassEventType type;
   final String? classId;

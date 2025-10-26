@@ -124,7 +124,7 @@ class GlobalSearchNotifier extends ChangeNotifier {
                 title: className,
                 subtitle: '$totalStudents học sinh • Giảng viên: $instructor',
                 description: description,
-                category: 'Lớp học',
+                category: 'Chủ đề',
                 icon: Icons.class_,
               ),
             );

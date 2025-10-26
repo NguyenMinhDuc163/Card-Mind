@@ -72,7 +72,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
                 color: context.brandColors.searchBarText,
               ),
               decoration: InputDecoration(
-                hintText: 'Tìm kiếm học phần, lớp học, thẻ chưa học...',
+                hintText: 'Tìm kiếm học phần, Chủ đề, thẻ chưa học...',
                 hintStyle: AppTextStyles.textContent2.copyWith(
                   color: context.brandColors.searchBarText.withOpacity(0.7),
                 ),
@@ -165,7 +165,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Tìm kiếm trong học phần, lớp học và thẻ chưa học',
+            'Tìm kiếm trong học phần, Chủ đề và thẻ chưa học',
             style: AppTextStyles.textContent3.copyWith(
               color: context.brandColors.searchBarText.withOpacity(0.5),
             ),
@@ -308,7 +308,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
       case SearchResultType.course:
         return 'Học phần';
       case SearchResultType.classroom:
-        return 'Lớp học';
+        return 'Chủ đề';
       case SearchResultType.bookmark:
         return 'Thẻ chưa học';
     }

@@ -165,14 +165,14 @@ class SampleDataService {
     await LocalStorageHelper.setValue('course_keys', courseKeys);
   }
 
-  /// Tạo 3 lớp học mẫu về tiếng Anh
+  /// Tạo 3 Chủ đề mẫu về tiếng Anh
   static Future<void> _createSampleClasses() async {
     final now = DateTime.now();
     final sampleClasses = [
       {
         'id': 'sample_class_1',
-        'className': 'Lớp Tiếng Anh Cơ Bản',
-        'description': 'Lớp học từ vựng tiếng Anh cơ bản cho người mới bắt đầu',
+        'className': 'Chủ đề Tiếng Anh Cơ Bản',
+        'description': 'Chủ đề từ vựng tiếng Anh cơ bản cho người mới bắt đầu',
         'instructor': 'Cô Sarah',
         'totalStudents': 20,
         'createdAt': now.toIso8601String(),
@@ -182,7 +182,7 @@ class SampleDataService {
       },
       {
         'id': 'sample_class_2',
-        'className': 'Lớp Màu Sắc & Hình Dạng',
+        'className': 'Chủ đề Màu Sắc & Hình Dạng',
         'description': 'Học từ vựng về màu sắc và hình dạng trong tiếng Anh',
         'instructor': 'Thầy John',
         'totalStudents': 15,
@@ -193,7 +193,7 @@ class SampleDataService {
       },
       {
         'id': 'sample_class_3',
-        'className': 'Lớp Động Vật & Thiên Nhiên',
+        'className': 'Chủ đề Động Vật & Thiên Nhiên',
         'description': 'Khám phá thế giới động vật qua tiếng Anh',
         'instructor': 'Cô Emma',
         'totalStudents': 18,

@@ -64,7 +64,7 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
     try {
       final classData = notifier.classes.firstWhere(
         (c) => c.id == classId,
-        orElse: () => throw Exception('Không tìm thấy lớp học'),
+        orElse: () => throw Exception('Không tìm thấy Chủ đề'),
       );
 
       _classData = classData;
@@ -134,14 +134,14 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
           (context) => AlertDialog(
             backgroundColor: context.colors.primary,
             title: Text(
-              'Xóa lớp học',
+              'Xóa Chủ đề',
               style: AppTextStyles.textContent1.copyWith(
                 color: context.colors.onPrimary,
                 fontWeight: FontWeight.w600,
               ),
             ),
             content: Text(
-              'Bạn có chắc chắn muốn xóa lớp học "${_classData?.className}"?',
+              'Bạn có chắc chắn muốn xóa Chủ đề "${_classData?.className}"?',
               style: AppTextStyles.textContent2.copyWith(
                 color: context.colors.onPrimary.withOpacity(0.8),
               ),
@@ -165,7 +165,7 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
                     Navigator.pop(context);
                     ScaffoldMessenger.of(
                       context,
-                    ).showSnackBar(const SnackBar(content: Text('Đã xóa lớp học')));
+                    ).showSnackBar(const SnackBar(content: Text('Đã xóa Chủ đề')));
                   }
                 },
                 style: ElevatedButton.styleFrom(
@@ -214,7 +214,7 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
       return FunctionScreenTemplate(
         backgroundColor: context.colors.primary,
         screen: const Center(
-          child: Text('Không tìm thấy lớp học', style: TextStyle(color: Colors.white70)),
+          child: Text('Không tìm thấy Chủ đề', style: TextStyle(color: Colors.white70)),
         ),
       );
     }
@@ -244,7 +244,7 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
                 children: [
                   Icon(Icons.delete, color: Colors.red, size: 18),
                   SizedBox(width: 8),
-                  Text('Xóa lớp học'),
+                  Text('Xóa Chủ đề'),
                 ],
               ),
             ),
@@ -333,7 +333,7 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Học phần trong lớp',
+                          'Học phần trong Chủ đề',
                           style: AppTextStyles.textContent1.copyWith(
                             color: context.colors.onPrimary,
                             fontWeight: FontWeight.w600,
@@ -385,7 +385,7 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              'Thêm học phần vào lớp học này',
+                              'Thêm học phần vào Chủ đề này',
                               style: AppTextStyles.textContent3.copyWith(
                                 color: context.colors.onPrimary.withOpacity(0.5),
                               ),
@@ -572,7 +572,7 @@ class _AddContentBottomSheetState extends State<_AddContentBottomSheet> {
           const SizedBox(height: 24),
 
           Text(
-            'Thêm học phần vào lớp',
+            'Thêm học phần vào Chủ đề',
             style: AppTextStyles.textHeader3.copyWith(
               color: context.colors.onPrimary,
               fontWeight: FontWeight.w600,

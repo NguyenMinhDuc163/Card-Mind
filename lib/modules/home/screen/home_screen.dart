@@ -121,10 +121,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                       ),
-                      Icon(
-                        Icons.more_vert,
-                        color: context.brandColors.searchBarIcon,
-                      ),
                     ],
                   ),
                 ],
@@ -232,10 +228,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                             ),
                                       ),
                                     ),
-                                    Icon(
-                                      Icons.more_vert,
-                                      color: context.brandColors.searchBarIcon,
-                                      size: 18,
+                                    GestureDetector(
+                                      onTap:
+                                          () => _showDeleteCourseDialog(
+                                            context,
+                                            course.id,
+                                            course.title,
+                                          ),
+                                      child: Icon(
+                                        Icons.more_vert,
+                                        color:
+                                            context.brandColors.searchBarIcon,
+                                        size: 18,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -251,6 +256,24 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 16)),
+          SliverPadding(
+            padding: AppPad.h16,
+            sliver: SliverToBoxAdapter(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Các chủ đề học tập',
+                      style: AppTextStyles.textHeader3.copyWith(
+                        color: context.brandColors.textPrimary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 12)),
           Consumer<HomeNotifier>(
             builder: (context, notifier, child) {
               if (notifier.homeData.classes.isEmpty) {
@@ -310,9 +333,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
                                 const Spacer(),
-                                Icon(
-                                  Icons.more_vert,
-                                  color: context.brandColors.searchBarIcon,
+                                GestureDetector(
+                                  onTap:
+                                      () => _showDeleteClassDialog(
+                                        context,
+                                        classItem.id,
+                                        classItem.className,
+                                      ),
+                                  child: Icon(
+                                    Icons.more_vert,
+                                    color: context.brandColors.searchBarIcon,
+                                  ),
                                 ),
                               ],
                             ),
@@ -386,5 +417,243 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
     );
+  }
+
+  void _showDeleteCourseDialog(
+    BuildContext context,
+    String courseId,
+    String courseTitle,
+  ) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: context.brandColors.cardBackground,
+          title: Row(
+            children: [
+              Icon(
+                Icons.delete_outline,
+                color: context.brandColors.buttonDestructive,
+                size: 24,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Xóa học phần',
+                style: TextStyle(color: context.brandColors.textPrimary),
+              ),
+            ],
+          ),
+          content: Text(
+            'Bạn có chắc chắn muốn xóa học phần "$courseTitle"?\n\nHành động này không thể hoàn tác và sẽ xóa tất cả dữ liệu liên quan.',
+            style: TextStyle(color: context.brandColors.textSecondary),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                'Hủy',
+                style: TextStyle(color: context.brandColors.textSecondary),
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                await _deleteCourse(context, courseId, courseTitle);
+              },
+              child: Text(
+                'Xóa',
+                style: TextStyle(color: context.brandColors.buttonDestructive),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _deleteCourse(
+    BuildContext context,
+    String courseId,
+    String courseTitle,
+  ) async {
+    final notifier = Provider.of<HomeNotifier>(context, listen: false);
+
+    // Hiển thị loading
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: context.brandColors.cardBackground,
+          content: Row(
+            children: [
+              CircularProgressIndicator(
+                color: context.brandColors.buttonPrimary,
+              ),
+              const SizedBox(width: 16),
+              Text(
+                'Đang xóa học phần...',
+                style: TextStyle(color: context.brandColors.textPrimary),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+
+    try {
+      final success = await notifier.deleteCourse(courseId);
+
+      // Đóng loading dialog
+      Navigator.of(context).pop();
+
+      if (success) {
+        // Hiển thị thông báo thành công
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Đã xóa học phần "$courseTitle" thành công'),
+            backgroundColor: context.brandColors.progressValue,
+          ),
+        );
+      } else {
+        // Hiển thị thông báo lỗi
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Không thể xóa học phần "$courseTitle"'),
+            backgroundColor: context.brandColors.buttonDestructive,
+          ),
+        );
+      }
+    } catch (e) {
+      // Đóng loading dialog
+      Navigator.of(context).pop();
+
+      // Hiển thị thông báo lỗi
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Có lỗi xảy ra khi xóa học phần: $e'),
+          backgroundColor: context.brandColors.buttonDestructive,
+        ),
+      );
+    }
+  }
+
+  void _showDeleteClassDialog(
+    BuildContext context,
+    String classId,
+    String className,
+  ) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: context.brandColors.cardBackground,
+          title: Row(
+            children: [
+              Icon(
+                Icons.delete_outline,
+                color: context.brandColors.buttonDestructive,
+                size: 24,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Xóa Chủ đề học',
+                style: TextStyle(color: context.brandColors.textPrimary),
+              ),
+            ],
+          ),
+          content: Text(
+            'Bạn có chắc chắn muốn xóa Chủ đề học "$className"?\n\nHành động này không thể hoàn tác.',
+            style: TextStyle(color: context.brandColors.textSecondary),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                'Hủy',
+                style: TextStyle(color: context.brandColors.textSecondary),
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                await _deleteClass(context, classId, className);
+              },
+              child: Text(
+                'Xóa',
+                style: TextStyle(color: context.brandColors.buttonDestructive),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _deleteClass(
+    BuildContext context,
+    String classId,
+    String className,
+  ) async {
+    final notifier = Provider.of<HomeNotifier>(context, listen: false);
+
+    // Hiển thị loading
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: context.brandColors.cardBackground,
+          content: Row(
+            children: [
+              CircularProgressIndicator(
+                color: context.brandColors.buttonPrimary,
+              ),
+              const SizedBox(width: 16),
+              Text(
+                'Đang xóa Chủ đề học...',
+                style: TextStyle(color: context.brandColors.textPrimary),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+
+    try {
+      final success = await notifier.deleteClass(classId);
+
+      // Đóng loading dialog
+      Navigator.of(context).pop();
+
+      if (success) {
+        // Hiển thị thông báo thành công
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Đã xóa Chủ đề học "$className" thành công'),
+            backgroundColor: context.brandColors.progressValue,
+          ),
+        );
+      } else {
+        // Hiển thị thông báo lỗi
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Không thể xóa Chủ đề học "$className"'),
+            backgroundColor: context.brandColors.buttonDestructive,
+          ),
+        );
+      }
+    } catch (e) {
+      // Đóng loading dialog
+      Navigator.of(context).pop();
+
+      // Hiển thị thông báo lỗi
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Có lỗi xảy ra khi xóa Chủ đề học: $e'),
+          backgroundColor: context.brandColors.buttonDestructive,
+        ),
+      );
+    }
   }
 }

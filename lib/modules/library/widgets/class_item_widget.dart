@@ -109,7 +109,7 @@ class ClassItemWidget extends StatelessWidget {
                             children: [
                               Icon(Icons.delete, color: Colors.red, size: 18),
                               SizedBox(width: 8),
-                              Text('Xóa lớp học'),
+                              Text('Xóa Chủ đề'),
                             ],
                           ),
                         ),

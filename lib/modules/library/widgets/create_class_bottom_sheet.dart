@@ -28,7 +28,7 @@ class _CreateClassBottomSheetState extends State<CreateClassBottomSheet> {
     if (_classNameController.text.trim().isEmpty) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Vui lòng nhập tên lớp học')));
+      ).showSnackBar(const SnackBar(content: Text('Vui lòng nhập tên Chủ đề')));
       return;
     }
 
@@ -50,7 +50,7 @@ class _CreateClassBottomSheetState extends State<CreateClassBottomSheet> {
     Navigator.pop(context);
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(const SnackBar(content: Text('Đã tạo lớp học thành công!')));
+    ).showSnackBar(const SnackBar(content: Text('Đã tạo Chủ đề thành công!')));
   }
 
   @override
@@ -80,7 +80,7 @@ class _CreateClassBottomSheetState extends State<CreateClassBottomSheet> {
               const SizedBox(height: 24),
 
               Text(
-                'Tạo lớp học mới',
+                'Tạo Chủ đề mới',
                 style: AppTextStyles.textHeader3.copyWith(
                   color: context.colors.onPrimary,
                   fontWeight: FontWeight.w600,
@@ -89,7 +89,7 @@ class _CreateClassBottomSheetState extends State<CreateClassBottomSheet> {
               const SizedBox(height: 24),
 
               Text(
-                'Tên lớp học',
+                'Tên Chủ đề',
                 style: AppTextStyles.textContent2.copyWith(
                   color: context.colors.onPrimary,
                   fontWeight: FontWeight.w500,
@@ -100,7 +100,7 @@ class _CreateClassBottomSheetState extends State<CreateClassBottomSheet> {
                 controller: _classNameController,
                 style: AppTextStyles.textContent2.copyWith(color: context.colors.onPrimary),
                 decoration: InputDecoration(
-                  hintText: 'Nhập tên lớp học...',
+                  hintText: 'Nhập tên Chủ đề...',
                   hintStyle: AppTextStyles.textContent2.copyWith(
                     color: context.colors.onPrimary.withOpacity(0.6),
                   ),
@@ -128,7 +128,7 @@ class _CreateClassBottomSheetState extends State<CreateClassBottomSheet> {
                 style: AppTextStyles.textContent2.copyWith(color: context.colors.onPrimary),
                 maxLines: 3,
                 decoration: InputDecoration(
-                  hintText: 'Nhập mô tả cho lớp học...',
+                  hintText: 'Nhập mô tả cho Chủ đề...',
                   hintStyle: AppTextStyles.textContent2.copyWith(
                     color: context.colors.onPrimary.withOpacity(0.6),
                   ),
@@ -292,7 +292,7 @@ class _CreateClassBottomSheetState extends State<CreateClassBottomSheet> {
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       ),
                       child: Text(
-                        'Tạo lớp học',
+                        'Tạo Chủ đề',
                         style: AppTextStyles.textContent2.copyWith(
                           color: context.colors.primary,
                           fontWeight: FontWeight.w600,

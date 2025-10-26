@@ -22,7 +22,7 @@ class ClassService implements IClassInterface {
         allClasses.map((classData) => classData.toJson()).toList(),
       );
     } catch (e) {
-      throw Exception('Không thể lưu lớp học: $e');
+      throw Exception('Không thể lưu Chủ đề: $e');
     }
   }
 
@@ -32,7 +32,7 @@ class ClassService implements IClassInterface {
       final allClasses = await getAllClasses();
       return allClasses.firstWhere(
         (classData) => classData.id == classId,
-        orElse: () => throw Exception('Không tìm thấy lớp học'),
+        orElse: () => throw Exception('Không tìm thấy Chủ đề'),
       );
     } catch (e) {
       return null;
@@ -50,7 +50,7 @@ class ClassService implements IClassInterface {
         allClasses.map((classData) => classData.toJson()).toList(),
       );
     } catch (e) {
-      throw Exception('Không thể xóa lớp học: $e');
+      throw Exception('Không thể xóa Chủ đề: $e');
     }
   }
 
@@ -63,7 +63,7 @@ class ClassService implements IClassInterface {
       }
       return [];
     } catch (e) {
-      throw Exception('Không thể tải danh sách lớp học: $e');
+      throw Exception('Không thể tải danh sách Chủ đề: $e');
     }
   }
 
@@ -86,7 +86,7 @@ class ClassService implements IClassInterface {
           )
           .toList();
     } catch (e) {
-      throw Exception('Không thể tìm kiếm lớp học: $e');
+      throw Exception('Không thể tìm kiếm Chủ đề: $e');
     }
   }
 }

@@ -89,7 +89,7 @@ class ClassNotifier extends ChangeNotifier {
       print('DEBUG: _classes length: ${_classes.length}');
     } catch (e) {
       print('DEBUG: Error in _loadClasses: $e');
-      throw Exception('Không thể load lớp học: $e');
+      throw Exception('Không thể load Chủ đề: $e');
     }
   }
 
@@ -159,7 +159,7 @@ class ClassNotifier extends ChangeNotifier {
         ),
       );
     } catch (e) {
-      _setError('Không thể lưu lớp học: $e');
+      _setError('Không thể lưu Chủ đề: $e');
     }
   }
 
@@ -180,7 +180,7 @@ class ClassNotifier extends ChangeNotifier {
         ClassEvent(type: ClassEventType.classDeleted, classId: classId),
       );
     } catch (e) {
-      _setError('Không thể xóa lớp học: $e');
+      _setError('Không thể xóa Chủ đề: $e');
     }
   }
 

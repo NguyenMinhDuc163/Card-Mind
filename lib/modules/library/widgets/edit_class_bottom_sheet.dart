@@ -38,7 +38,7 @@ class _EditClassBottomSheetState extends State<EditClassBottomSheet> {
     if (_classNameController.text.trim().isEmpty) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Vui lòng nhập tên lớp học')));
+      ).showSnackBar(const SnackBar(content: Text('Vui lòng nhập tên Chủ đề')));
       return;
     }
 
@@ -56,7 +56,7 @@ class _EditClassBottomSheetState extends State<EditClassBottomSheet> {
     Navigator.pop(context);
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(const SnackBar(content: Text('Đã cập nhật lớp học!')));
+    ).showSnackBar(const SnackBar(content: Text('Đã cập nhật Chủ đề!')));
   }
 
   @override
@@ -86,7 +86,7 @@ class _EditClassBottomSheetState extends State<EditClassBottomSheet> {
               const SizedBox(height: 24),
 
               Text(
-                'Chỉnh sửa lớp học',
+                'Chỉnh sửa Chủ đề',
                 style: AppTextStyles.textHeader3.copyWith(
                   color: context.colors.onPrimary,
                   fontWeight: FontWeight.w600,
@@ -95,7 +95,7 @@ class _EditClassBottomSheetState extends State<EditClassBottomSheet> {
               const SizedBox(height: 24),
 
               Text(
-                'Tên lớp học',
+                'Tên Chủ đề',
                 style: AppTextStyles.textContent2.copyWith(
                   color: context.colors.onPrimary,
                   fontWeight: FontWeight.w500,
@@ -106,7 +106,7 @@ class _EditClassBottomSheetState extends State<EditClassBottomSheet> {
                 controller: _classNameController,
                 style: AppTextStyles.textContent2.copyWith(color: context.colors.onPrimary),
                 decoration: InputDecoration(
-                  hintText: 'Nhập tên lớp học...',
+                  hintText: 'Nhập tên Chủ đề...',
                   hintStyle: AppTextStyles.textContent2.copyWith(
                     color: context.colors.onPrimary.withOpacity(0.6),
                   ),
@@ -134,7 +134,7 @@ class _EditClassBottomSheetState extends State<EditClassBottomSheet> {
                 style: AppTextStyles.textContent2.copyWith(color: context.colors.onPrimary),
                 maxLines: 3,
                 decoration: InputDecoration(
-                  hintText: 'Nhập mô tả cho lớp học...',
+                  hintText: 'Nhập mô tả cho Chủ đề...',
                   hintStyle: AppTextStyles.textContent2.copyWith(
                     color: context.colors.onPrimary.withOpacity(0.6),
                   ),
@@ -150,7 +150,7 @@ class _EditClassBottomSheetState extends State<EditClassBottomSheet> {
               const SizedBox(height: 24),
 
               Text(
-                'Học phần trong lớp',
+                'Học phần trong Chủ đề',
                 style: AppTextStyles.textContent2.copyWith(
                   color: context.colors.onPrimary,
                   fontWeight: FontWeight.w500,

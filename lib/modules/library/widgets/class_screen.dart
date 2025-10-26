@@ -118,14 +118,14 @@ class _ClassScreenState extends State<ClassScreen> {
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              'Chưa có lớp học nào',
+                              'Chưa có Chủ đề nào',
                               style: AppTextStyles.textContent2.copyWith(
                                 color: context.colors.onPrimary.withOpacity(0.7),
                               ),
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              'Tạo lớp học đầu tiên của bạn',
+                              'Tạo Chủ đề đầu tiên của bạn',
                               style: AppTextStyles.textContent3.copyWith(
                                 color: context.colors.onPrimary.withOpacity(0.5),
                               ),
@@ -135,7 +135,7 @@ class _ClassScreenState extends State<ClassScreen> {
                       )
                     else
                       DataGroupWidget(
-                        date: 'Lớp học của tôi',
+                        date: 'Chủ đề của tôi',
                         items:
                             notifier.classes.reversed.map((classData) {
                               return ClassItemWidget(
@@ -176,14 +176,14 @@ class _ClassScreenState extends State<ClassScreen> {
           (context) => AlertDialog(
             backgroundColor: context.colors.primary,
             title: Text(
-              'Xóa lớp học',
+              'Xóa Chủ đề',
               style: AppTextStyles.textContent1.copyWith(
                 color: context.colors.onPrimary,
                 fontWeight: FontWeight.w600,
               ),
             ),
             content: Text(
-              'Bạn có chắc chắn muốn xóa lớp học này?',
+              'Bạn có chắc chắn muốn xóa Chủ đề này?',
               style: AppTextStyles.textContent2.copyWith(
                 color: context.colors.onPrimary.withOpacity(0.8),
               ),
@@ -205,7 +205,7 @@ class _ClassScreenState extends State<ClassScreen> {
                   Navigator.pop(context);
                   ScaffoldMessenger.of(
                     context,
-                  ).showSnackBar(const SnackBar(content: Text('Đã xóa lớp học')));
+                  ).showSnackBar(const SnackBar(content: Text('Đã xóa Chủ đề')));
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
