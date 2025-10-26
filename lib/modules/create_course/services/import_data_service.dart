@@ -11,11 +11,15 @@ class ImportDataService {
       final termDefinitionDelimiter = config.effectiveTermDefinitionDelimiter;
 
       if (cardDelimiter.isEmpty) {
-        return ParsedDataResult.error('Delimiter giữa các thẻ không được để trống');
+        return ParsedDataResult.error(
+          'Delimiter giữa các thẻ không được để trống',
+        );
       }
 
       if (termDefinitionDelimiter.isEmpty) {
-        return ParsedDataResult.error('Delimiter giữa thuật ngữ và định nghĩa không được để trống');
+        return ParsedDataResult.error(
+          'Delimiter giữa thuật ngữ và định nghĩa không được để trống',
+        );
       }
 
       final cards = _splitCards(rawData, cardDelimiter);
@@ -50,25 +54,40 @@ class ImportDataService {
     if (delimiter == '\n') {
       return data.split('\n').where((line) => line.trim().isNotEmpty).toList();
     } else {
-      return data.split(delimiter).where((card) => card.trim().isNotEmpty).toList();
+      return data
+          .split(delimiter)
+          .where((card) => card.trim().isNotEmpty)
+          .toList();
     }
   }
 
   static ParsedTerm? _parseTerm(String card, String delimiter, int cardNumber) {
-    final parts = card.split(delimiter);
+    List<String> parts;
+
+    // Nếu delimiter là tab (\t), thì nhận cả tab VÀ nhiều dấu cách liên tiếp
+    if (delimiter == '\t') {
+      // Dùng regex để split theo tab HOẶC nhiều dấu cách liên tiếp
+      parts = card.split(RegExp(r'\t|\s{2,}'));
+    } else {
+      parts = card.split(delimiter);
+    }
 
     if (parts.length < 2) {
       return null;
     }
 
     final term = parts[0].trim();
-    final definition = parts.sublist(1).join(delimiter).trim();
+    final definition = parts.sublist(1).join(' ').trim();
 
     if (term.isEmpty || definition.isEmpty) {
       return null;
     }
 
-    return ParsedTerm(term: term, definition: definition, language: 'Tiếng Việt');
+    return ParsedTerm(
+      term: term,
+      definition: definition,
+      language: 'Tiếng Việt',
+    );
   }
 
   static String? validateConfig(ImportDataConfig config) {
@@ -77,7 +96,8 @@ class ImportDataService {
       return 'Vui lòng nhập delimiter tùy chỉnh cho thuật ngữ và định nghĩa';
     }
 
-    if (config.cardDelimiter == 'custom' && config.customCardDelimiter.trim().isEmpty) {
+    if (config.cardDelimiter == 'custom' &&
+        config.customCardDelimiter.trim().isEmpty) {
       return 'Vui lòng nhập delimiter tùy chỉnh cho các thẻ';
     }
 

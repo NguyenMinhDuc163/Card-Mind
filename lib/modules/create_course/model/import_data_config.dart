@@ -28,7 +28,8 @@ class ImportDataConfig extends Equatable {
     String? customCardDelimiter,
   }) {
     return ImportDataConfig(
-      termDefinitionDelimiter: termDefinitionDelimiter ?? this.termDefinitionDelimiter,
+      termDefinitionDelimiter:
+          termDefinitionDelimiter ?? this.termDefinitionDelimiter,
       cardDelimiter: cardDelimiter ?? this.cardDelimiter,
       customTermDefinitionDelimiter:
           customTermDefinitionDelimiter ?? this.customTermDefinitionDelimiter,
@@ -53,7 +54,7 @@ class ImportDataConfig extends Equatable {
   String _getDelimiterValue(String delimiter) {
     switch (delimiter) {
       case 'tab':
-        return '\t';
+        return '\t'; // Tab character
       case 'comma':
         return ',';
       case 'semicolon':
@@ -66,7 +67,10 @@ class ImportDataConfig extends Equatable {
   }
 
   factory ImportDataConfig.defaultConfig() {
-    return const ImportDataConfig(termDefinitionDelimiter: 'tab', cardDelimiter: 'newline');
+    return const ImportDataConfig(
+      termDefinitionDelimiter: 'tab',
+      cardDelimiter: 'newline',
+    );
   }
 }
 
@@ -75,7 +79,11 @@ class ParsedDataResult extends Equatable {
   final String? errorMessage;
   final bool hasError;
 
-  const ParsedDataResult({required this.terms, this.errorMessage, this.hasError = false});
+  const ParsedDataResult({
+    required this.terms,
+    this.errorMessage,
+    this.hasError = false,
+  });
 
   @override
   List<Object?> get props => [terms, errorMessage, hasError];
@@ -85,7 +93,11 @@ class ParsedDataResult extends Equatable {
   }
 
   factory ParsedDataResult.error(String errorMessage) {
-    return ParsedDataResult(terms: [], errorMessage: errorMessage, hasError: true);
+    return ParsedDataResult(
+      terms: [],
+      errorMessage: errorMessage,
+      hasError: true,
+    );
   }
 }
 
@@ -94,7 +106,11 @@ class ParsedTerm extends Equatable {
   final String definition;
   final String language;
 
-  const ParsedTerm({required this.term, required this.definition, this.language = 'Tiếng Việt'});
+  const ParsedTerm({
+    required this.term,
+    required this.definition,
+    this.language = 'Tiếng Việt',
+  });
 
   @override
   List<Object?> get props => [term, definition, language];

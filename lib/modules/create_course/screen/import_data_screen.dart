@@ -260,7 +260,7 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
             fontWeight: FontWeight.w500,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 30),
         _buildDelimiterOptions(
           currentValue: _config.cardDelimiter,
           options: const [
@@ -311,6 +311,14 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
                       }
                     },
                     activeColor: context.brandColors.buttonPrimary,
+                    fillColor: MaterialStateProperty.resolveWith<Color>((
+                      states,
+                    ) {
+                      if (states.contains(MaterialState.selected)) {
+                        return context.brandColors.buttonPrimary;
+                      }
+                      return context.brandColors.textMuted;
+                    }),
                   ),
                   Text(
                     label,
@@ -332,7 +340,7 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
                       color: context.brandColors.searchBarText,
                     ),
                     decoration: InputDecoration(
-                      hintText: 'Nhập delimiter tùy chỉnh...',
+                      hintText: 'Nhập ký tự...',
                       hintStyle: AppTextStyles.textContent2.copyWith(
                         color: context.brandColors.searchBarText.withOpacity(
                           0.6,
@@ -512,7 +520,7 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
                                                       color:
                                                           context
                                                               .brandColors
-                                                              .buttonPrimary,
+                                                              .textPrimary,
                                                       fontWeight:
                                                           FontWeight.w600,
                                                     ),
