@@ -15,10 +15,8 @@ class ThemeService {
         return ThemeMode.light;
       case 'dark':
         return ThemeMode.dark;
-      case 'system':
-        return ThemeMode.system;
       default:
-        return ThemeMode.system;
+        return ThemeMode.light; // Mặc định là light
     }
   }
 
@@ -26,7 +24,7 @@ class ThemeService {
     final String value = switch (mode) {
       ThemeMode.light => 'light',
       ThemeMode.dark => 'dark',
-      ThemeMode.system => 'system',
+      ThemeMode.system => 'light', // Nếu có system thì lưu thành light
     };
     await SpUtil.putString(_key, value);
   }
