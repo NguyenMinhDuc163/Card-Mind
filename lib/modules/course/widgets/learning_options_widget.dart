@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:card_mind/core/theme/theme_extensions.dart';
 
 enum LearningMode { flashcards, learn, test, match, blast, gravity, delete }
 
@@ -42,33 +43,38 @@ class LearningOptionsWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Chế độ học tập',
             style: TextStyle(
-              color: Colors.white,
+              color: context.brandColors.textPrimary,
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 16),
-          ...options.map((option) => _buildOptionItem(option)).toList(),
+          ...options
+              .map((option) => _buildOptionItem(context, option))
+              .toList(),
         ],
       ),
     );
   }
 
-  Widget _buildOptionItem(LearningOption option) {
+  Widget _buildOptionItem(BuildContext context, LearningOption option) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color:
             option.isDestructive
-                ? Colors.red.withOpacity(0.2)
-                : const Color(0xFF0E2B5C),
+                ? context.brandColors.buttonDestructive.withOpacity(0.2)
+                : context.brandColors.cardBackground,
         borderRadius: BorderRadius.circular(12),
         border:
             option.isDestructive
-                ? Border.all(color: Colors.red.withOpacity(0.3), width: 1)
+                ? Border.all(
+                  color: context.brandColors.buttonDestructive.withOpacity(0.3),
+                  width: 1,
+                )
                 : null,
       ),
       child: Material(
@@ -86,13 +92,18 @@ class LearningOptionsWidget extends StatelessWidget {
                   decoration: BoxDecoration(
                     color:
                         option.isDestructive
-                            ? Colors.red.withOpacity(0.2)
-                            : Colors.white.withOpacity(0.1),
+                            ? context.brandColors.buttonDestructive.withOpacity(
+                              0.2,
+                            )
+                            : context.brandColors.avatarBackground,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
                     option.icon,
-                    color: option.isDestructive ? Colors.red : Colors.white,
+                    color:
+                        option.isDestructive
+                            ? context.brandColors.buttonDestructive
+                            : context.brandColors.textPrimary,
                     size: 24,
                   ),
                 ),
@@ -105,7 +116,9 @@ class LearningOptionsWidget extends StatelessWidget {
                         option.title,
                         style: TextStyle(
                           color:
-                              option.isDestructive ? Colors.red : Colors.white,
+                              option.isDestructive
+                                  ? context.brandColors.buttonDestructive
+                                  : context.brandColors.textPrimary,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -116,8 +129,9 @@ class LearningOptionsWidget extends StatelessWidget {
                         style: TextStyle(
                           color:
                               option.isDestructive
-                                  ? Colors.red.withOpacity(0.7)
-                                  : Colors.white.withOpacity(0.7),
+                                  ? context.brandColors.buttonDestructive
+                                      .withOpacity(0.7)
+                                  : context.brandColors.textSecondary,
                           fontSize: 12,
                         ),
                       ),
@@ -130,8 +144,8 @@ class LearningOptionsWidget extends StatelessWidget {
                       : Icons.arrow_forward_ios,
                   color:
                       option.isDestructive
-                          ? Colors.red
-                          : Colors.white.withOpacity(0.5),
+                          ? context.brandColors.buttonDestructive
+                          : context.brandColors.textMuted,
                   size: 16,
                 ),
               ],

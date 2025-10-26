@@ -19,21 +19,23 @@ class TestResultScreen extends StatelessWidget {
 
         if (answers.isEmpty) {
           return FunctionScreenTemplate(
-            screen: const Scaffold(
-              backgroundColor: Color(0xFF0B1D3B),
+            screen: Scaffold(
+              backgroundColor: context.colors.primary,
               body: Center(
                 child: Text(
                   'Không có kết quả để hiển thị',
-                  style: TextStyle(color: Colors.white70),
+                  style: TextStyle(color: context.brandColors.textSecondary),
                 ),
               ),
             ),
           );
         }
 
-        final correctAnswers = answers.where((answer) => answer.isCorrect).length;
+        final correctAnswers =
+            answers.where((answer) => answer.isCorrect).length;
         final totalQuestions = answers.length;
-        final score = totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0.0;
+        final score =
+            totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0.0;
 
         return FunctionScreenTemplate(
           title: "Kết quả kiểm tra",
@@ -47,23 +49,32 @@ class TestResultScreen extends StatelessWidget {
                   width: double.infinity,
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF0E2B5C),
+                    color: context.brandColors.cardBackground,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.white.withOpacity(0.2)),
+                    border: Border.all(
+                      color: context.brandColors.borderColor.withOpacity(0.2),
+                    ),
                   ),
                   child: Column(
                     children: [
-                      const Icon(Icons.quiz, color: Colors.blue, size: 48),
+                      Icon(
+                        Icons.quiz,
+                        color: context.brandColors.buttonPrimary,
+                        size: 48,
+                      ),
                       const SizedBox(height: 16),
-                      const Text(
+                      Text(
                         'Điểm số của bạn',
-                        style: TextStyle(color: Colors.white70, fontSize: 16),
+                        style: TextStyle(
+                          color: context.brandColors.textSecondary,
+                          fontSize: 16,
+                        ),
                       ),
                       const SizedBox(height: 8),
                       Text(
                         '${correctAnswers}/${totalQuestions}',
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: context.brandColors.textPrimary,
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
                         ),
@@ -72,22 +83,26 @@ class TestResultScreen extends StatelessWidget {
                       Text(
                         '${score.toStringAsFixed(1)}%',
                         style: TextStyle(
-                          color: _getScoreColor(score),
+                          color: _getScoreColor(context, score),
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       const SizedBox(height: 16),
-                      _buildScoreMessage(score),
+                      _buildScoreMessage(context, score),
                     ],
                   ),
                 ),
 
                 const SizedBox(height: 24),
 
-                const Text(
+                Text(
                   'Chi tiết câu trả lời',
-                  style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    color: context.brandColors.textPrimary,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
 
                 const SizedBox(height: 16),
@@ -96,10 +111,16 @@ class TestResultScreen extends StatelessWidget {
                   final index = entry.key;
                   final answer = entry.value;
                   final question =
-                      notifier.questions.isNotEmpty && index < notifier.questions.length
+                      notifier.questions.isNotEmpty &&
+                              index < notifier.questions.length
                           ? notifier.questions[index]
                           : null;
-                  return _buildAnswerDetail(index + 1, answer, question);
+                  return _buildAnswerDetail(
+                    context,
+                    index + 1,
+                    answer,
+                    question,
+                  );
                 }).toList(),
 
                 const SizedBox(height: 24),
@@ -113,10 +134,11 @@ class TestResultScreen extends StatelessWidget {
 
                           final courseId = notifier.courseId;
                           if (courseId != null) {
-                            final courseNotifier = Provider.of<CourseInfoNotifier>(
-                              context,
-                              listen: false,
-                            );
+                            final courseNotifier =
+                                Provider.of<CourseInfoNotifier>(
+                                  context,
+                                  listen: false,
+                                );
 
                             if (courseNotifier.flashcards.isNotEmpty) {
                               await notifier.initializeTest(
@@ -125,18 +147,24 @@ class TestResultScreen extends StatelessWidget {
                               );
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Không có dữ liệu để tạo bài kiểm tra'),
-                                  backgroundColor: Colors.red,
+                                SnackBar(
+                                  content: const Text(
+                                    'Không có dữ liệu để tạo bài kiểm tra',
+                                  ),
+                                  backgroundColor:
+                                      context.brandColors.buttonDestructive,
                                 ),
                               );
                               return;
                             }
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Không tìm thấy thông tin khóa học'),
-                                backgroundColor: Colors.red,
+                              SnackBar(
+                                content: const Text(
+                                  'Không tìm thấy thông tin khóa học',
+                                ),
+                                backgroundColor:
+                                    context.brandColors.buttonDestructive,
                               ),
                             );
                             return;
@@ -145,10 +173,13 @@ class TestResultScreen extends StatelessWidget {
                           Navigator.of(context).pop();
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
+                          backgroundColor: context.brandColors.buttonPrimary,
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
-                        child: const Text('Làm lại', style: TextStyle(color: Colors.white)),
+                        child: const Text(
+                          'Làm lại',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -159,10 +190,13 @@ class TestResultScreen extends StatelessWidget {
                           Navigator.of(context).pop();
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
+                          backgroundColor: context.brandColors.progressValue,
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
-                        child: const Text('Hoàn thành', style: TextStyle(color: Colors.white)),
+                        child: const Text(
+                          'Hoàn thành',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                     ),
                   ],
@@ -175,15 +209,26 @@ class TestResultScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAnswerDetail(int questionNumber, TestAnswer answer, TestQuestion? question) {
+  Widget _buildAnswerDetail(
+    BuildContext context,
+    int questionNumber,
+    TestAnswer answer,
+    TestQuestion? question,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: answer.isCorrect ? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1),
+        color:
+            answer.isCorrect
+                ? context.brandColors.progressValue.withOpacity(0.1)
+                : context.brandColors.buttonDestructive.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: answer.isCorrect ? Colors.green.withOpacity(0.3) : Colors.red.withOpacity(0.3),
+          color:
+              answer.isCorrect
+                  ? context.brandColors.progressValue.withOpacity(0.3)
+                  : context.brandColors.buttonDestructive.withOpacity(0.3),
         ),
       ),
       child: Row(
@@ -192,7 +237,10 @@ class TestResultScreen extends StatelessWidget {
             width: 32,
             height: 32,
             decoration: BoxDecoration(
-              color: answer.isCorrect ? Colors.green : Colors.red,
+              color:
+                  answer.isCorrect
+                      ? context.brandColors.progressValue
+                      : context.brandColors.buttonDestructive,
               shape: BoxShape.circle,
             ),
             child: Center(
@@ -210,8 +258,8 @@ class TestResultScreen extends StatelessWidget {
               children: [
                 Text(
                   'Câu $questionNumber',
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: context.brandColors.textPrimary,
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),
@@ -219,14 +267,17 @@ class TestResultScreen extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   'Đáp án của bạn: ${answer.selectedAnswer}',
-                  style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 14),
+                  style: TextStyle(
+                    color: context.brandColors.textSecondary,
+                    fontSize: 14,
+                  ),
                 ),
                 if (!answer.isCorrect && question != null) ...[
                   const SizedBox(height: 4),
                   Text(
                     'Đáp án đúng: ${question.correctAnswer}',
-                    style: const TextStyle(
-                      color: Colors.green,
+                    style: TextStyle(
+                      color: context.brandColors.progressValue,
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
@@ -240,22 +291,22 @@ class TestResultScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildScoreMessage(double score) {
+  Widget _buildScoreMessage(BuildContext context, double score) {
     String message;
     Color color;
 
     if (score >= 90) {
       message = 'Xuất sắc! Bạn đã nắm vững kiến thức.';
-      color = Colors.green;
+      color = context.brandColors.progressValue;
     } else if (score >= 70) {
       message = 'Tốt! Hãy tiếp tục cố gắng.';
-      color = Colors.blue;
+      color = context.brandColors.buttonPrimary;
     } else if (score >= 50) {
       message = 'Khá tốt! Cần ôn tập thêm.';
-      color = Colors.orange;
+      color = context.brandColors.warning;
     } else {
       message = 'Cần cố gắng hơn! Hãy ôn tập lại.';
-      color = Colors.red;
+      color = context.brandColors.buttonDestructive;
     }
 
     return Text(
@@ -265,10 +316,10 @@ class TestResultScreen extends StatelessWidget {
     );
   }
 
-  Color _getScoreColor(double score) {
-    if (score >= 90) return Colors.green;
-    if (score >= 70) return Colors.blue;
-    if (score >= 50) return Colors.orange;
-    return Colors.red;
+  Color _getScoreColor(BuildContext context, double score) {
+    if (score >= 90) return context.brandColors.progressValue;
+    if (score >= 70) return context.brandColors.buttonPrimary;
+    if (score >= 50) return context.brandColors.warning;
+    return context.brandColors.buttonDestructive;
   }
 }

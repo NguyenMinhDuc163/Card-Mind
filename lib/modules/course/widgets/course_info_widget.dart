@@ -13,7 +13,7 @@ class CourseInfoWidget extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: context.colors.secondary,
+        color: context.brandColors.cardBackground,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -21,8 +21,8 @@ class CourseInfoWidget extends StatelessWidget {
         children: [
           Text(
             'Thông tin cơ bản về ${course.title}',
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: context.brandColors.textPrimary,
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
@@ -34,7 +34,7 @@ class CourseInfoWidget extends StatelessWidget {
                 width: 32,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: Colors.blue,
+                  color: context.brandColors.buttonPrimary,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child:
@@ -45,43 +45,47 @@ class CourseInfoWidget extends StatelessWidget {
                             course.iconUrl!,
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) {
-                              return const Icon(
+                              return Icon(
                                 Icons.school,
-                                color: Colors.white,
+                                color: context.brandColors.textPrimary,
                                 size: 18,
                               );
                             },
                           ),
                         )
-                        : const Icon(
+                        : Icon(
                           Icons.school,
-                          color: Colors.white,
+                          color: context.brandColors.textPrimary,
                           size: 18,
                         ),
               ),
               const SizedBox(width: 12),
               Text(
                 course.title,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: context.brandColors.textPrimary,
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               const SizedBox(width: 8),
               if (course.isVerified)
-                const Icon(Icons.verified, color: Color(0xFF34C358), size: 16),
+                Icon(
+                  Icons.verified,
+                  color: context.brandColors.progressValue,
+                  size: 16,
+                ),
               const SizedBox(width: 16),
               Container(
                 width: 1,
                 height: 20,
-                color: Colors.white.withOpacity(0.3),
+                color: context.brandColors.textMuted,
               ),
               const SizedBox(width: 16),
               Text(
                 '${course.totalTerms} thuật ngữ',
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: context.brandColors.textPrimary,
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
@@ -91,8 +95,8 @@ class CourseInfoWidget extends StatelessWidget {
           const SizedBox(height: 16),
           Text(
             course.description,
-            style: const TextStyle(
-              color: Colors.white70,
+            style: TextStyle(
+              color: context.brandColors.textSecondary,
               fontSize: 14,
               height: 1.4,
             ),
@@ -102,28 +106,28 @@ class CourseInfoWidget extends StatelessWidget {
             children: [
               Icon(
                 Icons.person,
-                color: Colors.white.withOpacity(0.7),
+                color: context.brandColors.textMuted,
                 size: 16,
               ),
               const SizedBox(width: 6),
               Text(
                 'Tác giả: ${course.author}',
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.7),
+                  color: context.brandColors.textMuted,
                   fontSize: 12,
                 ),
               ),
               const Spacer(),
               Icon(
                 Icons.category,
-                color: Colors.white.withOpacity(0.7),
+                color: context.brandColors.textMuted,
                 size: 16,
               ),
               const SizedBox(width: 6),
               Text(
                 course.category,
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.7),
+                  color: context.brandColors.textMuted,
                   fontSize: 12,
                 ),
               ),

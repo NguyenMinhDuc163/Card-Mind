@@ -99,7 +99,7 @@ class _FlashcardCarouselWidgetState extends State<FlashcardCarouselWidget> {
       width: double.infinity,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: context.colors.secondary,
+        color: context.brandColors.cardBackground,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -120,7 +120,7 @@ class _FlashcardCarouselWidgetState extends State<FlashcardCarouselWidget> {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
-                  color: Colors.white.withOpacity(0.1),
+                  color: context.brandColors.avatarBackground,
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
@@ -128,9 +128,9 @@ class _FlashcardCarouselWidgetState extends State<FlashcardCarouselWidget> {
                     imageUrl,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
-                      return const Icon(
+                      return Icon(
                         Icons.image_not_supported,
-                        color: Colors.white70,
+                        color: context.brandColors.textSecondary,
                         size: 32,
                       );
                     },
@@ -143,8 +143,8 @@ class _FlashcardCarouselWidgetState extends State<FlashcardCarouselWidget> {
               child: Center(
                 child: Text(
                   text,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: context.brandColors.textPrimary,
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                     height: 1.4,
@@ -166,19 +166,23 @@ class _FlashcardCarouselWidgetState extends State<FlashcardCarouselWidget> {
       height: 320,
       margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFF0E2B5C),
+        color: context.brandColors.cardBackground,
         borderRadius: BorderRadius.circular(16),
       ),
-      child: const Center(
+      child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.style, color: Colors.white70, size: 48),
-            SizedBox(height: 16),
+            Icon(
+              Icons.style,
+              color: context.brandColors.textSecondary,
+              size: 48,
+            ),
+            const SizedBox(height: 16),
             Text(
               'Chưa có thẻ học nào',
               style: TextStyle(
-                color: Colors.white70,
+                color: context.brandColors.textSecondary,
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
               ),
@@ -202,8 +206,8 @@ class _FlashcardCarouselWidgetState extends State<FlashcardCarouselWidget> {
             shape: BoxShape.circle,
             color:
                 index == _currentIndex
-                    ? const Color(0xFF0E2B5C)
-                    : Colors.white.withOpacity(0.5),
+                    ? context.brandColors.buttonPrimary
+                    : context.brandColors.textMuted,
           ),
         ),
       ),

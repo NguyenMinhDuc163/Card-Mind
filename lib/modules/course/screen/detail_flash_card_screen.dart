@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:card_mind/init.dart';
 import 'package:card_mind/core/theme/theme_extensions.dart';
-import 'package:card_mind/core/theme/app_colors.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:card_mind/data/models/flashcard.dart';
@@ -74,8 +73,10 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
           return FunctionScreenTemplate(
             screen: Scaffold(
               backgroundColor: context.colors.primary,
-              body: const Center(
-                child: CircularProgressIndicator(color: Colors.white),
+              body: Center(
+                child: CircularProgressIndicator(
+                  color: context.brandColors.textPrimary,
+                ),
               ),
             ),
           );
@@ -89,11 +90,17 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.error, color: Colors.white70, size: 48),
+                    Icon(
+                      Icons.error,
+                      color: context.brandColors.textSecondary,
+                      size: 48,
+                    ),
                     const SizedBox(height: 16),
                     Text(
                       notifier.errorMessage ?? 'Có lỗi xảy ra',
-                      style: const TextStyle(color: Colors.white70),
+                      style: TextStyle(
+                        color: context.brandColors.textSecondary,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
@@ -109,8 +116,6 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
         }
 
         if (notifier.currentCards.isEmpty && !notifier.isLoading) {
-          
-          
           if (notifier.hasExistingLearningData && notifier.totalCards > 0) {
             WidgetsBinding.instance.addPostFrameCallback((_) async {
               if (mounted) {
@@ -124,7 +129,6 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
             });
           }
 
-          
           return FunctionScreenTemplate(
             screen: Scaffold(
               backgroundColor: context.colors.primary,
@@ -134,53 +138,69 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
                   children: [
                     if (notifier.hasExistingLearningData &&
                         notifier.totalCards > 0) ...[
-                      const CircularProgressIndicator(color: Colors.white),
+                      CircularProgressIndicator(
+                        color: context.brandColors.textPrimary,
+                      ),
                       const SizedBox(height: 16),
-                      const Text(
+                      Text(
                         'Đang chuyển đến kết quả...',
-                        style: TextStyle(color: Colors.white70),
+                        style: TextStyle(
+                          color: context.brandColors.textSecondary,
+                        ),
                       ),
                     ] else if (notifier.totalCards == 0) ...[
-                      const CircularProgressIndicator(color: Colors.white),
+                      CircularProgressIndicator(
+                        color: context.brandColors.textPrimary,
+                      ),
                       const SizedBox(height: 16),
-                      const Text(
+                      Text(
                         'Đang tải dữ liệu...',
-                        style: TextStyle(color: Colors.white70),
+                        style: TextStyle(
+                          color: context.brandColors.textSecondary,
+                        ),
                       ),
                     ] else ...[
-                      const Icon(Icons.school, color: Colors.white70, size: 64),
+                      Icon(
+                        Icons.school,
+                        color: context.brandColors.textSecondary,
+                        size: 64,
+                      ),
                       const SizedBox(height: 16),
-                      const Text(
+                      Text(
                         'Chào mừng đến với khóa học mới!',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: context.brandColors.textPrimary,
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                         ),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 8),
-                      const Text(
+                      Text(
                         'Bắt đầu học ngay để xem tiến độ của bạn',
-                        style: TextStyle(color: Colors.white70, fontSize: 14),
+                        style: TextStyle(
+                          color: context.brandColors.textSecondary,
+                          fontSize: 14,
+                        ),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 24),
                       ElevatedButton(
                         onPressed: () {
-                          
                           _initializeData();
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
+                          backgroundColor: context.brandColors.buttonPrimary,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 24,
                             vertical: 12,
                           ),
                         ),
-                        child: const Text(
+                        child: Text(
                           'Bắt đầu học',
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(
+                            color: context.brandColors.textPrimary,
+                          ),
                         ),
                       ),
                     ],
@@ -250,8 +270,8 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
               children: [
                 Text(
                   '${notifier.learnedCount + notifier.unlearnedCount} / ${notifier.totalCards}',
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: context.brandColors.textPrimary,
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),
@@ -263,8 +283,10 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
                           ? (notifier.learnedCount + notifier.unlearnedCount) /
                               notifier.totalCards
                           : 0.0,
-                  backgroundColor: Colors.white.withOpacity(0.3),
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
+                  backgroundColor: context.brandColors.progressBackground,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    context.brandColors.progressValue,
+                  ),
                   minHeight: 4,
                 ),
               ],
@@ -282,8 +304,16 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _buildProgressChip(context, '${notifier.unlearnedCount}', Colors.red),
-        _buildProgressChip(context, '${notifier.learnedCount}', Colors.green),
+        _buildProgressChip(
+          context,
+          '${notifier.unlearnedCount}',
+          context.brandColors.buttonDestructive,
+        ),
+        _buildProgressChip(
+          context,
+          '${notifier.learnedCount}',
+          context.brandColors.progressValue,
+        ),
       ],
     );
   }
@@ -366,7 +396,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
       height: 400,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: context.colors.secondary,
+        color: context.brandColors.cardBackground,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -390,7 +420,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
                     width: double.infinity,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
-                      color: Colors.white.withOpacity(0.1),
+                      color: context.brandColors.avatarBackground,
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12),
@@ -398,9 +428,9 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
                         imageUrl,
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
-                          return const Icon(
+                          return Icon(
                             Icons.image_not_supported,
-                            color: Colors.white70,
+                            color: context.brandColors.textSecondary,
                             size: 48,
                           );
                         },
@@ -413,8 +443,8 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
                   child: Text(
                     text,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: context.brandColors.textPrimary,
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
@@ -429,7 +459,10 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
             child: IconButton(
               icon: Icon(
                 isBookmarked ? Icons.bookmark : Icons.bookmark_border,
-                color: isBookmarked ? AppColors.highlight : Colors.white70,
+                color:
+                    isBookmarked
+                        ? context.brandColors.progressValue
+                        : context.brandColors.textSecondary,
               ),
               onPressed: () {
                 notifier.toggleBookmark(flashcard);

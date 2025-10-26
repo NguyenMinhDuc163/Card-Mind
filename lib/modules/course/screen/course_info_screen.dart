@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:card_mind/init.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:card_mind/core/theme/theme_extensions.dart';
 import '../provider/course_info_notifier.dart';
 import '../widgets/flashcard_carousel_widget.dart';
 import '../widgets/course_info_widget.dart';
@@ -40,10 +41,12 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
       builder: (context, notifier, child) {
         if (notifier.isLoading) {
           return FunctionScreenTemplate(
-            screen: const Scaffold(
-              backgroundColor: Color(0xFF0B1D3B),
+            screen: Scaffold(
+              backgroundColor: context.colors.primary,
               body: Center(
-                child: CircularProgressIndicator(color: Colors.white),
+                child: CircularProgressIndicator(
+                  color: context.brandColors.textPrimary,
+                ),
               ),
             ),
           );
@@ -52,16 +55,22 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
         if (notifier.hasError) {
           return FunctionScreenTemplate(
             screen: Scaffold(
-              backgroundColor: const Color(0xFF0B1D3B),
+              backgroundColor: context.colors.primary,
               body: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.error, color: Colors.white70, size: 48),
+                    Icon(
+                      Icons.error,
+                      color: context.brandColors.textSecondary,
+                      size: 48,
+                    ),
                     const SizedBox(height: 16),
                     Text(
                       notifier.errorMessage ?? 'Có lỗi xảy ra',
-                      style: const TextStyle(color: Colors.white70),
+                      style: TextStyle(
+                        color: context.brandColors.textSecondary,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
@@ -78,12 +87,12 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
 
         if (notifier.course == null || notifier.flashcards.isEmpty) {
           return FunctionScreenTemplate(
-            screen: const Scaffold(
-              backgroundColor: Color(0xFF0B1D3B),
+            screen: Scaffold(
+              backgroundColor: context.colors.primary,
               body: Center(
                 child: Text(
                   'Không tìm thấy khóa học',
-                  style: TextStyle(color: Colors.white70),
+                  style: TextStyle(color: context.brandColors.textSecondary),
                 ),
               ),
             ),
@@ -92,7 +101,7 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
 
         return FunctionScreenTemplate(
           screen: Scaffold(
-            backgroundColor: const Color(0xFF0B1D3B),
+            backgroundColor: context.colors.primary,
             body: CustomScrollView(
               slivers: [
                 SliverToBoxAdapter(
@@ -165,26 +174,32 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: const Color(0xFF0E2B5C),
-          title: const Text(
+          backgroundColor: context.brandColors.cardBackground,
+          title: Text(
             'Xóa học phần',
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(color: context.brandColors.textPrimary),
           ),
-          content: const Text(
+          content: Text(
             'Bạn có chắc chắn muốn xóa học phần này không? Hành động này không thể hoàn tác.',
-            style: TextStyle(color: Colors.white70),
+            style: TextStyle(color: context.brandColors.textSecondary),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Hủy', style: TextStyle(color: Colors.white70)),
+              child: Text(
+                'Hủy',
+                style: TextStyle(color: context.brandColors.textSecondary),
+              ),
             ),
             TextButton(
               onPressed: () async {
                 Navigator.of(context).pop();
                 await _deleteCourse(courseId);
               },
-              child: const Text('Xóa', style: TextStyle(color: Colors.red)),
+              child: Text(
+                'Xóa',
+                style: TextStyle(color: context.brandColors.buttonDestructive),
+              ),
             ),
           ],
         );
@@ -199,16 +214,16 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return const AlertDialog(
-          backgroundColor: Color(0xFF0E2B5C),
+        return AlertDialog(
+          backgroundColor: context.brandColors.cardBackground,
           content: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              CircularProgressIndicator(color: Colors.white),
-              SizedBox(width: 16),
+              CircularProgressIndicator(color: context.brandColors.textPrimary),
+              const SizedBox(width: 16),
               Text(
                 'Đang xóa học phần...',
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: context.brandColors.textPrimary),
               ),
             ],
           ),
@@ -223,9 +238,9 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
 
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Đã xóa học phần thành công'),
-            backgroundColor: Colors.green,
+          SnackBar(
+            content: const Text('Đã xóa học phần thành công'),
+            backgroundColor: context.brandColors.progressValue,
           ),
         );
 
@@ -236,9 +251,9 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Không thể xóa học phần'),
-            backgroundColor: Colors.red,
+          SnackBar(
+            content: const Text('Không thể xóa học phần'),
+            backgroundColor: context.brandColors.buttonDestructive,
           ),
         );
       }
@@ -246,7 +261,10 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
       Navigator.of(context).pop();
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Lỗi: $e'), backgroundColor: Colors.red),
+        SnackBar(
+          content: Text('Lỗi: $e'),
+          backgroundColor: context.brandColors.buttonDestructive,
+        ),
       );
     }
   }

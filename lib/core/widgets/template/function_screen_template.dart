@@ -1,8 +1,6 @@
 import 'package:card_mind/core/theme/theme_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:card_mind/core/constants/icon_path.dart';
 import 'package:card_mind/core/theme/app_colors.dart';
 import 'package:card_mind/core/theme/app_pad.dart';
 import 'package:card_mind/core/theme/app_text_styles.dart';
@@ -90,7 +88,7 @@ class _FunctionScreenTemplateState extends State<FunctionScreenTemplate>
         if (widget.background != null)
           Positioned.fill(child: widget.background!),
         AnnotatedRegion(
-          value: SystemUiOverlayStyle.dark.copyWith(
+          value: SystemUiOverlayStyle.light.copyWith(
             systemNavigationBarColor: context.colors.primary,
             systemNavigationBarContrastEnforced: false,
           ),
@@ -145,18 +143,24 @@ class _FunctionScreenTemplateState extends State<FunctionScreenTemplate>
       leading: Padding(
         padding: AppPad.a8,
         child: CircleAvatar(
-          backgroundColor: context.colors.secondary,
+          backgroundColor: context.brandColors.avatarBackground,
           child:
               widget.leadingWidget ??
               (widget.isShowDrawer
                   ? IconButton(
-                    icon: Icon(Icons.menu),
+                    icon: Icon(
+                      Icons.menu,
+                      color: context.brandColors.searchBarIcon,
+                    ),
                     onPressed: () {
                       _scaffoldKey.currentState?.openDrawer();
                     },
                   )
                   : IconButton(
-                    icon: const Icon(Icons.arrow_back),
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: context.brandColors.searchBarIcon,
+                    ),
                     onPressed: () {
                       if (widget.onBack != null) {
                         widget.onBack!();
@@ -170,7 +174,12 @@ class _FunctionScreenTemplateState extends State<FunctionScreenTemplate>
       title:
           widget.titleWidget ??
           (widget.title != null
-              ? Text(widget.title!, style: AppTextStyles.textHeader3.copyWith(color: context.colors.surface))
+              ? Text(
+                widget.title!,
+                style: AppTextStyles.textHeader3.copyWith(
+                  color: context.brandColors.searchBarText,
+                ),
+              )
               : null),
       centerTitle: true,
       actions:
@@ -179,7 +188,7 @@ class _FunctionScreenTemplateState extends State<FunctionScreenTemplate>
                 (e) => Padding(
                   padding: AppPad.a8,
                   child: CircleAvatar(
-                    backgroundColor: widget.backgroundColor,
+                    backgroundColor: context.brandColors.avatarBackground,
                     child: e,
                   ),
                 ),

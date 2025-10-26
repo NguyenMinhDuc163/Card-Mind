@@ -1,6 +1,5 @@
 import 'package:card_mind/init.dart';
 import 'package:card_mind/core/theme/theme_extensions.dart';
-import 'package:card_mind/core/theme/app_colors.dart';
 import 'package:card_mind/modules/message/provider/chat_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -60,7 +59,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                           child: Text(
                             'Gửi tin nhắn để bắt đầu trò chuyện',
                             style: AppTextStyles.textContent2.copyWith(
-                              color: Colors.white.withOpacity(0.6),
+                              color: context.brandColors.textSecondary,
                             ),
                           ),
                         )
@@ -78,7 +77,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                           itemBuilder: (context, index) {
                             if (index == notifier.messages.length &&
                                 notifier.isLoading) {
-                              return _TypingIndicator();
+                              return const _TypingIndicator();
                             }
                             final message = notifier.messages[index];
                             return _MessageCard(message: message);
@@ -97,10 +96,14 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.highlight.withOpacity(0.2),
+                    color: context.brandColors.buttonDestructive.withOpacity(
+                      0.2,
+                    ),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: AppColors.highlight.withOpacity(0.3),
+                      color: context.brandColors.buttonDestructive.withOpacity(
+                        0.3,
+                      ),
                       width: 1,
                     ),
                   ),
@@ -109,14 +112,14 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                       Icon(
                         Icons.info_outline,
                         size: 20,
-                        color: AppColors.highlight,
+                        color: context.brandColors.buttonDestructive,
                       ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           notifier.errorMessage!,
                           style: AppTextStyles.textContent3.copyWith(
-                            color: AppColors.highlight,
+                            color: context.brandColors.buttonDestructive,
                           ),
                         ),
                       ),
@@ -145,6 +148,8 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
 }
 
 class _TypingIndicator extends StatelessWidget {
+  const _TypingIndicator();
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -152,27 +157,33 @@ class _TypingIndicator extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 16,
-          backgroundColor: AppColors.highlight.withOpacity(0.2),
-          child: Icon(Icons.smart_toy, size: 18, color: Colors.white),
+          backgroundColor: context.brandColors.avatarBackground,
+          child: Icon(
+            Icons.smart_toy,
+            size: 18,
+            color: context.brandColors.textPrimary,
+          ),
         ),
         const SizedBox(width: 10),
         Expanded(
           child: Container(
             decoration: BoxDecoration(
-              color: AppColors.silverGray,
+              color: context.brandColors.cardBackground,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.coolGray.withOpacity(0.3)),
+              border: Border.all(
+                color: context.brandColors.borderColor.withOpacity(0.3),
+              ),
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _buildDot(0),
+                  _buildDot(context, 0),
                   const SizedBox(width: 4),
-                  _buildDot(1),
+                  _buildDot(context, 1),
                   const SizedBox(width: 4),
-                  _buildDot(2),
+                  _buildDot(context, 2),
                 ],
               ),
             ),
@@ -182,13 +193,13 @@ class _TypingIndicator extends StatelessWidget {
     );
   }
 
-  Widget _buildDot(int index) {
+  Widget _buildDot(BuildContext context, int index) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 400),
       width: 8,
       height: 8,
       decoration: BoxDecoration(
-        color: AppColors.deepBlue.withOpacity(0.7),
+        color: context.brandColors.textMuted,
         shape: BoxShape.circle,
       ),
     );
@@ -210,15 +221,22 @@ class _MessageCard extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 16,
-            backgroundColor: AppColors.highlight.withOpacity(0.2),
-            child: Icon(Icons.smart_toy, size: 18, color: Colors.white),
+            backgroundColor: context.brandColors.avatarBackground,
+            child: Icon(
+              Icons.smart_toy,
+              size: 18,
+              color: context.brandColors.textPrimary,
+            ),
           ),
           const SizedBox(width: 10),
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: AppColors.silverGray,
+                color: context.brandColors.cardBackground,
                 borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: context.brandColors.borderColor.withOpacity(0.2),
+                ),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(14),
@@ -229,19 +247,41 @@ class _MessageCard extends StatelessWidget {
                       'AI Chat Bot',
                       style: AppTextStyles.textContent3.copyWith(
                         fontWeight: FontWeight.w700,
-                        color: AppColors.deepBlue,
+                        color: context.brandColors.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Html(
-                      data: message.text,
-                      style: {
-                        'p': Style(
-                          color: Colors.black87,
-                          fontSize: FontSize(16),
-                          lineHeight: LineHeight(1.4),
-                        ),
-                      },
+                    DefaultTextStyle(
+                      style: TextStyle(
+                        color: context.brandColors.textPrimary,
+                        fontSize: 16,
+                        height: 1.4,
+                      ),
+                      child: Html(
+                        data: message.text,
+                        style: {
+                          'body': Style(
+                            color: context.brandColors.textPrimary,
+                            fontSize: FontSize(16),
+                            lineHeight: LineHeight(1.4),
+                          ),
+                          'p': Style(
+                            color: context.brandColors.textPrimary,
+                            fontSize: FontSize(16),
+                            lineHeight: LineHeight(1.4),
+                          ),
+                          'div': Style(
+                            color: context.brandColors.textPrimary,
+                            fontSize: FontSize(16),
+                            lineHeight: LineHeight(1.4),
+                          ),
+                          'span': Style(
+                            color: context.brandColors.textPrimary,
+                            fontSize: FontSize(16),
+                            lineHeight: LineHeight(1.4),
+                          ),
+                        },
+                      ),
                     ),
                     const SizedBox(height: 10),
                     Row(
@@ -249,7 +289,7 @@ class _MessageCard extends StatelessWidget {
                         _ActionIcon(
                           icon: Icons.copy_outlined,
                           label: 'Copy Text',
-                          color: AppColors.deepBlue,
+                          color: context.brandColors.textPrimary,
                           onTap: () {
                             Clipboard.setData(
                               ClipboardData(text: message.text),
@@ -258,7 +298,8 @@ class _MessageCard extends StatelessWidget {
                               SnackBar(
                                 content: const Text('Đã copy vào clipboard'),
                                 duration: const Duration(seconds: 2),
-                                backgroundColor: AppColors.deepBlue,
+                                backgroundColor:
+                                    context.brandColors.buttonPrimary,
                               ),
                             );
                           },
@@ -266,12 +307,12 @@ class _MessageCard extends StatelessWidget {
                         const SizedBox(width: 10),
                         _ActionIcon(
                           icon: Icons.thumb_up_alt_outlined,
-                          color: AppColors.deepBlue,
+                          color: context.brandColors.textPrimary,
                         ),
                         const SizedBox(width: 10),
                         _ActionIcon(
                           icon: Icons.thumb_down_alt_outlined,
-                          color: AppColors.deepBlue,
+                          color: context.brandColors.textPrimary,
                         ),
                       ],
                     ),
@@ -296,7 +337,7 @@ class _MessageCard extends StatelessWidget {
         Expanded(
           child: Container(
             decoration: BoxDecoration(
-              color: AppColors.skyBlue,
+              color: context.brandColors.buttonPrimary,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Padding(
@@ -377,14 +418,16 @@ class _ChatInput extends StatelessWidget {
             child: Container(
               height: 48,
               decoration: BoxDecoration(
-                color: AppColors.deepBlue,
+                color: context.brandColors.searchBarBackground,
                 borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: Colors.white.withOpacity(0.3)),
+                border: Border.all(
+                  color: context.brandColors.borderColor.withOpacity(0.3),
+                ),
               ),
               child: Row(
                 children: [
                   const SizedBox(width: 12),
-                  Icon(Icons.search, color: Colors.white.withOpacity(0.8)),
+                  Icon(Icons.search, color: context.brandColors.searchBarIcon),
                   const SizedBox(width: 6),
                   Expanded(
                     child: TextField(
@@ -393,12 +436,14 @@ class _ChatInput extends StatelessWidget {
                       decoration: InputDecoration(
                         hintText: 'Ask ai chat anything',
                         hintStyle: AppTextStyles.textContent3.copyWith(
-                          color: Colors.white.withOpacity(0.6),
+                          color: context.brandColors.searchBarText.withOpacity(
+                            0.6,
+                          ),
                         ),
                         border: InputBorder.none,
                       ),
                       style: AppTextStyles.textContent2.copyWith(
-                        color: Colors.white,
+                        color: context.brandColors.searchBarText,
                       ),
                     ),
                   ),
@@ -422,8 +467,8 @@ class _ChatInput extends StatelessWidget {
               decoration: BoxDecoration(
                 color:
                     isLoading
-                        ? AppColors.skyBlue.withOpacity(0.5)
-                        : AppColors.skyBlue,
+                        ? context.brandColors.buttonPrimary.withOpacity(0.5)
+                        : context.brandColors.buttonPrimary,
                 shape: BoxShape.circle,
               ),
               child: Icon(

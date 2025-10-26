@@ -12,7 +12,7 @@ class AppTheme {
       error: AppColors.error,
       background: AppColors.bodyBackground,
       surface: AppColors.white,
-      onPrimary: Colors.white,
+      onPrimary: Colors.white, // Text màu trắng cho drawer
       onSecondary: Colors.white10,
       onError: Colors.white,
       onBackground: AppColors.text,
@@ -44,8 +44,22 @@ class AppTheme {
           success: Color(0xFF059669),
           warning: Color(0xFFF59E0B),
           info: Color(0xFF3B82F6),
-          cardBackground: Color(0xFFFFFFFF),
+          cardBackground: AppColors.deepBlue,
           borderColor: Color(0xFFE5E7EB),
+          searchBarBackground: AppColors.deepBlue,
+          searchBarText: Color(0xFFFFFFFF),
+          searchBarIcon: Color(0xFFFFFFFF),
+          avatarBackground: Color(0x1A0E2B5C),
+          statusActive: Color(0xFF4CAF50),
+          statusInactive: Color(0xFFFF9800),
+          progressBackground: Color(0xFFE5E7EB),
+          progressValue: Color(0xFF4CAF50),
+          buttonPrimary: AppColors.deepBlue,
+          buttonSecondary: Color(0xFF374151),
+          buttonDestructive: Color(0xFFF44336),
+          textPrimary: Color(0xFFFFFFFF),
+          textSecondary: Color(0xB3FFFFFF),
+          textMuted: Color(0x80FFFFFF),
         ),
       ],
     );
@@ -57,12 +71,12 @@ class AppTheme {
     const Color text = Color(0xFFE6E8EC);
 
     final ColorScheme colorScheme = const ColorScheme.dark(
-      primary: AppColors.primary,
+      primary: surface, // Sử dụng surface color cho dark theme
       secondary: AppColors.deepBlue,
       error: AppColors.error,
       background: background,
       surface: surface,
-      onPrimary: Colors.white,
+      onPrimary: Colors.white, // Text màu trắng cho drawer dark theme
       onSecondary: Colors.white,
       onError: Colors.white,
       onBackground: text,
@@ -93,8 +107,24 @@ class AppTheme {
           success: Color(0xFFB91083),
           warning: Color(0xFF51492C),
           info: Color(0xFF65FA60),
-          cardBackground: Color(0xFF141821),
+          cardBackground: Color(
+            0xFF1E293B,
+          ), // Màu xám xanh sáng hơn cho dark mode
           borderColor: Color(0xFF374151),
+          searchBarBackground: Color(0x1FFFFFFF),
+          searchBarText: Color(0xB3FFFFFF),
+          searchBarIcon: Color(0xB3FFFFFF),
+          avatarBackground: Color(0x3DFFFFFF),
+          statusActive: Color(0xFF66BB6A),
+          statusInactive: Color(0xFFFFB74D),
+          progressBackground: Color(0x1FFFFFFF),
+          progressValue: Color(0xFF66BB6A),
+          buttonPrimary: Color(0xFF64B5F6),
+          buttonSecondary: Color(0x1FFFFFFF),
+          buttonDestructive: Color(0xFFEF5350),
+          textPrimary: Color(0xFFFFFFFF),
+          textSecondary: Color(0xB3FFFFFF),
+          textMuted: Color(0x80FFFFFF),
         ),
       ],
     );

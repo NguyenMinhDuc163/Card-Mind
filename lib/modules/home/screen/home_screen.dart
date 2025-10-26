@@ -61,19 +61,22 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Container(
                         height: 44,
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.12),
+                          color: context.brandColors.searchBarBackground,
                           borderRadius: BorderRadius.circular(22),
                         ),
                         padding: const EdgeInsets.symmetric(horizontal: 14),
                         child: Row(
                           children: [
-                            const Icon(Icons.search, color: Colors.white70),
+                            Icon(
+                              Icons.search,
+                              color: context.brandColors.searchBarIcon,
+                            ),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
                                 'Tìm kiếm',
                                 style: AppTextStyles.text.copyWith(
-                                  color: Colors.white70,
+                                  color: context.brandColors.searchBarText,
                                 ),
                               ),
                             ),
@@ -83,10 +86,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  const CircleAvatar(
+                  CircleAvatar(
                     radius: 18,
-                    backgroundColor: Colors.white24,
-                    child: Icon(Icons.person),
+                    backgroundColor: context.brandColors.avatarBackground,
+                    child: Icon(
+                      Icons.person,
+                      color: context.brandColors.searchBarIcon,
+                    ),
                   ),
                 ],
               ),
@@ -100,7 +106,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Text(
                     'Lựa chọn của đội ngũ',
-                    style: AppTextStyles.text.copyWith(color: Colors.white70),
+                    style: AppTextStyles.text.copyWith(
+                      color: context.brandColors.searchBarText,
+                    ),
                   ),
                   const SizedBox(height: 6),
                   Row(
@@ -109,11 +117,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Text(
                           'Hãy thử các học phần này',
                           style: AppTextStyles.textHeader3.copyWith(
-                            color: AppColors.white,
+                            color: context.brandColors.textPrimary,
                           ),
                         ),
                       ),
-                      const Icon(Icons.more_vert, color: Colors.white70),
+                      Icon(
+                        Icons.more_vert,
+                        color: context.brandColors.searchBarIcon,
+                      ),
                     ],
                   ),
                 ],
@@ -124,9 +135,11 @@ class _HomeScreenState extends State<HomeScreen> {
           Consumer<HomeNotifier>(
             builder: (context, notifier, child) {
               if (notifier.isLoading) {
-                return const SliverToBoxAdapter(
+                return SliverToBoxAdapter(
                   child: Center(
-                    child: CircularProgressIndicator(color: Colors.white),
+                    child: CircularProgressIndicator(
+                      color: context.brandColors.textPrimary,
+                    ),
                   ),
                 );
               }
@@ -135,11 +148,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   notifier.homeData.courses.reversed.take(5).toList();
 
               if (topPicks.isEmpty) {
-                return const SliverToBoxAdapter(
+                return SliverToBoxAdapter(
                   child: Center(
                     child: Text(
                       'Chưa có khóa học nào',
-                      style: TextStyle(color: Colors.white70),
+                      style: TextStyle(
+                        color: context.brandColors.searchBarText,
+                      ),
                     ),
                   ),
                 );
@@ -165,7 +180,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                           child: Container(
                             decoration: BoxDecoration(
-                              color: context.colors.secondary.withOpacity(0.8),
+                              color: context.brandColors.cardBackground
+                                  .withOpacity(0.8),
                               borderRadius: BorderRadius.circular(20),
                               boxShadow: [
                                 BoxShadow(
@@ -186,20 +202,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                   width: 36,
                                   height: 36,
                                   decoration: BoxDecoration(
-                                    color: context.colors.secondary.withOpacity(
-                                      0.2,
-                                    ),
+                                    color: context.brandColors.avatarBackground,
                                     borderRadius: BorderRadius.circular(10),
                                   ),
-                                  child: const Icon(
+                                  child: Icon(
                                     Icons.style,
-                                    color: Colors.white70,
+                                    color: context.brandColors.searchBarIcon,
                                   ),
                                 ),
                                 Text(
                                   course.title,
                                   style: AppTextStyles.textContent2.copyWith(
-                                    color: AppColors.white,
+                                    color: context.brandColors.textPrimary,
                                   ),
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
@@ -210,12 +224,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                       child: Text(
                                         '${course.totalTerms} thẻ · Tác giả: ${course.author}',
                                         style: AppTextStyles.textContent4
-                                            .copyWith(color: Colors.white70),
+                                            .copyWith(
+                                              color:
+                                                  context
+                                                      .brandColors
+                                                      .searchBarText,
+                                            ),
                                       ),
                                     ),
-                                    const Icon(
+                                    Icon(
                                       Icons.more_vert,
-                                      color: Colors.white70,
+                                      color: context.brandColors.searchBarIcon,
                                       size: 18,
                                     ),
                                   ],
@@ -259,7 +278,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                       child: Container(
                         decoration: BoxDecoration(
-                          color: context.colors.secondary.withOpacity(0.9),
+                          color: context.brandColors.cardBackground.withOpacity(
+                            0.9,
+                          ),
                           borderRadius: BorderRadius.circular(22),
                           boxShadow: [
                             BoxShadow(
@@ -280,20 +301,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                   width: 36,
                                   height: 36,
                                   decoration: BoxDecoration(
-                                    color: context.colors.secondary.withOpacity(
-                                      0.25,
-                                    ),
+                                    color: context.brandColors.avatarBackground,
                                     borderRadius: BorderRadius.circular(10),
                                   ),
-                                  child: const Icon(
+                                  child: Icon(
                                     Icons.class_,
-                                    color: Colors.white70,
+                                    color: context.brandColors.searchBarIcon,
                                   ),
                                 ),
                                 const Spacer(),
-                                const Icon(
+                                Icon(
                                   Icons.more_vert,
-                                  color: Colors.white70,
+                                  color: context.brandColors.searchBarIcon,
                                 ),
                               ],
                             ),
@@ -301,14 +320,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             Text(
                               classItem.className,
                               style: AppTextStyles.textHeader3.copyWith(
-                                color: AppColors.white,
+                                color: context.brandColors.textPrimary,
                               ),
                             ),
                             const SizedBox(height: 6),
                             Text(
                               classItem.description,
                               style: AppTextStyles.textContent3.copyWith(
-                                color: Colors.white70,
+                                color: context.brandColors.searchBarText,
                               ),
                             ),
                             const SizedBox(height: 12),
@@ -318,7 +337,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: Text(
                                     '${classItem.totalStudents} học sinh • ${classItem.instructor}',
                                     style: AppTextStyles.textContent4.copyWith(
-                                      color: Colors.white60,
+                                      color: context.brandColors.searchBarText
+                                          .withOpacity(0.8),
                                     ),
                                   ),
                                 ),
@@ -330,8 +350,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                   decoration: BoxDecoration(
                                     color:
                                         classItem.status == 'active'
-                                            ? Colors.green.withOpacity(0.2)
-                                            : Colors.orange.withOpacity(0.2),
+                                            ? context.brandColors.statusActive
+                                                .withOpacity(0.2)
+                                            : context.brandColors.statusInactive
+                                                .withOpacity(0.2),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Text(
@@ -341,8 +363,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                     style: AppTextStyles.textContent4.copyWith(
                                       color:
                                           classItem.status == 'active'
-                                              ? Colors.green
-                                              : Colors.orange,
+                                              ? context.brandColors.statusActive
+                                              : context
+                                                  .brandColors
+                                                  .statusInactive,
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),

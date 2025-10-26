@@ -3,9 +3,7 @@ import 'package:card_mind/core/widgets/app_gap.dart';
 import 'package:card_mind/init.dart';
 import 'package:card_mind/core/helpers/local_storage_helper.dart';
 import 'package:card_mind/modules/dashboard/screen/dashboard_screen.dart';
-import 'package:card_mind/modules/home/screen/home_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:card_mind/core/theme/app_colors.dart';
 import 'package:card_mind/core/theme/app_pad.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -43,8 +41,10 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
           return FunctionScreenTemplate(
             isShowAppBar: false,
             backgroundColor: context.colors.primary,
-            screen: const Center(
-              child: CircularProgressIndicator(color: Colors.white),
+            screen: Center(
+              child: CircularProgressIndicator(
+                color: context.brandColors.textPrimary,
+              ),
             ),
           );
         }
@@ -57,16 +57,24 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.error, color: Colors.white70, size: 48),
+                  Icon(
+                    Icons.error,
+                    color: context.brandColors.textSecondary,
+                    size: 48,
+                  ),
                   const SizedBox(height: 16),
                   Text(
                     notifier.errorMessage ?? 'Có lỗi xảy ra',
-                    style: const TextStyle(color: Colors.white70),
+                    style: TextStyle(color: context.brandColors.textSecondary),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () => _initializeData(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: context.brandColors.buttonPrimary,
+                      foregroundColor: Colors.white,
+                    ),
                     child: const Text('Thử lại'),
                   ),
                 ],
@@ -101,16 +109,24 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           GestureDetector(
-            onTap: () => Navigator.pushReplacementNamed(context, DashboardScreen.routeName),
+            onTap:
+                () => Navigator.pushReplacementNamed(
+                  context,
+                  DashboardScreen.routeName,
+                ),
             child: Container(
               padding: AppPad.a8,
-              child: const Icon(Icons.close, color: AppColors.white, size: 24),
+              child: Icon(
+                Icons.close,
+                color: context.brandColors.textPrimary,
+                size: 24,
+              ),
             ),
           ),
           Text(
             '${notifier.learnedCount}/${notifier.totalCards}',
-            style: const TextStyle(
-              color: AppColors.white,
+            style: TextStyle(
+              color: context.brandColors.textPrimary,
               fontSize: 16,
               fontWeight: FontWeight.w500,
             ),
@@ -132,8 +148,8 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
               children: [
                 Text(
                   notifier.congratulationMessage,
-                  style: const TextStyle(
-                    color: AppColors.white,
+                  style: TextStyle(
+                    color: context.brandColors.textPrimary,
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                   ),
@@ -141,8 +157,8 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
                 const SizedBox(height: 8),
                 Text(
                   notifier.descriptionMessage,
-                  style: const TextStyle(
-                    color: AppColors.white,
+                  style: TextStyle(
+                    color: context.brandColors.textSecondary,
                     fontSize: 14,
                     height: 1.4,
                   ),
@@ -169,10 +185,10 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Tiến độ của bạn',
             style: TextStyle(
-              color: AppColors.white,
+              color: context.brandColors.textPrimary,
               fontSize: 18,
               fontWeight: FontWeight.w600,
             ),
@@ -180,9 +196,9 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
           const SizedBox(height: 20),
           Row(
             children: [
-              _buildProgressCircle(notifier),
+              _buildProgressCircle(context, notifier),
               const SizedBox(width: 20),
-              Expanded(child: _buildProgressLegend(notifier)),
+              Expanded(child: _buildProgressLegend(context, notifier)),
             ],
           ),
         ],
@@ -190,7 +206,10 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
     );
   }
 
-  Widget _buildProgressCircle(CourseResultNotifier notifier) {
+  Widget _buildProgressCircle(
+    BuildContext context,
+    CourseResultNotifier notifier,
+  ) {
     return SizedBox(
       width: 100,
       height: 100,
@@ -201,7 +220,10 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
             height: 100,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: AppColors.lightOrange, width: 12),
+              border: Border.all(
+                color: context.brandColors.progressBackground,
+                width: 12,
+              ),
             ),
           ),
 
@@ -211,7 +233,7 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
             child: CustomPaint(
               painter: ProgressPainter(
                 progress: notifier.progressPercentage,
-                progressColor: AppColors.tealGreen,
+                progressColor: context.brandColors.progressValue,
                 backgroundColor: Colors.transparent,
                 strokeWidth: 12,
               ),
@@ -221,8 +243,8 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
           Center(
             child: Text(
               '${(notifier.progressPercentage * 100).toInt()}%',
-              style: const TextStyle(
-                color: AppColors.white,
+              style: TextStyle(
+                color: context.brandColors.textPrimary,
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
@@ -233,23 +255,42 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
     );
   }
 
-  Widget _buildProgressLegend(CourseResultNotifier notifier) {
+  Widget _buildProgressLegend(
+    BuildContext context,
+    CourseResultNotifier notifier,
+  ) {
     return Column(
       children: [
-        _buildLegendItem('Biết', AppColors.tealGreen, notifier.knownCount),
+        _buildLegendItem(
+          context,
+          'Biết',
+          context.brandColors.progressValue,
+          notifier.knownCount,
+        ),
         const SizedBox(height: 8),
         _buildLegendItem(
+          context,
           'Đang học',
-          AppColors.lightOrange,
+          context.brandColors.warning,
           notifier.learningCount,
         ),
         const SizedBox(height: 8),
-        _buildLegendItem('Còn lại', AppColors.gray, notifier.remainingCount),
+        _buildLegendItem(
+          context,
+          'Còn lại',
+          context.brandColors.textMuted,
+          notifier.remainingCount,
+        ),
       ],
     );
   }
 
-  Widget _buildLegendItem(String label, Color color, int count) {
+  Widget _buildLegendItem(
+    BuildContext context,
+    String label,
+    Color color,
+    int count,
+  ) {
     return Container(
       padding: AppPad.h12v8,
       decoration: BoxDecoration(
@@ -261,16 +302,16 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
         children: [
           Text(
             label,
-            style: const TextStyle(
-              color: AppColors.black50,
+            style: TextStyle(
+              color: context.brandColors.textPrimary,
               fontSize: 14,
               fontWeight: FontWeight.bold,
             ),
           ),
           Text(
             count.toString(),
-            style: const TextStyle(
-              color: AppColors.black50,
+            style: TextStyle(
+              color: context.brandColors.textPrimary,
               fontSize: 14,
               fontWeight: FontWeight.bold,
             ),
@@ -293,22 +334,22 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
               width: double.infinity,
               padding: AppPad.v20,
               decoration: BoxDecoration(
-                color: AppColors.vibrantBlue,
+                color: context.brandColors.buttonPrimary,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.credit_card,
-                    color: AppColors.white,
+                    color: context.brandColors.textPrimary,
                     size: 20,
                   ),
                   const SizedBox(width: 8),
-                  const Text(
+                  Text(
                     'Tiếp tục ôn thuật ngữ',
                     style: TextStyle(
-                      color: AppColors.white,
+                      color: context.brandColors.textPrimary,
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
                     ),
@@ -326,14 +367,14 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
               width: double.infinity,
               padding: AppPad.v20,
               decoration: BoxDecoration(
-                color: context.colors.secondary,
+                color: context.brandColors.buttonSecondary,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Center(
+              child: Center(
                 child: Text(
                   'Đặt lại thẻ nhớ',
                   style: TextStyle(
-                    color: AppColors.white,
+                    color: context.brandColors.textPrimary,
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                   ),
@@ -350,18 +391,22 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
               width: double.infinity,
               padding: AppPad.v20,
               decoration: BoxDecoration(
-                color: AppColors.lightOrange,
+                color: context.brandColors.warning,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.history, color: AppColors.white, size: 20),
+                  Icon(
+                    Icons.history,
+                    color: context.brandColors.textPrimary,
+                    size: 20,
+                  ),
                   const SizedBox(width: 8),
-                  const Text(
+                  Text(
                     'Xem lịch sử học tập',
                     style: TextStyle(
-                      color: AppColors.white,
+                      color: context.brandColors.textPrimary,
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
                     ),
@@ -418,7 +463,7 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
           Text(
             'Lịch sử học tập',
             style: TextStyle(
-              color: AppColors.white,
+              color: context.brandColors.textPrimary,
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
@@ -427,13 +472,13 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
           Text(
             notifier.course?.title ?? 'Khóa học',
             style: TextStyle(
-              color: AppColors.white.withOpacity(0.8),
+              color: context.brandColors.textSecondary,
               fontSize: 14,
             ),
           ),
           const SizedBox(height: 20),
 
-          _buildHistoryItems(notifier),
+          _buildHistoryItems(context, notifier),
 
           const SizedBox(height: 20),
 
@@ -442,16 +487,16 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
             child: ElevatedButton(
               onPressed: () => Navigator.pop(context),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.lightOrange,
+                backgroundColor: context.brandColors.warning,
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: const Text(
+              child: Text(
                 'Đóng',
                 style: TextStyle(
-                  color: AppColors.white,
+                  color: context.brandColors.textPrimary,
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
                 ),
@@ -463,7 +508,10 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
     );
   }
 
-  Widget _buildHistoryItems(CourseResultNotifier notifier) {
+  Widget _buildHistoryItems(
+    BuildContext context,
+    CourseResultNotifier notifier,
+  ) {
     final allResults =
         LocalStorageHelper.getValue('all_learning_results') as List<dynamic>? ??
         [];
@@ -493,21 +541,21 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
       return Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.1),
+          color: context.brandColors.cardBackground.withOpacity(0.1),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
           children: [
             Icon(
               Icons.history,
-              color: AppColors.white.withOpacity(0.5),
+              color: context.brandColors.textSecondary,
               size: 48,
             ),
             const SizedBox(height: 12),
             Text(
               'Chưa có lịch sử học tập',
               style: TextStyle(
-                color: AppColors.white.withOpacity(0.7),
+                color: context.brandColors.textSecondary,
                 fontSize: 16,
               ),
             ),
@@ -533,10 +581,10 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
             margin: const EdgeInsets.only(bottom: 12),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: context.brandColors.cardBackground.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: Colors.white.withOpacity(0.2),
+                color: context.brandColors.borderColor.withOpacity(0.2),
                 width: 1,
               ),
             ),
@@ -547,14 +595,17 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
                   height: 50,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: AppColors.lightOrange.withOpacity(0.2),
-                    border: Border.all(color: AppColors.lightOrange, width: 2),
+                    color: context.brandColors.warning.withOpacity(0.2),
+                    border: Border.all(
+                      color: context.brandColors.warning,
+                      width: 2,
+                    ),
                   ),
                   child: Center(
                     child: Text(
                       '${progressPercentage.toInt()}%',
-                      style: const TextStyle(
-                        color: AppColors.white,
+                      style: TextStyle(
+                        color: context.brandColors.textPrimary,
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                       ),
@@ -569,8 +620,8 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
                     children: [
                       Text(
                         '${learnedCount}/${totalCards} thẻ đã học',
-                        style: const TextStyle(
-                          color: AppColors.white,
+                        style: TextStyle(
+                          color: context.brandColors.textPrimary,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -579,7 +630,7 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
                       Text(
                         _formatDateTime(completedAt),
                         style: TextStyle(
-                          color: AppColors.white.withOpacity(0.7),
+                          color: context.brandColors.textSecondary,
                           fontSize: 12,
                         ),
                       ),
@@ -593,8 +644,8 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
                       : Icons.schedule,
                   color:
                       progressPercentage >= 100
-                          ? AppColors.tealGreen
-                          : AppColors.lightOrange,
+                          ? context.brandColors.progressValue
+                          : context.brandColors.warning,
                   size: 24,
                 ),
               ],

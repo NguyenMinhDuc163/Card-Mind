@@ -30,7 +30,9 @@ class _TestScreenState extends State<TestScreen> {
     super.didChangeDependencies();
 
     final notifier = Provider.of<TestNotifier>(context, listen: false);
-    if (notifier.questions.isEmpty && !notifier.isLoading && notifier.courseId != null) {
+    if (notifier.questions.isEmpty &&
+        !notifier.isLoading &&
+        notifier.courseId != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _initializeTest();
       });
@@ -42,11 +44,17 @@ class _TestScreenState extends State<TestScreen> {
     final courseId = ModalRoute.of(context)?.settings.arguments as String?;
 
     if (courseId != null) {
-      final courseNotifier = Provider.of<CourseInfoNotifier>(context, listen: false);
+      final courseNotifier = Provider.of<CourseInfoNotifier>(
+        context,
+        listen: false,
+      );
 
       notifier.resetTestCompletely();
 
-      await notifier.initializeTest(courseId: courseId, flashcards: courseNotifier.flashcards);
+      await notifier.initializeTest(
+        courseId: courseId,
+        flashcards: courseNotifier.flashcards,
+      );
     }
   }
 
@@ -56,15 +64,22 @@ class _TestScreenState extends State<TestScreen> {
       builder: (context, notifier, child) {
         if (notifier.isLoading) {
           return FunctionScreenTemplate(
-            screen: const Scaffold(
-              backgroundColor: Color(0xFF0B1D3B),
+            screen: Scaffold(
+              backgroundColor: context.colors.primary,
               body: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CircularProgressIndicator(color: Colors.white),
-                    SizedBox(height: 16),
-                    Text('Đang tạo bài kiểm tra...', style: TextStyle(color: Colors.white70)),
+                    CircularProgressIndicator(
+                      color: context.brandColors.textPrimary,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Đang tạo bài kiểm tra...',
+                      style: TextStyle(
+                        color: context.brandColors.textSecondary,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -75,21 +90,31 @@ class _TestScreenState extends State<TestScreen> {
         if (notifier.hasError) {
           return FunctionScreenTemplate(
             screen: Scaffold(
-              backgroundColor: const Color(0xFF0B1D3B),
+              backgroundColor: context.colors.primary,
               body: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.error, color: Colors.white70, size: 48),
+                    Icon(
+                      Icons.error,
+                      color: context.brandColors.textSecondary,
+                      size: 48,
+                    ),
                     const SizedBox(height: 16),
                     Text(
                       notifier.errorMessage ?? 'Có lỗi xảy ra',
-                      style: const TextStyle(color: Colors.white70),
+                      style: TextStyle(
+                        color: context.brandColors.textSecondary,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () => _initializeTest(),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: context.brandColors.buttonPrimary,
+                        foregroundColor: Colors.white,
+                      ),
                       child: const Text('Thử lại'),
                     ),
                   ],
@@ -101,12 +126,12 @@ class _TestScreenState extends State<TestScreen> {
 
         if (notifier.questions.isEmpty) {
           return FunctionScreenTemplate(
-            screen: const Scaffold(
-              backgroundColor: Color(0xFF0B1D3B),
+            screen: Scaffold(
+              backgroundColor: context.colors.primary,
               body: Center(
                 child: Text(
                   'Không có câu hỏi để kiểm tra',
-                  style: TextStyle(color: Colors.white70),
+                  style: TextStyle(color: context.brandColors.textSecondary),
                 ),
               ),
             ),
@@ -124,10 +149,12 @@ class _TestScreenState extends State<TestScreen> {
 
   Widget _buildTestInterface(TestNotifier notifier) {
     final currentQuestion = notifier.currentQuestion!;
-    final progress = (notifier.currentQuestionIndex + 1) / notifier.totalQuestions;
+    final progress =
+        (notifier.currentQuestionIndex + 1) / notifier.totalQuestions;
 
     return FunctionScreenTemplate(
-      title: 'Kiểm tra - Câu ${notifier.currentQuestionIndex + 1}/${notifier.totalQuestions}',
+      title:
+          'Kiểm tra - Câu ${notifier.currentQuestionIndex + 1}/${notifier.totalQuestions}',
       backgroundColor: context.colors.primary,
       screen: Column(
         children: [
@@ -136,7 +163,7 @@ class _TestScreenState extends State<TestScreen> {
             height: 4,
             margin: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: context.brandColors.progressBackground,
               borderRadius: BorderRadius.circular(2),
             ),
             child: FractionallySizedBox(
@@ -144,7 +171,7 @@ class _TestScreenState extends State<TestScreen> {
               widthFactor: progress,
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.blue,
+                  color: context.brandColors.progressValue,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -160,14 +187,16 @@ class _TestScreenState extends State<TestScreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF0E2B5C),
+                      color: context.brandColors.cardBackground,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.white.withOpacity(0.2)),
+                      border: Border.all(
+                        color: context.brandColors.borderColor.withOpacity(0.2),
+                      ),
                     ),
                     child: Text(
                       currentQuestion.question,
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: context.brandColors.textPrimary,
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                       ),
@@ -177,10 +206,10 @@ class _TestScreenState extends State<TestScreen> {
 
                   const SizedBox(height: 24),
 
-                  const Text(
+                  Text(
                     'Chọn đáp án đúng:',
                     style: TextStyle(
-                      color: Colors.white70,
+                      color: context.brandColors.textSecondary,
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
                     ),
@@ -188,7 +217,9 @@ class _TestScreenState extends State<TestScreen> {
 
                   const SizedBox(height: 16),
 
-                  Expanded(child: _buildAnswerOptions(currentQuestion, notifier)),
+                  Expanded(
+                    child: _buildAnswerOptions(currentQuestion, notifier),
+                  ),
                 ],
               ),
             ),
@@ -217,9 +248,11 @@ class _TestScreenState extends State<TestScreen> {
   Widget _buildAnswerOption(String option, TestNotifier notifier) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF0E2B5C),
+        color: context.brandColors.cardBackground,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withOpacity(0.2)),
+        border: Border.all(
+          color: context.brandColors.borderColor.withOpacity(0.2),
+        ),
       ),
       child: Material(
         color: Colors.transparent,
@@ -231,8 +264,8 @@ class _TestScreenState extends State<TestScreen> {
             child: Center(
               child: Text(
                 option,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: context.brandColors.textPrimary,
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
@@ -250,23 +283,34 @@ class _TestScreenState extends State<TestScreen> {
   Widget _buildTestCompleted() {
     return FunctionScreenTemplate(
       screen: Scaffold(
-        backgroundColor: const Color(0xFF0B1D3B),
+        backgroundColor: context.colors.primary,
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.check_circle, color: Colors.green, size: 64),
+              Icon(
+                Icons.check_circle,
+                color: context.brandColors.progressValue,
+                size: 64,
+              ),
               const SizedBox(height: 16),
-              const Text(
+              Text(
                 'Hoàn thành bài kiểm tra!',
-                style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: context.brandColors.textPrimary,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 8),
               Consumer<TestNotifier>(
                 builder: (context, notifier, child) {
                   return Text(
                     'Điểm: ${notifier.correctAnswers}/${notifier.totalQuestions} (${notifier.score.toStringAsFixed(1)}%)',
-                    style: const TextStyle(color: Colors.white70, fontSize: 18),
+                    style: TextStyle(
+                      color: context.brandColors.textSecondary,
+                      fontSize: 18,
+                    ),
                   );
                 },
               ),
@@ -274,8 +318,11 @@ class _TestScreenState extends State<TestScreen> {
               ElevatedButton(
                 onPressed: () => _showResults(),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                  backgroundColor: context.brandColors.buttonPrimary,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 12,
+                  ),
                 ),
                 child: const Text(
                   'Xem kết quả chi tiết',
@@ -300,6 +347,10 @@ class _TestScreenState extends State<TestScreen> {
 
   void _showResults() {
     final notifier = Provider.of<TestNotifier>(context, listen: false);
-    Navigator.pushNamed(context, TestResultScreen.routeName, arguments: notifier.answers);
+    Navigator.pushNamed(
+      context,
+      TestResultScreen.routeName,
+      arguments: notifier.answers,
+    );
   }
 }

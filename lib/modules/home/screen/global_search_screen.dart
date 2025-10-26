@@ -52,18 +52,15 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
       margin: AppPad.h16v12,
       padding: AppPad.h16v12,
       decoration: BoxDecoration(
-        color: context.colors.primary,
+        color: context.brandColors.searchBarBackground,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: context.colors.onPrimary.withOpacity(0.3),
-          width: 1,
-        ),
+        border: Border.all(color: context.brandColors.borderColor, width: 1),
       ),
       child: Row(
         children: [
           Icon(
             Icons.search,
-            color: context.colors.onPrimary.withOpacity(0.6),
+            color: context.brandColors.searchBarIcon,
             size: 20,
           ),
           const SizedBox(width: 12),
@@ -72,12 +69,12 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
               controller: _searchController,
               autofocus: true,
               style: AppTextStyles.textContent2.copyWith(
-                color: context.colors.onPrimary,
+                color: context.brandColors.searchBarText,
               ),
               decoration: InputDecoration(
                 hintText: 'Tìm kiếm học phần, lớp học, thẻ chưa học...',
                 hintStyle: AppTextStyles.textContent2.copyWith(
-                  color: context.colors.onPrimary.withOpacity(0.6),
+                  color: context.brandColors.searchBarText.withOpacity(0.7),
                 ),
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.zero,
@@ -95,7 +92,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
               },
               child: Icon(
                 Icons.clear,
-                color: context.colors.onPrimary.withOpacity(0.6),
+                color: context.brandColors.searchBarIcon,
                 size: 20,
               ),
             ),
@@ -118,12 +115,16 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.error, color: context.colors.onPrimary, size: 48),
+                Icon(
+                  Icons.error,
+                  color: context.brandColors.searchBarIcon,
+                  size: 48,
+                ),
                 const SizedBox(height: 16),
                 Text(
                   notifier.errorMessage ?? 'Có lỗi xảy ra',
                   style: AppTextStyles.textContent2.copyWith(
-                    color: context.colors.onPrimary,
+                    color: context.brandColors.searchBarText,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -152,21 +153,21 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
         children: [
           Icon(
             Icons.search,
-            color: context.colors.onPrimary.withOpacity(0.5),
+            color: context.brandColors.searchBarIcon.withOpacity(0.5),
             size: 64,
           ),
           const SizedBox(height: 16),
           Text(
             'Tìm kiếm toàn bộ nội dung',
             style: AppTextStyles.textContent1.copyWith(
-              color: context.colors.onPrimary.withOpacity(0.7),
+              color: context.brandColors.searchBarText.withOpacity(0.7),
             ),
           ),
           const SizedBox(height: 8),
           Text(
             'Tìm kiếm trong học phần, lớp học và thẻ chưa học',
             style: AppTextStyles.textContent3.copyWith(
-              color: context.colors.onPrimary.withOpacity(0.5),
+              color: context.brandColors.searchBarText.withOpacity(0.5),
             ),
             textAlign: TextAlign.center,
           ),
@@ -182,21 +183,21 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
         children: [
           Icon(
             Icons.search_off,
-            color: context.colors.onPrimary.withOpacity(0.5),
+            color: context.brandColors.searchBarIcon.withOpacity(0.5),
             size: 64,
           ),
           const SizedBox(height: 16),
           Text(
             'Không tìm thấy kết quả',
             style: AppTextStyles.textContent1.copyWith(
-              color: context.colors.onPrimary.withOpacity(0.7),
+              color: context.brandColors.searchBarText.withOpacity(0.7),
             ),
           ),
           const SizedBox(height: 8),
           Text(
             'Thử tìm kiếm với từ khóa khác',
             style: AppTextStyles.textContent3.copyWith(
-              color: context.colors.onPrimary.withOpacity(0.5),
+              color: context.brandColors.searchBarText.withOpacity(0.5),
             ),
           ),
         ],
@@ -219,10 +220,10 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: context.colors.surface.withOpacity(0.1),
+        color: context.brandColors.cardBackground.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: context.colors.outline.withOpacity(0.2),
+          color: context.brandColors.borderColor.withOpacity(0.2),
           width: 1,
         ),
       ),
@@ -240,7 +241,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
         title: Text(
           result.title,
           style: AppTextStyles.textContent1.copyWith(
-            color: context.colors.onPrimary,
+            color: context.brandColors.searchBarText,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -251,7 +252,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
             Text(
               result.subtitle,
               style: AppTextStyles.textContent3.copyWith(
-                color: context.colors.onPrimary.withOpacity(0.7),
+                color: context.brandColors.searchBarText.withOpacity(0.7),
               ),
             ),
             if (result.description.isNotEmpty) ...[
@@ -259,7 +260,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
               Text(
                 result.description,
                 style: AppTextStyles.textContent3.copyWith(
-                  color: context.colors.onPrimary.withOpacity(0.6),
+                  color: context.brandColors.searchBarText.withOpacity(0.6),
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -284,7 +285,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
         ),
         trailing: Icon(
           Icons.arrow_forward_ios,
-          color: context.colors.onPrimary.withOpacity(0.4),
+          color: context.brandColors.searchBarIcon.withOpacity(0.4),
           size: 16,
         ),
       ),
