@@ -42,6 +42,15 @@ class DetailFlashCardNotifier extends ChangeNotifier {
 
   String? get courseId => _courseId;
 
+  bool get hasExistingLearningData {
+    if (_courseId == null) return false;
+
+    final learnedCardsKey = 'learned_cards_$_courseId';
+    final learnedData = LocalStorageHelper.getValue(learnedCardsKey);
+
+    return learnedData != null;
+  }
+
   int get totalCards {
     return _originalCards.length + _learnedCards.length + _unlearnedCards.length;
   }
@@ -60,6 +69,9 @@ class DetailFlashCardNotifier extends ChangeNotifier {
       if (courseId != null) {
         _resetAllData();
         await _loadCourseFromHive(courseId);
+        await _loadExistingLearningData(courseId);
+
+        await Future.delayed(const Duration(milliseconds: 100));
       }
       _errorMessage = null;
     } catch (e) {
@@ -140,6 +152,52 @@ class DetailFlashCardNotifier extends ChangeNotifier {
     try {
       LocalStorageHelper.setValue('learned_cards_$_courseId', _learnedCardIds.toList());
     } catch (e) {}
+  }
+
+  Future<void> _loadExistingLearningData(String courseId) async {
+    try {
+      final learnedCardsData = await getLearnedCards(courseId);
+      final learnedIds = learnedCardsData.map((card) => card['id'] as String).toSet();
+      _learnedCardIds = learnedIds;
+
+      final unlearnedCardsData = await getUnlearnedCards(courseId);
+      final unlearnedIds = unlearnedCardsData.map((card) => card['id'] as String).toSet();
+
+      _originalCards =
+          _originalCards
+              .where((card) => !learnedIds.contains(card.id) && !unlearnedIds.contains(card.id))
+              .toList();
+
+      _learnedCards =
+          learnedCardsData
+              .map(
+                (cardData) => Flashcard(
+                  id: cardData['id'] as String,
+                  frontText: cardData['frontText'] as String,
+                  backText: cardData['backText'] as String,
+                  category: cardData['category'] as String,
+                  createdAt: DateTime.parse(cardData['createdAt'] as String),
+                  updatedAt: DateTime.parse(cardData['updatedAt'] as String),
+                ),
+              )
+              .toList();
+
+      _unlearnedCards =
+          unlearnedCardsData
+              .map(
+                (cardData) => Flashcard(
+                  id: cardData['id'] as String,
+                  frontText: cardData['frontText'] as String,
+                  backText: cardData['backText'] as String,
+                  category: cardData['category'] as String,
+                  createdAt: DateTime.parse(cardData['createdAt'] as String),
+                  updatedAt: DateTime.parse(cardData['updatedAt'] as String),
+                ),
+              )
+              .toList();
+    } catch (e) {
+      print('Error loading existing learning data: $e');
+    }
   }
 
   void _convertToUICourse() {

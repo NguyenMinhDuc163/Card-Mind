@@ -29,7 +29,10 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
   }
 
   Future<void> _initializeData() async {
-    final notifier = Provider.of<DetailFlashCardNotifier>(context, listen: false);
+    final notifier = Provider.of<DetailFlashCardNotifier>(
+      context,
+      listen: false,
+    );
     final courseId = ModalRoute.of(context)?.settings.arguments as String?;
     await notifier.initializeData(courseId: courseId);
   }
@@ -71,7 +74,9 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
           return FunctionScreenTemplate(
             screen: Scaffold(
               backgroundColor: context.colors.primary,
-              body: const Center(child: CircularProgressIndicator(color: Colors.white)),
+              body: const Center(
+                child: CircularProgressIndicator(color: Colors.white),
+              ),
             ),
           );
         }
@@ -104,27 +109,81 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
         }
 
         if (notifier.currentCards.isEmpty && !notifier.isLoading) {
-          WidgetsBinding.instance.addPostFrameCallback((_) async {
-            if (mounted) {
-              await notifier.saveLearningResult();
-              Navigator.pushReplacementNamed(
-                context,
-                CourseResultScreen.routeName,
-                arguments: notifier.courseId,
-              );
-            }
-          });
+          
+          
+          if (notifier.hasExistingLearningData && notifier.totalCards > 0) {
+            WidgetsBinding.instance.addPostFrameCallback((_) async {
+              if (mounted) {
+                await notifier.saveLearningResult();
+                Navigator.pushReplacementNamed(
+                  context,
+                  CourseResultScreen.routeName,
+                  arguments: notifier.courseId,
+                );
+              }
+            });
+          }
 
+          
           return FunctionScreenTemplate(
             screen: Scaffold(
               backgroundColor: context.colors.primary,
-              body: const Center(
+              body: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CircularProgressIndicator(color: Colors.white),
-                    SizedBox(height: 16),
-                    Text('Đang chuyển đến kết quả...', style: TextStyle(color: Colors.white70)),
+                    if (notifier.hasExistingLearningData &&
+                        notifier.totalCards > 0) ...[
+                      const CircularProgressIndicator(color: Colors.white),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Đang chuyển đến kết quả...',
+                        style: TextStyle(color: Colors.white70),
+                      ),
+                    ] else if (notifier.totalCards == 0) ...[
+                      const CircularProgressIndicator(color: Colors.white),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Đang tải dữ liệu...',
+                        style: TextStyle(color: Colors.white70),
+                      ),
+                    ] else ...[
+                      const Icon(Icons.school, color: Colors.white70, size: 64),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Chào mừng đến với khóa học mới!',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Bắt đầu học ngay để xem tiến độ của bạn',
+                        style: TextStyle(color: Colors.white70, fontSize: 14),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 24),
+                      ElevatedButton(
+                        onPressed: () {
+                          
+                          _initializeData();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 12,
+                          ),
+                        ),
+                        child: const Text(
+                          'Bắt đầu học',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -145,7 +204,11 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
                   );
                 }
               },
-              child: Icon(Icons.check, color: context.colors.onPrimary, size: 24),
+              child: Icon(
+                Icons.check,
+                color: context.colors.onPrimary,
+                size: 24,
+              ),
             ),
           ],
           backgroundColor: context.colors.primary,
@@ -156,7 +219,11 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
               Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(top: 60, left: 16, right: 16),
+                    padding: const EdgeInsets.only(
+                      top: 60,
+                      left: 16,
+                      right: 16,
+                    ),
                     child: _buildProgressIndicators(context, notifier),
                   ),
 
@@ -193,7 +260,8 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
                 LinearProgressIndicator(
                   value:
                       notifier.totalCards > 0
-                          ? (notifier.learnedCount + notifier.unlearnedCount) / notifier.totalCards
+                          ? (notifier.learnedCount + notifier.unlearnedCount) /
+                              notifier.totalCards
                           : 0.0,
                   backgroundColor: Colors.white.withOpacity(0.3),
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
@@ -207,7 +275,10 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
     );
   }
 
-  Widget _buildProgressIndicators(BuildContext context, DetailFlashCardNotifier notifier) {
+  Widget _buildProgressIndicators(
+    BuildContext context,
+    DetailFlashCardNotifier notifier,
+  ) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -225,11 +296,17 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: color, width: 1),
       ),
-      child: Text(text, style: TextStyle(color: color, fontWeight: FontWeight.bold)),
+      child: Text(
+        text,
+        style: TextStyle(color: color, fontWeight: FontWeight.bold),
+      ),
     );
   }
 
-  Widget _buildFlashcardPageView(BuildContext context, DetailFlashCardNotifier notifier) {
+  Widget _buildFlashcardPageView(
+    BuildContext context,
+    DetailFlashCardNotifier notifier,
+  ) {
     if (notifier.currentCards.isEmpty || notifier.currentCards.length < 1) {
       return const SizedBox.shrink();
     }
@@ -365,7 +442,10 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
     );
   }
 
-  Widget _buildBottomNavigationBar(BuildContext context, DetailFlashCardNotifier notifier) {
+  Widget _buildBottomNavigationBar(
+    BuildContext context,
+    DetailFlashCardNotifier notifier,
+  ) {
     return Container(
       padding: const EdgeInsets.only(bottom: 20, top: 10, left: 16, right: 16),
       color: context.colors.primary,
@@ -391,7 +471,8 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
   }
 
   void _revertLastCard(DetailFlashCardNotifier notifier) {
-    if (notifier.learnedCards.isNotEmpty || notifier.unlearnedCards.isNotEmpty) {
+    if (notifier.learnedCards.isNotEmpty ||
+        notifier.unlearnedCards.isNotEmpty) {
       notifier.revertLastCard();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
