@@ -4,7 +4,8 @@ import 'package:card_mind/core/theme/app_pad.dart';
 import 'package:card_mind/core/theme/app_text_styles.dart';
 import 'package:card_mind/modules/create_course/provider/create_course_notifier.dart';
 import 'package:card_mind/modules/create_course/model/create_course_data.dart';
-import 'package:card_mind/modules/create_course/services/course_service.dart';
+import 'package:card_mind/modules/create_course/model/import_data_config.dart';
+import 'package:card_mind/modules/create_course/screen/import_data_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -21,7 +22,6 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
   final TextEditingController _topicController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final CourseService _courseService = CourseService();
 
   bool _showDescription = false;
   bool _isInitialized = false;
@@ -43,10 +43,6 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
         _isInitialized = true;
         _loadDataToControllers(notifier.courseData);
       });
-
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        notifier.notifyListeners();
-      });
     }
   }
 
@@ -54,7 +50,8 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
     _topicController.text = courseData.topic;
     _titleController.text = courseData.title;
     _descriptionController.text = courseData.description ?? '';
-    _showDescription = courseData.description != null && courseData.description!.isNotEmpty;
+    _showDescription =
+        courseData.description != null && courseData.description!.isNotEmpty;
   }
 
   @override
@@ -73,7 +70,9 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
           return FunctionScreenTemplate(
             isShowAppBar: false,
             backgroundColor: context.colors.primary,
-            screen: const Center(child: CircularProgressIndicator(color: Colors.white)),
+            screen: const Center(
+              child: CircularProgressIndicator(color: Colors.white),
+            ),
           );
         }
 
@@ -89,11 +88,16 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                   const SizedBox(height: 16),
                   Text(
                     notifier.errorMessage ?? 'Có lỗi xảy ra',
-                    style: AppTextStyles.textContent2.copyWith(color: context.colors.onPrimary),
+                    style: AppTextStyles.textContent2.copyWith(
+                      color: context.colors.onPrimary,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
-                  ElevatedButton(onPressed: () => _initializeData(), child: const Text('Thử lại')),
+                  ElevatedButton(
+                    onPressed: () => _initializeData(),
+                    child: const Text('Thử lại'),
+                  ),
                 ],
               ),
             ),
@@ -136,24 +140,75 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                     children: [
                       _buildCourseInfo(notifier),
                       const SizedBox(height: 24),
-                      if (!_showDescription)
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _showDescription = true;
-                              });
-                            },
-                            child: Text(
-                              '+ Mô tả',
-                              style: AppTextStyles.textContent2.copyWith(
-                                color: context.colors.onPrimary,
-                                fontWeight: FontWeight.w500,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          GestureDetector(
+                            onTap: () => _showImportDataDialog(notifier),
+                            child: Container(
+                              padding: AppPad.h12v8,
+                              decoration: BoxDecoration(
+                                color: context.colors.primary.withOpacity(0.8),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: context.colors.onPrimary.withOpacity(
+                                    0.2,
+                                  ),
+                                  width: 1,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.upload_file,
+                                    color: context.colors.onPrimary,
+                                    size: 16,
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    'Nhập',
+                                    style: AppTextStyles.textContent2.copyWith(
+                                      color: context.colors.onPrimary,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
-                        ),
+                          if (!_showDescription)
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _showDescription = true;
+                                });
+                              },
+                              child: Container(
+                                padding: AppPad.h12v8,
+                                decoration: BoxDecoration(
+                                  color: context.colors.primary.withOpacity(
+                                    0.8,
+                                  ),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color: context.colors.onPrimary.withOpacity(
+                                      0.2,
+                                    ),
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Text(
+                                  '+ Mô tả',
+                                  style: AppTextStyles.textContent2.copyWith(
+                                    color: context.colors.onPrimary,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
                       const SizedBox(height: 24),
                       _buildTermsList(notifier),
                       const SizedBox(height: 80),
@@ -170,7 +225,11 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                     onPressed: () => _addNewTerm(notifier),
                     backgroundColor: Colors.blue,
                     shape: const CircleBorder(),
-                    child: Icon(Icons.add, color: context.colors.onPrimary, size: 28),
+                    child: Icon(
+                      Icons.add,
+                      color: context.colors.onPrimary,
+                      size: 28,
+                    ),
                   ),
                 ),
               ),
@@ -189,7 +248,10 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
     notifier.updateCourseInfo(
       topic: _topicController.text,
       title: _titleController.text,
-      description: _descriptionController.text.isNotEmpty ? _descriptionController.text : null,
+      description:
+          _descriptionController.text.isNotEmpty
+              ? _descriptionController.text
+              : null,
     );
     notifier.saveData();
   }
@@ -210,7 +272,9 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
       _showDescription = false;
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Đã lưu khóa học!')));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Đã lưu khóa học!')));
   }
 
   bool _validateCourseData(CreateCourseNotifier notifier) {
@@ -224,21 +288,36 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
       return false;
     }
 
-    if (notifier.courseData.terms.isEmpty) {
+    final validTerms =
+        notifier.courseData.terms
+            .where(
+              (term) =>
+                  term.term.trim().isNotEmpty ||
+                  term.definition.trim().isNotEmpty,
+            )
+            .toList();
+
+    if (validTerms.isEmpty) {
       _showValidationError('Vui lòng thêm ít nhất một thuật ngữ');
       return false;
     }
 
     for (int i = 0; i < notifier.courseData.terms.length; i++) {
       final term = notifier.courseData.terms[i];
+      final hasTerm = term.term.trim().isNotEmpty;
+      final hasDefinition = term.definition.trim().isNotEmpty;
 
-      if (term.term.trim().isEmpty) {
-        _showValidationError('Thuật ngữ ${i + 1}: Vui lòng nhập thuật ngữ');
+      if (!hasTerm && !hasDefinition) {
+        continue;
+      }
+
+      if (hasTerm && !hasDefinition) {
+        _showValidationError('Thuật ngữ ${i + 1}: Vui lòng nhập định nghĩa');
         return false;
       }
 
-      if (term.definition.trim().isEmpty) {
-        _showValidationError('Thuật ngữ ${i + 1}: Vui lòng nhập định nghĩa');
+      if (!hasTerm && hasDefinition) {
+        _showValidationError('Thuật ngữ ${i + 1}: Vui lòng nhập thuật ngữ');
         return false;
       }
     }
@@ -247,12 +326,26 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
   }
 
   void _showValidationError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-        duration: const Duration(seconds: 3),
-      ),
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Row(
+            children: [
+              Icon(Icons.error, color: Colors.red, size: 24),
+              const SizedBox(width: 8),
+              const Text('Lỗi xác thực'),
+            ],
+          ),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Đóng'),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -262,9 +355,14 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Xóa dữ liệu'),
-          content: const Text('Bạn có chắc chắn muốn xóa tất cả dữ liệu đã nhập?'),
+          content: const Text(
+            'Bạn có chắc chắn muốn xóa tất cả dữ liệu đã nhập?',
+          ),
           actions: [
-            TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Hủy')),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Hủy'),
+            ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
@@ -297,7 +395,9 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
         TextField(
           controller: _topicController,
           onChanged: (value) => _updateCourseInfo(notifier),
-          style: AppTextStyles.textContent2.copyWith(color: context.colors.onPrimary),
+          style: AppTextStyles.textContent2.copyWith(
+            color: context.colors.onPrimary,
+          ),
           decoration: InputDecoration(
             hintText: 'Chủ đề, chương, đơn vị',
             hintStyle: AppTextStyles.textContent2.copyWith(
@@ -358,20 +458,31 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
           TextField(
             controller: _descriptionController,
             onChanged: (value) => _updateCourseInfo(notifier),
-            style: AppTextStyles.textContent2.copyWith(color: context.colors.onPrimary),
+            style: AppTextStyles.textContent2.copyWith(
+              color: context.colors.onPrimary,
+            ),
             decoration: InputDecoration(
               hintText: 'Nhập mô tả cho khóa học...',
               hintStyle: AppTextStyles.textContent2.copyWith(
                 color: context.colors.onPrimary.withOpacity(0.6),
               ),
               border: UnderlineInputBorder(
-                borderSide: BorderSide(color: context.colors.onPrimary, width: 1),
+                borderSide: BorderSide(
+                  color: context.colors.onPrimary,
+                  width: 1,
+                ),
               ),
               enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: context.colors.onPrimary, width: 1),
+                borderSide: BorderSide(
+                  color: context.colors.onPrimary,
+                  width: 1,
+                ),
               ),
               focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: context.colors.onPrimary, width: 2),
+                borderSide: BorderSide(
+                  color: context.colors.onPrimary,
+                  width: 2,
+                ),
               ),
             ),
             maxLines: 3,
@@ -392,7 +503,11 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
     );
   }
 
-  Widget _buildTermItem(TermData term, int index, CreateCourseNotifier notifier) {
+  Widget _buildTermItem(
+    TermData term,
+    int index,
+    CreateCourseNotifier notifier,
+  ) {
     final termController = TextEditingController(text: term.term);
     final definitionController = TextEditingController(text: term.definition);
 
@@ -402,13 +517,19 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
       background: Container(
         alignment: Alignment.centerLeft,
         padding: AppPad.h16,
-        decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(12)),
+        decoration: BoxDecoration(
+          color: Colors.red,
+          borderRadius: BorderRadius.circular(12),
+        ),
         child: Icon(Icons.delete, color: context.colors.onPrimary, size: 24),
       ),
       secondaryBackground: Container(
         alignment: Alignment.centerRight,
         padding: AppPad.h16,
-        decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(12)),
+        decoration: BoxDecoration(
+          color: Colors.red,
+          borderRadius: BorderRadius.circular(12),
+        ),
         child: Icon(Icons.delete, color: context.colors.onPrimary, size: 24),
       ),
       onDismissed: (direction) {
@@ -420,7 +541,10 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
         decoration: BoxDecoration(
           color: context.colors.primary.withOpacity(0.8),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: context.colors.onPrimary.withOpacity(0.2), width: 1),
+          border: Border.all(
+            color: context.colors.onPrimary.withOpacity(0.2),
+            width: 1,
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -441,16 +565,27 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                 notifier.updateTerm(index, updatedTerm);
                 notifier.saveData();
               },
-              style: AppTextStyles.textContent2.copyWith(color: context.colors.onPrimary),
+              style: AppTextStyles.textContent2.copyWith(
+                color: context.colors.onPrimary,
+              ),
               decoration: InputDecoration(
                 border: UnderlineInputBorder(
-                  borderSide: BorderSide(color: context.colors.onPrimary, width: 1),
+                  borderSide: BorderSide(
+                    color: context.colors.onPrimary,
+                    width: 1,
+                  ),
                 ),
                 enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: context.colors.onPrimary, width: 1),
+                  borderSide: BorderSide(
+                    color: context.colors.onPrimary,
+                    width: 1,
+                  ),
                 ),
                 focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: context.colors.onPrimary, width: 2),
+                  borderSide: BorderSide(
+                    color: context.colors.onPrimary,
+                    width: 2,
+                  ),
                 ),
               ),
             ),
@@ -472,16 +607,27 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                 notifier.updateTerm(index, updatedTerm);
                 notifier.saveData();
               },
-              style: AppTextStyles.textContent2.copyWith(color: context.colors.onPrimary),
+              style: AppTextStyles.textContent2.copyWith(
+                color: context.colors.onPrimary,
+              ),
               decoration: InputDecoration(
                 border: UnderlineInputBorder(
-                  borderSide: BorderSide(color: context.colors.onPrimary, width: 1),
+                  borderSide: BorderSide(
+                    color: context.colors.onPrimary,
+                    width: 1,
+                  ),
                 ),
                 enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: context.colors.onPrimary, width: 1),
+                  borderSide: BorderSide(
+                    color: context.colors.onPrimary,
+                    width: 1,
+                  ),
                 ),
                 focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: context.colors.onPrimary, width: 2),
+                  borderSide: BorderSide(
+                    color: context.colors.onPrimary,
+                    width: 2,
+                  ),
                 ),
               ),
             ),
@@ -503,14 +649,18 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
               child: Container(
                 padding: AppPad.v12,
                 decoration: BoxDecoration(
-                  border: Border(bottom: BorderSide(color: Colors.blue, width: 1)),
+                  border: Border(
+                    bottom: BorderSide(color: Colors.blue, width: 1),
+                  ),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       term.language,
-                      style: AppTextStyles.textContent2.copyWith(color: Colors.blue),
+                      style: AppTextStyles.textContent2.copyWith(
+                        color: Colors.blue,
+                      ),
                     ),
                     Icon(Icons.arrow_drop_down, color: Colors.blue, size: 20),
                   ],
@@ -523,7 +673,11 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
     );
   }
 
-  void _showLanguagePicker(TermData term, int index, CreateCourseNotifier notifier) {
+  void _showLanguagePicker(
+    TermData term,
+    int index,
+    CreateCourseNotifier notifier,
+  ) {
     final languages = ['Tiếng Việt', 'English', '日本語', '한국어', '中文'];
 
     showModalBottomSheet(
@@ -543,11 +697,65 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                         notifier.saveData();
                         Navigator.pop(context);
                       },
-                      trailing: term.language == language ? const Icon(Icons.check) : null,
+                      trailing:
+                          term.language == language
+                              ? const Icon(Icons.check)
+                              : null,
                     );
                   }).toList(),
             ),
           ),
+    );
+  }
+
+  void _showImportDataDialog(CreateCourseNotifier notifier) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder:
+            (context) => ImportDataScreen(
+              onImportData: (parsedTerms) {
+                _handleImportedData(parsedTerms, notifier);
+              },
+            ),
+        fullscreenDialog: true,
+      ),
+    );
+  }
+
+  void _handleImportedData(
+    List<ParsedTerm> parsedTerms,
+    CreateCourseNotifier notifier,
+  ) {
+    if (parsedTerms.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Không có dữ liệu để import'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    for (final parsedTerm in parsedTerms) {
+      final newTerm = TermData(
+        id:
+            DateTime.now().millisecondsSinceEpoch.toString() +
+            parsedTerm.term.hashCode.toString(),
+        term: parsedTerm.term,
+        definition: parsedTerm.definition,
+        language: parsedTerm.language,
+      );
+
+      notifier.addTermDirectly(newTerm);
+    }
+
+    notifier.saveData();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Đã import ${parsedTerms.length} thuật ngữ thành công!'),
+        backgroundColor: Colors.green,
+      ),
     );
   }
 }

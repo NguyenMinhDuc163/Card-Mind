@@ -40,10 +40,7 @@ class CreateCourseNotifier extends ChangeNotifier {
 
   Future<void> completeCourse() async {
     try {
-      final courseKey = _generateCourseKey(
-        _courseData.topic,
-        _courseData.title,
-      );
+      final courseKey = _generateCourseKey(_courseData.topic, _courseData.title);
       print('Generated key: $courseKey');
 
       final now = DateTime.now();
@@ -56,8 +53,7 @@ class CreateCourseNotifier extends ChangeNotifier {
       LocalStorageHelper.setValue(courseKey, newCourseData.toJson());
       print('Saved course data with key: $courseKey');
 
-      final existingKeys =
-          LocalStorageHelper.getValue('course_keys') as List<dynamic>? ?? [];
+      final existingKeys = LocalStorageHelper.getValue('course_keys') as List<dynamic>? ?? [];
       final List<String> courseKeys = existingKeys.cast<String>();
       if (!courseKeys.contains(courseKey)) {
         courseKeys.add(courseKey);
@@ -67,12 +63,8 @@ class CreateCourseNotifier extends ChangeNotifier {
 
       _clearError();
 
-      
       EventService().emitCourseEvent(
-        CourseEvent(
-          type: CourseEventType.courseCreated,
-          courseId: newCourseData.id,
-        ),
+        CourseEvent(type: CourseEventType.courseCreated, courseId: newCourseData.id),
       );
 
       _courseData = CreateCourseData.createNew();
@@ -85,16 +77,8 @@ class CreateCourseNotifier extends ChangeNotifier {
   }
 
   String _generateCourseKey(String topic, String title) {
-    final cleanTopic =
-        topic
-            .replaceAll(RegExp(r'[^\w\s]'), '')
-            .replaceAll(' ', '_')
-            .toLowerCase();
-    final cleanTitle =
-        title
-            .replaceAll(RegExp(r'[^\w\s]'), '')
-            .replaceAll(' ', '_')
-            .toLowerCase();
+    final cleanTopic = topic.replaceAll(RegExp(r'[^\w\s]'), '').replaceAll(' ', '_').toLowerCase();
+    final cleanTitle = title.replaceAll(RegExp(r'[^\w\s]'), '').replaceAll(' ', '_').toLowerCase();
 
     final timestamp = DateTime.now().millisecondsSinceEpoch;
     return 'course_${cleanTopic}_${cleanTitle}_$timestamp';
@@ -112,6 +96,11 @@ class CreateCourseNotifier extends ChangeNotifier {
   void addTerm() {
     final newTerm = TermData.createNew();
     _courseData = _courseData.copyWith(terms: [..._courseData.terms, newTerm]);
+    notifyListeners();
+  }
+
+  void addTermDirectly(TermData term) {
+    _courseData = _courseData.copyWith(terms: [..._courseData.terms, term]);
     notifyListeners();
   }
 
@@ -141,12 +130,33 @@ class CreateCourseNotifier extends ChangeNotifier {
   }
 
   bool get isDataValid {
-    return _courseData.topic.isNotEmpty &&
-        _courseData.title.isNotEmpty &&
-        _courseData.terms.isNotEmpty &&
-        _courseData.terms.every(
-          (term) => term.term.isNotEmpty && term.definition.isNotEmpty,
-        );
+    if (_courseData.topic.isEmpty || _courseData.title.isEmpty) {
+      return false;
+    }
+
+    final validTerms =
+        _courseData.terms
+            .where((term) => term.term.trim().isNotEmpty || term.definition.trim().isNotEmpty)
+            .toList();
+
+    if (validTerms.isEmpty) {
+      return false;
+    }
+
+    for (final term in _courseData.terms) {
+      final hasTerm = term.term.trim().isNotEmpty;
+      final hasDefinition = term.definition.trim().isNotEmpty;
+
+      if (!hasTerm && !hasDefinition) {
+        continue;
+      }
+
+      if ((hasTerm && !hasDefinition) || (!hasTerm && hasDefinition)) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   int get termsCount => _courseData.terms.length;
