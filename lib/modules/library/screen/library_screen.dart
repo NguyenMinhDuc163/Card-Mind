@@ -23,7 +23,7 @@ class _LibraryScreenState extends State<LibraryScreen>
   String _searchQuery = '';
   late TextEditingController _searchController;
 
-  final List<String> _tabs = ['Học phần', 'Lớp học', 'Thư viện'];
+  final List<String> _tabs = ['Học phần', 'Lớp học', 'Ôn tập'];
 
   @override
   void initState() {

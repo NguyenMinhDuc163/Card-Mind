@@ -43,37 +43,34 @@ class BookMarkNotifier extends ChangeNotifier {
 
   Future<void> _loadUnlearnedCardsByCourse() async {
     try {
-      
       final coursesWithResults =
           await DetailFlashCardNotifier.getCoursesWithResults();
 
       final List<Map<String, dynamic>> unlearnedCardsList = [];
 
       for (final courseId in coursesWithResults) {
-        
         final unlearnedCards = await DetailFlashCardNotifier.getUnlearnedCards(
           courseId,
         );
 
         if (unlearnedCards.isNotEmpty) {
-          
           final courseData = await _getCourseData(courseId);
 
           if (courseData != null) {
             unlearnedCardsList.add({
               'courseId': courseId,
-              'courseTitle': courseData['title'],
+              'courseTitle': courseData['title'] ?? 'Không có tiêu đề',
               'courseDescription': courseData['description'] ?? '',
-              'courseCategory': courseData['topic'],
+              'courseCategory': courseData['topic'] ?? '',
               'unlearnedCount': unlearnedCards.length,
               'unlearnedCards': unlearnedCards,
-              'lastUpdated': courseData['updatedAt'],
+              'lastUpdated':
+                  courseData['updatedAt'] ?? DateTime.now().toIso8601String(),
             });
           }
         }
       }
 
-      
       unlearnedCardsList.sort(
         (a, b) =>
             (b['unlearnedCount'] as int).compareTo(a['unlearnedCount'] as int),
@@ -87,11 +84,9 @@ class BookMarkNotifier extends ChangeNotifier {
 
   Future<void> _loadBookmarkedCoursesByCourse() async {
     try {
-      
       final bookmarkedCards =
           await DetailFlashCardNotifier.getBookmarkedCards();
 
-      
       final courseInfo =
           await DetailFlashCardNotifier.getBookmarkedCourseInfo();
 
@@ -100,7 +95,6 @@ class BookMarkNotifier extends ChangeNotifier {
         return;
       }
 
-      
       _bookmarkedCoursesByCourse = [
         {
           'courseId': courseInfo['courseId'],
@@ -140,7 +134,6 @@ class BookMarkNotifier extends ChangeNotifier {
     }
   }
 
-  
   int get totalUnlearnedCards {
     return _unlearnedCardsByCourse.fold(
       0,
@@ -148,7 +141,6 @@ class BookMarkNotifier extends ChangeNotifier {
     );
   }
 
-  
   int get coursesWithUnlearnedCards => _unlearnedCardsByCourse.length;
 
   void searchBookmarks(String query) {
@@ -157,7 +149,6 @@ class BookMarkNotifier extends ChangeNotifier {
       _filteredUnlearnedCardsByCourse = [];
       _filteredBookmarkedCoursesByCourse = [];
     } else {
-      
       _filteredUnlearnedCardsByCourse =
           _unlearnedCardsByCourse.where((courseData) {
             final courseTitle = courseData['courseTitle'] as String? ?? '';
@@ -171,7 +162,6 @@ class BookMarkNotifier extends ChangeNotifier {
                 courseCategory.toLowerCase().contains(query.toLowerCase());
           }).toList();
 
-      
       _filteredBookmarkedCoursesByCourse =
           _bookmarkedCoursesByCourse.where((courseData) {
             final courseTitle = courseData['courseTitle'] as String? ?? '';

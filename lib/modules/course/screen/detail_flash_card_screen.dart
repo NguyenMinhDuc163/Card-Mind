@@ -27,13 +27,30 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
     });
   }
 
-  Future<void> _initializeData() async {
+  Future<void> _initializeData({bool resetLearningData = false}) async {
     final notifier = Provider.of<DetailFlashCardNotifier>(
       context,
       listen: false,
     );
-    final courseId = ModalRoute.of(context)?.settings.arguments as String?;
-    await notifier.initializeData(courseId: courseId);
+
+    // Lấy arguments - có thể là String (courseId) hoặc Map (courseId + learningMode)
+    final arguments = ModalRoute.of(context)?.settings.arguments;
+    String? courseId;
+    LearningMode learningMode = LearningMode.fullCourse;
+
+    if (arguments is String) {
+      courseId = arguments;
+    } else if (arguments is Map<String, dynamic>) {
+      courseId = arguments['courseId'] as String?;
+      learningMode =
+          arguments['learningMode'] as LearningMode? ?? LearningMode.fullCourse;
+    }
+
+    await notifier.initializeData(
+      courseId: courseId,
+      resetLearningData: resetLearningData,
+      learningMode: learningMode,
+    );
   }
 
   bool _onSwipe(
@@ -228,6 +245,14 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
         return FunctionScreenTemplate(
           actionsWidget: [
             GestureDetector(
+              onTap: () => _showResetDialog(notifier),
+              child: Icon(
+                Icons.refresh,
+                color: context.colors.onPrimary,
+                size: 24,
+              ),
+            ),
+            GestureDetector(
               onTap: () async {
                 await notifier.saveLearningResult();
                 if (mounted) {
@@ -283,7 +308,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
             child: Column(
               children: [
                 Text(
-                  '${notifier.learnedCount + notifier.unlearnedCount} / ${notifier.totalCards}',
+                  '${notifier.currentCardIndex} / ${notifier.totalCards}',
                   style: TextStyle(
                     color: context.brandColors.textPrimary,
                     fontSize: 16,
@@ -294,7 +319,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
                 LinearProgressIndicator(
                   value:
                       notifier.totalCards > 0
-                          ? (notifier.learnedCount + notifier.unlearnedCount) /
+                          ? (notifier.currentCardIndex + 1) /
                               notifier.totalCards
                           : 0.0,
                   backgroundColor: context.brandColors.progressBackground,
@@ -545,6 +570,69 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
         CourseResultScreen.routeName,
         arguments: notifier.courseId,
       );
+    }
+  }
+
+  void _showResetDialog(DetailFlashCardNotifier notifier) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: context.brandColors.cardBackground,
+          title: Row(
+            children: [
+              Icon(
+                Icons.refresh,
+                color: context.brandColors.buttonPrimary,
+                size: 24,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Làm lại khóa học',
+                style: TextStyle(color: context.brandColors.textPrimary),
+              ),
+            ],
+          ),
+          content: Text(
+            'Bạn có chắc chắn muốn làm lại khóa học này? Tất cả tiến độ học tập sẽ bị xóa và bạn sẽ bắt đầu lại từ đầu.',
+            style: TextStyle(color: context.brandColors.textSecondary),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                'Hủy',
+                style: TextStyle(color: context.brandColors.buttonPrimary),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _resetLearningData(notifier);
+              },
+              child: Text(
+                'Làm lại',
+                style: TextStyle(color: context.brandColors.buttonDestructive),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _resetLearningData(DetailFlashCardNotifier notifier) async {
+    if (notifier.courseId != null) {
+      await _initializeData(resetLearningData: true);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Đã reset khóa học! Bắt đầu học lại từ đầu.'),
+            backgroundColor: context.brandColors.progressValue,
+          ),
+        );
+      }
     }
   }
 }

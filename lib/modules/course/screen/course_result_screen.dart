@@ -415,6 +415,46 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
               ),
             ),
           ),
+          const SizedBox(height: 12),
+          GestureDetector(
+            onTap: () {
+              Navigator.pushReplacementNamed(
+                context,
+                DashboardScreen.routeName,
+              );
+            },
+            child: Container(
+              width: double.infinity,
+              padding: AppPad.v20,
+              decoration: BoxDecoration(
+                color: context.brandColors.buttonSecondary,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: context.brandColors.borderColor.withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.home,
+                    color: context.brandColors.textPrimary,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Về trang chủ',
+                    style: TextStyle(
+                      color: context.brandColors.textPrimary,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );

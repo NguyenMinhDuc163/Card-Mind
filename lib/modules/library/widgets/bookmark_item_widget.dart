@@ -16,13 +16,14 @@ class BookmarkItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final courseTitle = courseData['courseTitle'] as String;
-    final courseDescription = courseData['courseDescription'] as String;
+    final courseTitle =
+        courseData['courseTitle'] as String? ?? 'Không có tiêu đề';
+    final courseDescription = courseData['courseDescription'] as String? ?? '';
     final courseCategory = courseData['courseCategory'] as String?;
     final courseTopic = courseData['courseTopic'] as String?;
     final unlearnedCount = courseData['unlearnedCount'] as int?;
     final bookmarkedCount = courseData['bookmarkedCount'] as int?;
-    final lastUpdated = courseData['lastUpdated'] as String;
+    final lastUpdated = courseData['lastUpdated'] as String? ?? '';
 
     return GestureDetector(
       onTap: onTap,

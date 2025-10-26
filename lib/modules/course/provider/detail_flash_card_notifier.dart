@@ -5,6 +5,12 @@ import 'package:card_mind/data/models/course.dart';
 import 'package:card_mind/data/models/flashcard.dart';
 import 'package:flutter/foundation.dart';
 
+enum LearningMode {
+  fullCourse, // Học tất cả thẻ trong khóa học
+  bookmarked, // Chỉ học thẻ đã bookmark
+  unlearned, // Chỉ học thẻ chưa thuộc
+}
+
 class DetailFlashCardNotifier extends ChangeNotifier {
   CourseData? _courseData;
   Course? _course;
@@ -17,6 +23,8 @@ class DetailFlashCardNotifier extends ChangeNotifier {
   bool _isLoading = false;
   String? _errorMessage;
   String? _courseId;
+  int _currentCardIndex = 0; // Track thẻ hiện tại đang hiển thị
+  LearningMode _learningMode = LearningMode.fullCourse; // Chế độ học tập
 
   CourseData? get courseData => _courseData;
 
@@ -59,9 +67,8 @@ class DetailFlashCardNotifier extends ChangeNotifier {
   }
 
   int get totalCards {
-    return _originalCards.length +
-        _learnedCards.length +
-        _unlearnedCards.length;
+    // Tổng số thẻ cố định = số thẻ trong list A
+    return _originalCards.length;
   }
 
   int get learnedCount => _learnedCards.length;
@@ -70,15 +77,29 @@ class DetailFlashCardNotifier extends ChangeNotifier {
 
   int get remainingCount => _originalCards.length;
 
-  Future<void> initializeData({String? courseId}) async {
+  int get currentCardIndex => _currentCardIndex;
+
+  LearningMode get learningMode => _learningMode;
+
+  Future<void> initializeData({
+    String? courseId,
+    bool resetLearningData = false,
+    LearningMode learningMode = LearningMode.fullCourse,
+  }) async {
     _courseId = courseId;
+    _learningMode = learningMode;
     _isLoading = true;
     notifyListeners();
     try {
       if (courseId != null) {
         _resetAllData();
         await _loadCourseFromHive(courseId);
-        await _loadExistingLearningData(courseId);
+        await _filterCardsByLearningMode(courseId);
+
+        // B và C luôn bắt đầu rỗng, không load từ Hive
+        // Chỉ load khi hoàn thành khóa học
+        print('🔄 Initialized with learning mode: ${_learningMode.name}');
+        print('🔄 Cards after filtering: ${_originalCards.length}');
 
         await Future.delayed(const Duration(milliseconds: 100));
       }
@@ -98,7 +119,11 @@ class DetailFlashCardNotifier extends ChangeNotifier {
     _learnedCardIds = <String>{};
     _bookmarkedCardIds = <String>{};
     _bookmarkedCards = [];
+    _currentCardIndex = 0; // Reset về thẻ đầu tiên
   }
+
+  // Xóa method _clearLearningData vì không cần thiết nữa
+  // B và C luôn bắt đầu rỗng
 
   Future<void> _saveBookmarkedCards() async {
     try {
@@ -159,108 +184,50 @@ class DetailFlashCardNotifier extends ChangeNotifier {
     }
   }
 
-  Future<void> _saveLearnedCards() async {
+  // Xóa các method _saveLearnedCards và _saveUnlearnedCards
+  // Vì B và C chỉ lưu khi hoàn thành khóa học
+
+  // Xóa method _loadExistingLearningData vì không cần load từ Hive nữa
+  // B và C luôn bắt đầu rỗng
+
+  Future<void> _filterCardsByLearningMode(String courseId) async {
     try {
-      if (_courseData != null) {
-        LocalStorageHelper.setValue(
-          'learned_cards_${_courseData!.id}',
-          _learnedCardIds.toList(),
-        );
+      switch (_learningMode) {
+        case LearningMode.fullCourse:
+          // Giữ nguyên tất cả thẻ
+          print(
+            '📚 Learning mode: Full course - ${_originalCards.length} cards',
+          );
+          break;
+
+        case LearningMode.bookmarked:
+          // Chỉ giữ thẻ đã bookmark
+          final bookmarkedCards = await getBookmarkedCards();
+          final bookmarkedIds =
+              bookmarkedCards.map((card) => card['id'] as String).toSet();
+          _originalCards =
+              _originalCards
+                  .where((card) => bookmarkedIds.contains(card.id))
+                  .toList();
+          print(
+            '📚 Learning mode: Bookmarked - ${_originalCards.length} cards',
+          );
+          break;
+
+        case LearningMode.unlearned:
+          // Chỉ giữ thẻ chưa thuộc
+          final unlearnedCards = await getUnlearnedCards(courseId);
+          final unlearnedIds =
+              unlearnedCards.map((card) => card['id'] as String).toSet();
+          _originalCards =
+              _originalCards
+                  .where((card) => unlearnedIds.contains(card.id))
+                  .toList();
+          print('📚 Learning mode: Unlearned - ${_originalCards.length} cards');
+          break;
       }
-    } catch (e) {}
-  }
-
-  Future<void> _loadExistingLearningData(String courseId) async {
-    try {
-      print('🔍 Loading existing learning data for courseId: $courseId');
-
-      final learnedCardsData = await getLearnedCards(courseId);
-      final learnedIds =
-          learnedCardsData.map((card) => card['id'] as String).toSet();
-      _learnedCardIds = learnedIds;
-      print('🔍 Found ${learnedCardsData.length} learned cards');
-
-      final unlearnedCardsData = await getUnlearnedCards(courseId);
-      final unlearnedIds =
-          unlearnedCardsData.map((card) => card['id'] as String).toSet();
-      print('🔍 Found ${unlearnedCardsData.length} unlearned cards');
-
-      // Kiểm tra xem có dữ liệu học tập không hợp lệ không (từ khóa học khác)
-      final currentCourseCardIds =
-          _originalCards.map((card) => card.id).toSet();
-      final validLearnedIds =
-          learnedIds.where((id) => currentCourseCardIds.contains(id)).toSet();
-      final validUnlearnedIds =
-          unlearnedIds.where((id) => currentCourseCardIds.contains(id)).toSet();
-
-      if (learnedIds.length != validLearnedIds.length ||
-          unlearnedIds.length != validUnlearnedIds.length) {
-        print('🔍 Found invalid learning data, cleaning up...');
-        _learnedCardIds = validLearnedIds;
-        // Clear invalid data
-        LocalStorageHelper.setValue(
-          'learned_cards_$courseId',
-          validLearnedIds.toList(),
-        );
-        LocalStorageHelper.setValue(
-          'unlearned_cards_$courseId',
-          validUnlearnedIds.toList(),
-        );
-      }
-
-      final originalCount = _originalCards.length;
-      _originalCards =
-          _originalCards
-              .where(
-                (card) =>
-                    !validLearnedIds.contains(card.id) &&
-                    !validUnlearnedIds.contains(card.id),
-              )
-              .toList();
-      print('🔍 Original cards: $originalCount -> ${_originalCards.length}');
-
-      _learnedCards =
-          learnedCardsData
-              .where(
-                (cardData) =>
-                    validLearnedIds.contains(cardData['id'] as String),
-              )
-              .map(
-                (cardData) => Flashcard(
-                  id: cardData['id'] as String,
-                  frontText: cardData['frontText'] as String,
-                  backText: cardData['backText'] as String,
-                  category: cardData['category'] as String,
-                  createdAt: DateTime.parse(cardData['createdAt'] as String),
-                  updatedAt: DateTime.parse(cardData['updatedAt'] as String),
-                ),
-              )
-              .toList();
-
-      _unlearnedCards =
-          unlearnedCardsData
-              .where(
-                (cardData) =>
-                    validUnlearnedIds.contains(cardData['id'] as String),
-              )
-              .map(
-                (cardData) => Flashcard(
-                  id: cardData['id'] as String,
-                  frontText: cardData['frontText'] as String,
-                  backText: cardData['backText'] as String,
-                  category: cardData['category'] as String,
-                  createdAt: DateTime.parse(cardData['createdAt'] as String),
-                  updatedAt: DateTime.parse(cardData['updatedAt'] as String),
-                ),
-              )
-              .toList();
-
-      print(
-        '🔍 Final counts - Original: ${_originalCards.length}, Learned: ${_learnedCards.length}, Unlearned: ${_unlearnedCards.length}',
-      );
-      print('🔍 Total cards: ${totalCards}');
     } catch (e) {
-      print('Error loading existing learning data: $e');
+      print('❌ Error filtering cards by learning mode: $e');
     }
   }
 
@@ -279,6 +246,15 @@ class DetailFlashCardNotifier extends ChangeNotifier {
           );
         }).toList();
 
+    print('🔄 Converted ${_courseData!.terms.length} terms to flashcards');
+    print('🔄 All cards created:');
+    for (int i = 0; i < _originalCards.length; i++) {
+      print(
+        '  ${i + 1}. ${_originalCards[i].frontText} (ID: ${_originalCards[i].id})',
+      );
+    }
+    print('🔄 Starting at index: $_currentCardIndex');
+
     _course = Course(
       id: _courseData!.id,
       title: _courseData!.title,
@@ -294,37 +270,76 @@ class DetailFlashCardNotifier extends ChangeNotifier {
   }
 
   void onSwipeRight(Flashcard card) {
-    _originalCards.removeWhere((c) => c.id == card.id);
+    // Thêm vào list B (learned) - tạm thời, không lưu Hive
+    if (!_learnedCardIds.contains(card.id)) {
+      _learnedCards.add(card);
+      _learnedCardIds.add(card.id);
+    }
 
-    _learnedCards.add(card);
+    // Chuyển sang thẻ tiếp theo
+    _currentCardIndex++;
 
-    _learnedCardIds.add(card.id);
-    _saveLearnedCards();
+    print('📚 Swiped RIGHT - Learned: ${card.frontText}');
+    print('📊 Current index: $_currentCardIndex/${_originalCards.length}');
+    print(
+      '📊 List A: ${_originalCards.length}, List B (Learned): ${_learnedCards.length}, List C (Unlearned): ${_unlearnedCards.length}',
+    );
+
     notifyListeners();
   }
 
   void onSwipeLeft(Flashcard card) {
-    _originalCards.removeWhere((c) => c.id == card.id);
+    // Thêm vào list C (unlearned) - tạm thời, không lưu Hive
+    if (!_unlearnedCards.any((c) => c.id == card.id)) {
+      _unlearnedCards.add(card);
+    }
 
-    _unlearnedCards.add(card);
+    // Chuyển sang thẻ tiếp theo
+    _currentCardIndex++;
+
+    print('❌ Swiped LEFT - Unlearned: ${card.frontText}');
+    print('📊 Current index: $_currentCardIndex/${_originalCards.length}');
+    print(
+      '📊 List A: ${_originalCards.length}, List B (Learned): ${_learnedCards.length}, List C (Unlearned): ${_unlearnedCards.length}',
+    );
+
     notifyListeners();
   }
 
-  bool get hasCardsToStudy => _originalCards.isNotEmpty;
+  bool get hasCardsToStudy {
+    // Kết thúc khi đã học hết tất cả thẻ (index >= length)
+    return _currentCardIndex < _originalCards.length;
+  }
 
-  Flashcard? get currentCard =>
-      _originalCards.isNotEmpty ? _originalCards.first : null;
+  Flashcard? get currentCard {
+    // Hiển thị thẻ tại index hiện tại
+    if (_currentCardIndex < _originalCards.length) {
+      return _originalCards[_currentCardIndex];
+    }
+    return null;
+  }
 
   void revertLastCard() {
+    // Hoàn tác thẻ learned cuối cùng (không lưu Hive)
     if (_learnedCards.isNotEmpty) {
       final lastLearnedCard = _learnedCards.removeLast();
-      _originalCards.insert(0, lastLearnedCard);
       _learnedCardIds.remove(lastLearnedCard.id);
-      _saveLearnedCards();
-    } else if (_unlearnedCards.isNotEmpty) {
-      final lastUnlearnedCard = _unlearnedCards.removeLast();
-      _originalCards.insert(0, lastUnlearnedCard);
+      _currentCardIndex--; // Giảm index
+      print('↩️ Reverted learned card: ${lastLearnedCard.frontText}');
     }
+    // Hoặc hoàn tác thẻ unlearned cuối cùng (không lưu Hive)
+    else if (_unlearnedCards.isNotEmpty) {
+      final lastUnlearnedCard = _unlearnedCards.removeLast();
+      _currentCardIndex--; // Giảm index
+      print('↩️ Reverted unlearned card: ${lastUnlearnedCard.frontText}');
+    }
+
+    print(
+      '📊 Current index after revert: $_currentCardIndex/${_originalCards.length}',
+    );
+    print(
+      '📊 After revert - List A: ${_originalCards.length}, List B (Learned): ${_learnedCards.length}, List C (Unlearned): ${_unlearnedCards.length}',
+    );
 
     notifyListeners();
   }
@@ -334,9 +349,13 @@ class DetailFlashCardNotifier extends ChangeNotifier {
 
     try {
       final now = DateTime.now();
+      print(
+        '💾 Saving learning result - List B: ${_learnedCards.length}, List C: ${_unlearnedCards.length}',
+      );
+
+      // Lưu kết quả học tập
       final resultKey =
           'learning_result_${_courseData!.id}_${now.millisecondsSinceEpoch}';
-
       final result = {
         'courseId': _courseData!.id,
         'courseTitle': _courseData!.title,
@@ -352,9 +371,9 @@ class DetailFlashCardNotifier extends ChangeNotifier {
         'unlearnedCards': _unlearnedCards.map((card) => card.id).toList(),
         'bookmarkedCards': _bookmarkedCards.map((card) => card.id).toList(),
       };
-
       LocalStorageHelper.setValue(resultKey, result);
 
+      // Lưu list B (learned cards) vào Hive
       final learnedCardsKey = 'learned_cards_${_courseData!.id}';
       final learnedCardsData = {
         'courseId': _courseData!.id,
@@ -378,6 +397,7 @@ class DetailFlashCardNotifier extends ChangeNotifier {
       };
       LocalStorageHelper.setValue(learnedCardsKey, learnedCardsData);
 
+      // Lưu list C (unlearned cards) vào Hive
       final unlearnedCardsKey = 'unlearned_cards_${_courseData!.id}';
       final unlearnedCardsData = {
         'courseId': _courseData!.id,
@@ -401,6 +421,7 @@ class DetailFlashCardNotifier extends ChangeNotifier {
       };
       LocalStorageHelper.setValue(unlearnedCardsKey, unlearnedCardsData);
 
+      // Cập nhật danh sách kết quả
       final allResults =
           LocalStorageHelper.getValue('all_learning_results')
               as List<dynamic>? ??
@@ -416,8 +437,10 @@ class DetailFlashCardNotifier extends ChangeNotifier {
         coursesWithResults.add(_courseData!.id);
         LocalStorageHelper.setValue('courses_with_results', coursesWithResults);
       }
+
+      print('✅ Successfully saved learning result to Hive');
     } catch (e) {
-      print('Error saving learning result: $e');
+      print('❌ Error saving learning result: $e');
     }
   }
 
@@ -501,11 +524,12 @@ class DetailFlashCardNotifier extends ChangeNotifier {
           data as Map<dynamic, dynamic>,
         );
         return {
-          'courseId': bookmarkedData['courseId'],
-          'courseTitle': bookmarkedData['courseTitle'],
-          'courseTopic': bookmarkedData['courseTopic'],
-          'courseDescription': bookmarkedData['courseDescription'],
-          'lastUpdated': bookmarkedData['lastUpdated'],
+          'courseId': bookmarkedData['courseId'] ?? '',
+          'courseTitle': bookmarkedData['courseTitle'] ?? 'Không có tiêu đề',
+          'courseTopic': bookmarkedData['courseTopic'] ?? '',
+          'courseDescription': bookmarkedData['courseDescription'] ?? '',
+          'lastUpdated':
+              bookmarkedData['lastUpdated'] ?? DateTime.now().toIso8601String(),
         };
       }
       return null;
@@ -518,7 +542,7 @@ class DetailFlashCardNotifier extends ChangeNotifier {
   void markCardAsLearned(String cardId) {
     if (!_learnedCardIds.contains(cardId)) {
       _learnedCardIds.add(cardId);
-      _saveLearnedCards();
+      // Không lưu Hive, chỉ lưu khi hoàn thành
       notifyListeners();
     }
   }
@@ -526,7 +550,7 @@ class DetailFlashCardNotifier extends ChangeNotifier {
   void unmarkCardAsLearned(String cardId) {
     if (_learnedCardIds.contains(cardId)) {
       _learnedCardIds.remove(cardId);
-      _saveLearnedCards();
+      // Không lưu Hive, chỉ lưu khi hoàn thành
       notifyListeners();
     }
   }
