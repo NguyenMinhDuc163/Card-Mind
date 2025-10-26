@@ -221,6 +221,36 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
 
     return FunctionScreenTemplate(
       backgroundColor: context.colors.primary,
+      titleWidget: Text(
+        _classData!.className,
+        style: AppTextStyles.textContent1.copyWith(
+          color: context.colors.onPrimary,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      actionsWidget: [
+        IconButton(onPressed: _showEditClassBottomSheet, icon: const Icon(Icons.edit)),
+        PopupMenuButton<String>(
+          onSelected: (value) {
+            if (value == 'delete') {
+              _showDeleteClassDialog();
+            }
+          },
+          itemBuilder:
+              (context) => [
+            const PopupMenuItem(
+              value: 'delete',
+              child: Row(
+                children: [
+                  Icon(Icons.delete, color: Colors.red, size: 18),
+                  SizedBox(width: 8),
+                  Text('Xóa lớp học'),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
       screen: Scaffold(
         backgroundColor: context.colors.primary,
         floatingActionButton:
@@ -237,43 +267,6 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
           children: [
             CustomScrollView(
               slivers: [
-                SliverAppBar(
-                  backgroundColor: context.colors.primary,
-                  foregroundColor: context.colors.onPrimary,
-                  elevation: 0,
-                  pinned: true,
-                  title: Text(
-                    _classData!.className,
-                    style: AppTextStyles.textContent1.copyWith(
-                      color: context.colors.onPrimary,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  actions: [
-                    IconButton(onPressed: _showEditClassBottomSheet, icon: const Icon(Icons.edit)),
-                    PopupMenuButton<String>(
-                      onSelected: (value) {
-                        if (value == 'delete') {
-                          _showDeleteClassDialog();
-                        }
-                      },
-                      itemBuilder:
-                          (context) => [
-                            const PopupMenuItem(
-                              value: 'delete',
-                              child: Row(
-                                children: [
-                                  Icon(Icons.delete, color: Colors.red, size: 18),
-                                  SizedBox(width: 8),
-                                  Text('Xóa lớp học'),
-                                ],
-                              ),
-                            ),
-                          ],
-                    ),
-                  ],
-                ),
-
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: AppPad.h16v20,

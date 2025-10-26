@@ -100,7 +100,7 @@ class DrawerWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Xin chào",
+              "Card mind xin chào!",
               style: AppTextStyles.textHeader3.copyWith(
                 color: context.colors.onPrimary,
               ),

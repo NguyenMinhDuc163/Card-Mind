@@ -116,7 +116,19 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
         }
 
         if (notifier.currentCards.isEmpty && !notifier.isLoading) {
+          // Debug: Kiểm tra các điều kiện
+          print('=== DEBUG DETAIL FLASHCARD ===');
+          print('Current cards: ${notifier.currentCards.length}');
+          print('Is loading: ${notifier.isLoading}');
+          print(
+            'Has existing learning data: ${notifier.hasExistingLearningData}',
+          );
+          print('Total cards: ${notifier.totalCards}');
+          print('Course ID: ${notifier.courseId}');
+          print('==============================');
+
           if (notifier.hasExistingLearningData && notifier.totalCards > 0) {
+            print('🚨 TRIGGERING NAVIGATION TO RESULT SCREEN');
             WidgetsBinding.instance.addPostFrameCallback((_) async {
               if (mounted) {
                 await notifier.saveLearningResult();
@@ -127,6 +139,8 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
                 );
               }
             });
+          } else {
+            print('✅ NOT triggering navigation - showing welcome screen');
           }
 
           return FunctionScreenTemplate(

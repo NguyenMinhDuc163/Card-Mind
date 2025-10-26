@@ -43,16 +43,25 @@ class DetailFlashCardNotifier extends ChangeNotifier {
   String? get courseId => _courseId;
 
   bool get hasExistingLearningData {
-    if (_courseId == null) return false;
+    if (_courseData == null) {
+      print('🔍 hasExistingLearningData: courseData is null');
+      return false;
+    }
 
-    final learnedCardsKey = 'learned_cards_$_courseId';
+    final learnedCardsKey = 'learned_cards_${_courseData!.id}';
     final learnedData = LocalStorageHelper.getValue(learnedCardsKey);
+
+    print(
+      '🔍 hasExistingLearningData: courseId=${_courseData!.id}, key=$learnedCardsKey, data=$learnedData',
+    );
 
     return learnedData != null;
   }
 
   int get totalCards {
-    return _originalCards.length + _learnedCards.length + _unlearnedCards.length;
+    return _originalCards.length +
+        _learnedCards.length +
+        _unlearnedCards.length;
   }
 
   int get learnedCount => _learnedCards.length;
@@ -124,13 +133,15 @@ class DetailFlashCardNotifier extends ChangeNotifier {
 
   Future<void> _loadCourseFromHive(String courseId) async {
     try {
-      final courseKeys = LocalStorageHelper.getValue('course_keys') as List<dynamic>? ?? [];
+      final courseKeys =
+          LocalStorageHelper.getValue('course_keys') as List<dynamic>? ?? [];
 
       for (final key in courseKeys) {
         final courseData = LocalStorageHelper.getValue(key as String);
         if (courseData != null) {
           final Map<String, dynamic> jsonData = {};
-          final Map<dynamic, dynamic> rawData = courseData as Map<dynamic, dynamic>;
+          final Map<dynamic, dynamic> rawData =
+              courseData as Map<dynamic, dynamic>;
 
           rawData.forEach((key, value) {
             jsonData[key.toString()] = _convertValue(value);
@@ -150,26 +161,70 @@ class DetailFlashCardNotifier extends ChangeNotifier {
 
   Future<void> _saveLearnedCards() async {
     try {
-      LocalStorageHelper.setValue('learned_cards_$_courseId', _learnedCardIds.toList());
+      if (_courseData != null) {
+        LocalStorageHelper.setValue(
+          'learned_cards_${_courseData!.id}',
+          _learnedCardIds.toList(),
+        );
+      }
     } catch (e) {}
   }
 
   Future<void> _loadExistingLearningData(String courseId) async {
     try {
+      print('🔍 Loading existing learning data for courseId: $courseId');
+
       final learnedCardsData = await getLearnedCards(courseId);
-      final learnedIds = learnedCardsData.map((card) => card['id'] as String).toSet();
+      final learnedIds =
+          learnedCardsData.map((card) => card['id'] as String).toSet();
       _learnedCardIds = learnedIds;
+      print('🔍 Found ${learnedCardsData.length} learned cards');
 
       final unlearnedCardsData = await getUnlearnedCards(courseId);
-      final unlearnedIds = unlearnedCardsData.map((card) => card['id'] as String).toSet();
+      final unlearnedIds =
+          unlearnedCardsData.map((card) => card['id'] as String).toSet();
+      print('🔍 Found ${unlearnedCardsData.length} unlearned cards');
 
+      // Kiểm tra xem có dữ liệu học tập không hợp lệ không (từ khóa học khác)
+      final currentCourseCardIds =
+          _originalCards.map((card) => card.id).toSet();
+      final validLearnedIds =
+          learnedIds.where((id) => currentCourseCardIds.contains(id)).toSet();
+      final validUnlearnedIds =
+          unlearnedIds.where((id) => currentCourseCardIds.contains(id)).toSet();
+
+      if (learnedIds.length != validLearnedIds.length ||
+          unlearnedIds.length != validUnlearnedIds.length) {
+        print('🔍 Found invalid learning data, cleaning up...');
+        _learnedCardIds = validLearnedIds;
+        // Clear invalid data
+        LocalStorageHelper.setValue(
+          'learned_cards_$courseId',
+          validLearnedIds.toList(),
+        );
+        LocalStorageHelper.setValue(
+          'unlearned_cards_$courseId',
+          validUnlearnedIds.toList(),
+        );
+      }
+
+      final originalCount = _originalCards.length;
       _originalCards =
           _originalCards
-              .where((card) => !learnedIds.contains(card.id) && !unlearnedIds.contains(card.id))
+              .where(
+                (card) =>
+                    !validLearnedIds.contains(card.id) &&
+                    !validUnlearnedIds.contains(card.id),
+              )
               .toList();
+      print('🔍 Original cards: $originalCount -> ${_originalCards.length}');
 
       _learnedCards =
           learnedCardsData
+              .where(
+                (cardData) =>
+                    validLearnedIds.contains(cardData['id'] as String),
+              )
               .map(
                 (cardData) => Flashcard(
                   id: cardData['id'] as String,
@@ -184,6 +239,10 @@ class DetailFlashCardNotifier extends ChangeNotifier {
 
       _unlearnedCards =
           unlearnedCardsData
+              .where(
+                (cardData) =>
+                    validUnlearnedIds.contains(cardData['id'] as String),
+              )
               .map(
                 (cardData) => Flashcard(
                   id: cardData['id'] as String,
@@ -195,6 +254,11 @@ class DetailFlashCardNotifier extends ChangeNotifier {
                 ),
               )
               .toList();
+
+      print(
+        '🔍 Final counts - Original: ${_originalCards.length}, Learned: ${_learnedCards.length}, Unlearned: ${_unlearnedCards.length}',
+      );
+      print('🔍 Total cards: ${totalCards}');
     } catch (e) {
       print('Error loading existing learning data: $e');
     }
@@ -248,7 +312,8 @@ class DetailFlashCardNotifier extends ChangeNotifier {
 
   bool get hasCardsToStudy => _originalCards.isNotEmpty;
 
-  Flashcard? get currentCard => _originalCards.isNotEmpty ? _originalCards.first : null;
+  Flashcard? get currentCard =>
+      _originalCards.isNotEmpty ? _originalCards.first : null;
 
   void revertLastCard() {
     if (_learnedCards.isNotEmpty) {
@@ -269,7 +334,8 @@ class DetailFlashCardNotifier extends ChangeNotifier {
 
     try {
       final now = DateTime.now();
-      final resultKey = 'learning_result_${_courseData!.id}_${now.millisecondsSinceEpoch}';
+      final resultKey =
+          'learning_result_${_courseData!.id}_${now.millisecondsSinceEpoch}';
 
       final result = {
         'courseId': _courseData!.id,
@@ -336,12 +402,16 @@ class DetailFlashCardNotifier extends ChangeNotifier {
       LocalStorageHelper.setValue(unlearnedCardsKey, unlearnedCardsData);
 
       final allResults =
-          LocalStorageHelper.getValue('all_learning_results') as List<dynamic>? ?? [];
+          LocalStorageHelper.getValue('all_learning_results')
+              as List<dynamic>? ??
+          [];
       allResults.add(resultKey);
       LocalStorageHelper.setValue('all_learning_results', allResults);
 
       final coursesWithResults =
-          LocalStorageHelper.getValue('courses_with_results') as List<dynamic>? ?? [];
+          LocalStorageHelper.getValue('courses_with_results')
+              as List<dynamic>? ??
+          [];
       if (!coursesWithResults.contains(_courseData!.id)) {
         coursesWithResults.add(_courseData!.id);
         LocalStorageHelper.setValue('courses_with_results', coursesWithResults);
@@ -351,7 +421,9 @@ class DetailFlashCardNotifier extends ChangeNotifier {
     }
   }
 
-  static Future<List<Map<String, dynamic>>> getLearnedCards(String courseId) async {
+  static Future<List<Map<String, dynamic>>> getLearnedCards(
+    String courseId,
+  ) async {
     try {
       final learnedCardsKey = 'learned_cards_$courseId';
       final data = LocalStorageHelper.getValue(learnedCardsKey);
@@ -368,7 +440,9 @@ class DetailFlashCardNotifier extends ChangeNotifier {
     }
   }
 
-  static Future<List<Map<String, dynamic>>> getUnlearnedCards(String courseId) async {
+  static Future<List<Map<String, dynamic>>> getUnlearnedCards(
+    String courseId,
+  ) async {
     try {
       if (courseId.isEmpty) {
         return [];
@@ -392,7 +466,10 @@ class DetailFlashCardNotifier extends ChangeNotifier {
 
   static Future<List<String>> getCoursesWithResults() async {
     try {
-      final courses = LocalStorageHelper.getValue('courses_with_results') as List<dynamic>? ?? [];
+      final courses =
+          LocalStorageHelper.getValue('courses_with_results')
+              as List<dynamic>? ??
+          [];
       return courses.cast<String>();
     } catch (e) {
       print('Error getting courses with results: $e');
