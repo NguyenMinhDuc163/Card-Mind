@@ -351,7 +351,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
               ),
               const SizedBox(width: 8),
               Text(
-                'Lỗi xác thực',
+                'Thông báo',
                 style: TextStyle(color: context.brandColors.textPrimary),
               ),
             ],
@@ -566,7 +566,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
     final definitionController = TextEditingController(text: term.definition);
 
     return Dismissible(
-      key: Key('term_${term.id}'),
+      key: Key('term_${term.id}_$index'),
       direction: DismissDirection.horizontal,
       background: Container(
         alignment: Alignment.centerLeft,
@@ -805,11 +805,10 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
       return;
     }
 
-    for (final parsedTerm in parsedTerms) {
+    for (int i = 0; i < parsedTerms.length; i++) {
+      final parsedTerm = parsedTerms[i];
       final newTerm = TermData(
-        id:
-            DateTime.now().millisecondsSinceEpoch.toString() +
-            parsedTerm.term.hashCode.toString(),
+        id: '${DateTime.now().millisecondsSinceEpoch}_$i',
         term: parsedTerm.term,
         definition: parsedTerm.definition,
         language: parsedTerm.language,

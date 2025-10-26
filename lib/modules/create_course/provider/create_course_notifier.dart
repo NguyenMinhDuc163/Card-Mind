@@ -40,12 +40,25 @@ class CreateCourseNotifier extends ChangeNotifier {
 
   Future<void> completeCourse() async {
     try {
-      final courseKey = _generateCourseKey(_courseData.topic, _courseData.title);
+      // Loại bỏ các thuật ngữ trống (không có cả thuật ngữ và định nghĩa)
+      final validTerms =
+          _courseData.terms.where((term) {
+            final hasTerm = term.term.trim().isNotEmpty;
+            final hasDefinition = term.definition.trim().isNotEmpty;
+            // Chỉ giữ lại những thuật ngữ có ít nhất thuật ngữ hoặc định nghĩa
+            return hasTerm && hasDefinition;
+          }).toList();
+
+      final courseKey = _generateCourseKey(
+        _courseData.topic,
+        _courseData.title,
+      );
       print('Generated key: $courseKey');
 
       final now = DateTime.now();
       final newCourseData = _courseData.copyWith(
         id: now.millisecondsSinceEpoch.toString(),
+        terms: validTerms,
         createdAt: now,
         updatedAt: now,
       );
@@ -53,7 +66,8 @@ class CreateCourseNotifier extends ChangeNotifier {
       LocalStorageHelper.setValue(courseKey, newCourseData.toJson());
       print('Saved course data with key: $courseKey');
 
-      final existingKeys = LocalStorageHelper.getValue('course_keys') as List<dynamic>? ?? [];
+      final existingKeys =
+          LocalStorageHelper.getValue('course_keys') as List<dynamic>? ?? [];
       final List<String> courseKeys = existingKeys.cast<String>();
       if (!courseKeys.contains(courseKey)) {
         courseKeys.add(courseKey);
@@ -64,7 +78,10 @@ class CreateCourseNotifier extends ChangeNotifier {
       _clearError();
 
       EventService().emitCourseEvent(
-        CourseEvent(type: CourseEventType.courseCreated, courseId: newCourseData.id),
+        CourseEvent(
+          type: CourseEventType.courseCreated,
+          courseId: newCourseData.id,
+        ),
       );
 
       _courseData = CreateCourseData.createNew();
@@ -77,8 +94,16 @@ class CreateCourseNotifier extends ChangeNotifier {
   }
 
   String _generateCourseKey(String topic, String title) {
-    final cleanTopic = topic.replaceAll(RegExp(r'[^\w\s]'), '').replaceAll(' ', '_').toLowerCase();
-    final cleanTitle = title.replaceAll(RegExp(r'[^\w\s]'), '').replaceAll(' ', '_').toLowerCase();
+    final cleanTopic =
+        topic
+            .replaceAll(RegExp(r'[^\w\s]'), '')
+            .replaceAll(' ', '_')
+            .toLowerCase();
+    final cleanTitle =
+        title
+            .replaceAll(RegExp(r'[^\w\s]'), '')
+            .replaceAll(' ', '_')
+            .toLowerCase();
 
     final timestamp = DateTime.now().millisecondsSinceEpoch;
     return 'course_${cleanTopic}_${cleanTitle}_$timestamp';
@@ -136,7 +161,11 @@ class CreateCourseNotifier extends ChangeNotifier {
 
     final validTerms =
         _courseData.terms
-            .where((term) => term.term.trim().isNotEmpty || term.definition.trim().isNotEmpty)
+            .where(
+              (term) =>
+                  term.term.trim().isNotEmpty ||
+                  term.definition.trim().isNotEmpty,
+            )
             .toList();
 
     if (validTerms.isEmpty) {
