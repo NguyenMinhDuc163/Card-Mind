@@ -217,12 +217,6 @@ Mọi đóng góp đều được chào đón! Vui lòng:
 
 Dự án này được phân phối dưới giấy phép MIT. Xem file `LICENSE` để biết thêm thông tin.
 
-## 🌐 Demo & Liên hệ
-
-- **🌐 Live Demo**: [card_mind.nguyenduc.click](https://card_mind.nguyenduc.click)
-- **📧 Email**: nguyenduc@example.com
-- **💼 Portfolio**: [nguyenduc.click](https://nguyenduc.click)
-
 <div align="center">
   <p>Được phát triển với ❤️ bằng Flutter</p>
   <p>© 2024 Card Mind. All rights reserved.</p>
