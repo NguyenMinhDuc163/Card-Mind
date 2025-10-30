@@ -152,6 +152,13 @@ class HomeNotifier extends ChangeNotifier {
         }
       }
 
+      // Sắp xếp theo ID (mới nhất lên đầu - vì ID = timestamp)
+      coursesList.sort((a, b) {
+        final idA = int.tryParse(a.id) ?? 0;
+        final idB = int.tryParse(b.id) ?? 0;
+        return idB.compareTo(idA); // Giảm dần (mới nhất trước)
+      });
+
       _homeData = _homeData.copyWith(courses: coursesList);
     } catch (e) {
       throw Exception('Không thể load khóa học: $e');

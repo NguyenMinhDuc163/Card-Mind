@@ -4,6 +4,7 @@ import 'package:card_mind/modules/course/screen/course_info_screen.dart';
 import 'package:card_mind/modules/home/provider/home_notifier.dart';
 import 'package:card_mind/modules/home/screen/global_search_screen.dart';
 import 'package:card_mind/modules/library/screen/class_detail_screen.dart';
+import 'package:card_mind/modules/dashboard/screen/dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -258,6 +259,25 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                       ),
+                      GestureDetector(
+                        onTap: () {
+                          // Switch sang Library tab (index 3) trong Dashboard
+                          final dashboardState = context.findAncestorStateOfType<State<DashboardScreen>>();
+                          if (dashboardState != null) {
+                            // Call switchToTab method
+                            (dashboardState as dynamic).switchToTab(3);
+                          }
+                        },
+                        child: Text(
+                          'Xem tất cả',
+                          style: AppTextStyles.textContent3.copyWith(
+                            color: context.brandColors.textPrimary,
+                            fontWeight: FontWeight.w600,
+                            decoration: TextDecoration.underline,
+                            decorationColor: context.brandColors.textPrimary,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ],
@@ -278,7 +298,7 @@ class _HomeScreenState extends State<HomeScreen> {
               }
 
               final topPicks =
-                  notifier.homeData.courses.reversed.take(5).toList();
+                  notifier.homeData.courses.take(5).toList();
 
               if (topPicks.isEmpty) {
                 return SliverToBoxAdapter(

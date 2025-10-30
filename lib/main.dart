@@ -34,6 +34,9 @@ void main() async {
   // Khởi tạo notification service
   await NotificationService().initialize();
 
+  // Request notification permissions
+  await NotificationService().requestPermissions();
+
   // Khởi tạo sample data nếu cần
   await SampleDataService.initializeSampleData();
 

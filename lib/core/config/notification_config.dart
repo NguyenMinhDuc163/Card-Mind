@@ -1,3 +1,5 @@
+import 'package:card_mind/core/services/spaced_repetition_service.dart';
+
 /// Cấu hình cho Local Push Notifications
 /// File này chứa tất cả các tham số có thể điều chỉnh cho thông báo
 class NotificationConfig {
@@ -126,6 +128,21 @@ class NotificationConfig {
   static DateTime calculateNotificationTime(DateTime nextReviewDate) {
     final now = DateTime.now();
 
+    // Kiểm tra timeUnit từ SpacedRepetitionService
+    final service = SpacedRepetitionService();
+    final isMinutesMode = service.timeUnit == 'minutes';
+
+    // Nếu đang dùng minutes mode, GỬI ĐÚNG THỜI GIAN nextReviewDate
+    if (isMinutesMode) {
+      // Nếu nextReviewDate là quá khứ, gửi sau 1 phút
+      if (nextReviewDate.isBefore(now)) {
+        return now.add(const Duration(minutes: 1));
+      }
+      // Nếu nextReviewDate là tương lai, gửi đúng thời gian đó
+      return nextReviewDate;
+    }
+
+    // ===== DAYS MODE =====
     // Nếu nextReviewDate là quá khứ hoặc hiện tại
     if (nextReviewDate.isBefore(now) || nextReviewDate.isAtSameMomentAs(now)) {
       if (sendImmediateNotifications) {

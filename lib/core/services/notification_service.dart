@@ -251,9 +251,18 @@ class NotificationService {
         payload: courseId, // Có thể dùng để navigate
       );
 
-      print(
-        '📱 Scheduled notification #$notificationId for $scheduledTime (course: $courseId)',
-      );
+      print('\n📱 ============================================');
+      print('📱 [Notification] SCHEDULED SUCCESSFULLY');
+      print('📱 ============================================');
+      print('📱 Notification ID: #$notificationId');
+      print('📱 Course: $courseId');
+      print('📱 Card: $cardId');
+      print('📱 Next Review Date: $nextReviewDate');
+      print('📱 Scheduled Time: $scheduledTime');
+      print('📱 Time until notification: ${scheduledTime.difference(DateTime.now())}');
+      print('📱 Title: ${NotificationConfig.defaultTitle}');
+      print('📱 Body: $body');
+      print('📱 ============================================\n');
     } catch (e) {
       print('❌ Error scheduling notification: $e');
     }

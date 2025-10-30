@@ -40,6 +40,25 @@ class _LibraryScreenState extends State<LibraryScreen>
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Lấy tab index từ arguments (nếu có)
+    final args = ModalRoute.of(context)?.settings.arguments;
+    if (args != null && args is int) {
+      if (args >= 0 && args < _tabs.length) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted && _tabController.index != args) {
+            _tabController.animateTo(args);
+            setState(() {
+              _selectedTabIndex = args;
+            });
+          }
+        });
+      }
+    }
+  }
+
+  @override
   void dispose() {
     _tabController.dispose();
     _searchController.dispose();

@@ -85,6 +85,9 @@ class ContentNotifier extends ChangeNotifier {
         }
       }
 
+      // Sắp xếp theo thời gian tạo (mới nhất lên đầu)
+      contentsList.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
       _contents = contentsList;
     } catch (e) {
       throw Exception('Không thể load nội dung: $e');
