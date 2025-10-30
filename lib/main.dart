@@ -1,6 +1,7 @@
 import 'package:card_mind/core/app_bloc_observer.dart';
 import 'package:card_mind/core/helpers/local_storage_helper.dart';
 import 'package:card_mind/core/services/sample_data_service.dart';
+import 'package:card_mind/core/services/notification_service.dart';
 import 'package:card_mind/providers/provider_setup.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
@@ -29,6 +30,9 @@ void main() async {
   await ThemeService.init();
   await Hive.initFlutter();
   await LocalStorageHelper.initLocalStorageHelper();
+
+  // Khởi tạo notification service
+  await NotificationService().initialize();
 
   // Khởi tạo sample data nếu cần
   await SampleDataService.initializeSampleData();

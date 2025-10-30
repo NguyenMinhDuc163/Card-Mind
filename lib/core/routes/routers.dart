@@ -15,6 +15,7 @@ import 'package:card_mind/modules/library/screen/library_screen.dart';
 import 'package:card_mind/modules/library/screen/class_detail_screen.dart';
 import 'package:card_mind/modules/message/screen/chat_history_screen.dart';
 import 'package:card_mind/modules/settings/screen/spaced_repetition_settings_screen.dart';
+import 'package:card_mind/modules/settings/screen/notification_test_screen.dart';
 import 'package:flutter/material.dart';
 
 //part of in dart
@@ -96,6 +97,11 @@ class Routers {
         return MaterialPageRoute(
           settings: settings,
           builder: (_) => const SpacedRepetitionSettingsScreen(),
+        );
+      case NotificationTestScreen.routeName:
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (_) => const NotificationTestScreen(),
         );
       default:
         return MaterialPageRoute(

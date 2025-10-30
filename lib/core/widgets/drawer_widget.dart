@@ -3,11 +3,56 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:card_mind/core/widgets/switch_botton_widget.dart';
 import 'package:card_mind/core/theme/theme_extensions.dart';
 import 'package:card_mind/core/services/data_management_service.dart';
+import 'package:card_mind/core/services/notification_service.dart';
 import 'package:card_mind/modules/settings/screen/spaced_repetition_settings_screen.dart';
 import 'package:card_mind/init.dart';
 
-class DrawerWidget extends StatelessWidget {
+class DrawerWidget extends StatefulWidget {
   const DrawerWidget({super.key});
+
+  @override
+  State<DrawerWidget> createState() => _DrawerWidgetState();
+}
+
+class _DrawerWidgetState extends State<DrawerWidget> {
+  bool _notificationsEnabled = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadNotificationStatus();
+  }
+
+  Future<void> _loadNotificationStatus() async {
+    final enabled = await NotificationService().areNotificationsEnabled();
+    if (mounted) {
+      setState(() {
+        _notificationsEnabled = enabled;
+      });
+    }
+  }
+
+  Future<void> _toggleNotifications(bool value) async {
+    try {
+      // Cập nhật state ngay
+      setState(() {
+        _notificationsEnabled = value;
+      });
+
+      // Bật/tắt notifications
+      await NotificationService().setNotificationsEnabled(value);
+
+      // Nếu BẬT, gửi notification test để user biết
+      if (value) {
+        await NotificationService().showImmediateNotification(
+          title: '✅ Thông báo đã bật',
+          body: 'Bạn sẽ nhận được nhắc nhở khi đến giờ ôn tập!',
+        );
+      }
+    } catch (e) {
+      print('Error toggling notifications: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +103,32 @@ class DrawerWidget extends StatelessWidget {
                 Padding(
                   padding: AppPad.h10,
                   child: SwitchBottomWidget(onChanged: (value) {}),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildDrawerItem(
+                    context,
+                    icon: Icon(
+                      Icons.notifications_active,
+                      color: context.colors.onPrimary,
+                    ),
+                    title: 'Nhắc nhở ôn tập',
+                    onTap: () => Navigator.pop(context),
+                  ),
+                ),
+                Padding(
+                  padding: AppPad.h10,
+                  child: Switch(
+                    value: _notificationsEnabled,
+                    onChanged: _toggleNotifications,
+                    activeColor: Colors.white,
+                    activeTrackColor: Colors.green,
+                    inactiveThumbColor: Colors.white,
+                    inactiveTrackColor: Colors.grey[300],
+                  ),
                 ),
               ],
             ),

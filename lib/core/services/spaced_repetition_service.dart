@@ -1,5 +1,6 @@
 import 'package:card_mind/core/helpers/local_storage_helper.dart';
 import 'package:card_mind/data/models/card_review_data.dart';
+import 'package:card_mind/core/services/notification_service.dart';
 
 /// Service quản lý Spaced Repetition
 /// Lưu trữ và tính toán lịch ôn tập cho các flashcards
@@ -118,6 +119,11 @@ class SpacedRepetitionService {
         'interval=${reviewData.intervalDays} days, '
         'nextReview=${_formatDate(reviewData.nextReviewDate)}',
       );
+
+      // Schedule notification cho card này (không block main flow)
+      _scheduleNotificationForCard(reviewData).catchError((e) {
+        print('⚠️ Failed to schedule notification: $e');
+      });
     } catch (e) {
       print('❌ Error saving card review data: $e');
     }
@@ -259,6 +265,16 @@ class SpacedRepetitionService {
       for (final cardId in cardIds) {
         final key = _getCardReviewKey(courseId, cardId);
         LocalStorageHelper.deleteValue(key);
+
+        // Cancel notification cho card này
+        NotificationService()
+            .cancelReviewNotification(
+          courseId: courseId,
+          cardId: cardId,
+        )
+            .catchError((e) {
+          print('⚠️ Failed to cancel notification for card $cardId: $e');
+        });
       }
 
       // Xóa danh sách course reviews
@@ -279,6 +295,16 @@ class SpacedRepetitionService {
 
       // Xóa khỏi danh sách course reviews
       await _removeFromCourseReviewsList(courseId, cardId);
+
+      // Cancel notification cho card này
+      NotificationService()
+          .cancelReviewNotification(
+        courseId: courseId,
+        cardId: cardId,
+      )
+          .catchError((e) {
+        print('⚠️ Failed to cancel notification: $e');
+      });
 
       print('🗑️ Deleted review data for card $cardId');
     } catch (e) {
@@ -370,5 +396,42 @@ class SpacedRepetitionService {
 
   String _formatDate(DateTime date) {
     return '${date.day}/${date.month}/${date.year}';
+  }
+
+  /// Schedule notification cho một card cần ôn tập
+  Future<void> _scheduleNotificationForCard(CardReviewData reviewData) async {
+    try {
+      // Lấy thông tin course để có courseTitle
+      String? courseTitle;
+      try {
+        final courseKeys =
+            LocalStorageHelper.getValue('course_keys') as List<dynamic>? ?? [];
+
+        for (final key in courseKeys) {
+          final courseData = LocalStorageHelper.getValue(key as String);
+          if (courseData != null) {
+            final Map<String, dynamic> jsonData =
+                Map<String, dynamic>.from(courseData as Map<dynamic, dynamic>);
+            if (jsonData['id'] == reviewData.courseId) {
+              courseTitle = jsonData['title'] as String?;
+              break;
+            }
+          }
+        }
+      } catch (e) {
+        print('⚠️ Could not get course title: $e');
+      }
+
+      // Schedule notification
+      await NotificationService().scheduleReviewNotification(
+        courseId: reviewData.courseId,
+        cardId: reviewData.cardId,
+        nextReviewDate: reviewData.nextReviewDate,
+        courseTitle: courseTitle,
+        cardCount: 1,
+      );
+    } catch (e) {
+      print('❌ Error scheduling notification for card: $e');
+    }
   }
 }
