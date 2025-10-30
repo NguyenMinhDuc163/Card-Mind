@@ -17,8 +17,11 @@ class BookmarkScreen extends StatefulWidget {
   State<BookmarkScreen> createState() => _BookmarkScreenState();
 }
 
-class _BookmarkScreenState extends State<BookmarkScreen> {
+class _BookmarkScreenState extends State<BookmarkScreen> with AutomaticKeepAliveClientMixin {
   bool _isInitialized = false;
+
+  @override
+  bool get wantKeepAlive => false; // Không cache state, luôn refresh
 
   @override
   void initState() {
@@ -26,6 +29,17 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initializeData();
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Refresh mỗi khi dependencies thay đổi (screen hiển thị lại)
+    if (_isInitialized) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _refreshData();
+      });
+    }
   }
 
   @override
@@ -37,6 +51,14 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
           _performSearch();
         }
       });
+    }
+  }
+
+  Future<void> _refreshData() async {
+    if (mounted) {
+      final notifier = Provider.of<BookMarkNotifier>(context, listen: false);
+      await notifier.initializeData();
+      print('📚 BookmarkScreen refreshed');
     }
   }
 
@@ -56,24 +78,48 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
     notifier.searchBookmarks(widget.searchQuery);
   }
 
-  void _navigateToCourse(String courseId, {LearningMode? learningMode}) {
+  Future<void> _navigateToCourse(String courseId, {LearningMode? learningMode}) async {
     if (learningMode != null) {
-      Navigator.pushNamed(
+      // Convert enum to string
+      String learningModeStr;
+      switch (learningMode) {
+        case LearningMode.review:
+          learningModeStr = 'review';
+          break;
+        case LearningMode.bookmarked:
+          learningModeStr = 'bookmarked';
+          break;
+        case LearningMode.unlearned:
+          learningModeStr = 'unlearned';
+          break;
+        case LearningMode.fullCourse:
+          learningModeStr = 'fullCourse';
+          break;
+      }
+
+      await Navigator.pushNamed(
         context,
         DetailFlashCardScreen.routeName,
-        arguments: {'courseId': courseId, 'learningMode': learningMode},
+        arguments: {'courseId': courseId, 'learningMode': learningModeStr},
       );
     } else {
-      Navigator.pushNamed(
+      await Navigator.pushNamed(
         context,
         DetailFlashCardScreen.routeName,
         arguments: courseId,
       );
     }
+
+    // Refresh data khi quay về (đặc biệt cho bookmark mode)
+    if (mounted) {
+      final notifier = Provider.of<BookMarkNotifier>(context, listen: false);
+      await notifier.initializeData();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
     return Consumer<BookMarkNotifier>(
       builder: (context, notifier, child) {
         if (!_isInitialized || notifier.isLoading) {
@@ -122,6 +168,24 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                 _buildHeader(notifier),
                 const SizedBox(height: 20),
 
+                if (notifier.coursesNeedingReview.isNotEmpty) ...[
+                  DataGroupWidget(
+                    date: 'Cần ôn tập hôm nay',
+                    items:
+                        notifier.coursesNeedingReview.map((courseData) {
+                          return BookmarkItemWidget(
+                            courseData: courseData,
+                            onTap:
+                                () => _navigateToCourse(
+                                  courseData['courseId'] as String,
+                                  learningMode: LearningMode.review,
+                                ),
+                          );
+                        }).toList(),
+                  ),
+                  const SizedBox(height: 20),
+                ],
+
                 if (notifier.bookmarkedCoursesByCourse.isNotEmpty) ...[
                   DataGroupWidget(
                     date: 'Học phần đã đánh dấu',
@@ -142,7 +206,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                 ],
 
                 if (notifier.unlearnedCardsByCourse.isEmpty &&
-                    notifier.bookmarkedCoursesByCourse.isEmpty)
+                    notifier.bookmarkedCoursesByCourse.isEmpty &&
+                    notifier.coursesNeedingReview.isEmpty)
                   _buildEmptyState(context)
                 else if (notifier.unlearnedCardsByCourse.isNotEmpty)
                   DataGroupWidget(
@@ -191,7 +256,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
               ),
               const SizedBox(width: 8),
               Text(
-                'Tổng hợp thẻ chưa thuộc',
+                'Tổng hợp học tập',
                 style: AppTextStyles.textContent1.copyWith(
                   color: context.colors.onPrimary,
                   fontWeight: FontWeight.w600,
@@ -204,19 +269,19 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
             children: [
               Expanded(
                 child: _buildStatCard(
-                  'Tổng thẻ',
-                  '${notifier.totalUnlearnedCards}',
-                  Icons.credit_card,
-                  context.colors.error,
+                  'Cần ôn tập',
+                  '${notifier.totalReviewCards}',
+                  Icons.schedule,
+                  context.brandColors.progressValue,
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: _buildStatCard(
-                  'Học phần',
-                  '${notifier.coursesWithUnlearnedCards}',
-                  Icons.school,
-                  Colors.white.withOpacity(.7),
+                  'Chưa thuộc',
+                  '${notifier.totalUnlearnedCards}',
+                  Icons.credit_card,
+                  context.colors.error,
                 ),
               ),
             ],

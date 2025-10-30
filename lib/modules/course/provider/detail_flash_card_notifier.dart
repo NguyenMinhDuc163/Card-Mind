@@ -97,12 +97,14 @@ class DetailFlashCardNotifier extends ChangeNotifier {
       if (courseId != null) {
         _resetAllData();
         await _loadCourseFromHive(courseId);
+        await _loadBookmarkedCardIds(); // Load bookmark IDs trước khi filter
         await _filterCardsByLearningMode(courseId);
 
         // B và C luôn bắt đầu rỗng, không load từ Hive
         // Chỉ load khi hoàn thành khóa học
         print('🔄 Initialized with learning mode: ${_learningMode.name}');
         print('🔄 Cards after filtering: ${_originalCards.length}');
+        print('🔖 Bookmarked card IDs: $_bookmarkedCardIds');
 
         await Future.delayed(const Duration(milliseconds: 100));
       }
@@ -128,14 +130,55 @@ class DetailFlashCardNotifier extends ChangeNotifier {
   // Xóa method _clearLearningData vì không cần thiết nữa
   // B và C luôn bắt đầu rỗng
 
+  Future<void> _loadBookmarkedCardIds() async {
+    try {
+      if (_courseData?.id == null) {
+        print('⚠️ Cannot load bookmarks: courseId is null');
+        _bookmarkedCardIds = {};
+        _bookmarkedCards = [];
+        return;
+      }
+
+      final courseId = _courseData!.id;
+      final bookmarkedCards = await getBookmarkedCardsByCourse(courseId);
+
+      _bookmarkedCardIds = bookmarkedCards.map((card) => card['id'] as String).toSet();
+      _bookmarkedCards = bookmarkedCards.map((cardData) {
+        return Flashcard(
+          id: cardData['id'] as String,
+          frontText: cardData['frontText'] as String,
+          backText: cardData['backText'] as String,
+          frontImage: cardData['frontImage'] as String?,
+          backImage: cardData['backImage'] as String?,
+          category: cardData['category'] as String? ?? '',
+          createdAt: DateTime.parse(cardData['createdAt'] as String),
+          updatedAt: DateTime.parse(cardData['updatedAt'] as String),
+        );
+      }).toList();
+      print('📚 Loaded ${_bookmarkedCardIds.length} bookmarked card IDs for course $courseId');
+    } catch (e) {
+      print('Error loading bookmarked card IDs: $e');
+      _bookmarkedCardIds = {};
+      _bookmarkedCards = [];
+    }
+  }
+
   Future<void> _saveBookmarkedCards() async {
     try {
+      if (_courseData?.id == null) {
+        print('⚠️ Cannot save bookmarks: courseId is null');
+        return;
+      }
+
       final now = DateTime.now();
+      final courseId = _courseData!.id;
+
+      // Lưu bookmark theo courseId (mỗi course riêng biệt)
       final bookmarkedData = {
-        'courseId': _courseData?.id,
-        'courseTitle': _courseData?.title,
-        'courseTopic': _courseData?.topic,
-        'courseDescription': _courseData?.description,
+        'courseId': courseId,
+        'courseTitle': _courseData!.title,
+        'courseTopic': _courseData!.topic,
+        'courseDescription': _courseData!.description,
         'cards':
             _bookmarkedCards
                 .map(
@@ -153,9 +196,40 @@ class DetailFlashCardNotifier extends ChangeNotifier {
                 .toList(),
         'lastUpdated': now.toIso8601String(),
       };
-      LocalStorageHelper.setValue('bookmarked_cards', bookmarkedData);
+
+      // Lưu theo course ID để không bị overwrite
+      final key = 'bookmarked_cards_$courseId';
+      LocalStorageHelper.setValue(key, bookmarkedData);
+
+      // Cập nhật danh sách courses có bookmark
+      await _updateBookmarkedCoursesList(courseId);
+
+      print('💾 Saved ${_bookmarkedCards.length} bookmarked cards for course $courseId');
     } catch (e) {
       print('Error saving bookmarked cards: $e');
+    }
+  }
+
+  Future<void> _updateBookmarkedCoursesList(String courseId) async {
+    try {
+      final bookmarkedCourses =
+          LocalStorageHelper.getValue('bookmarked_courses_list')
+              as List<dynamic>? ??
+          [];
+
+      if (!bookmarkedCourses.contains(courseId)) {
+        bookmarkedCourses.add(courseId);
+        LocalStorageHelper.setValue('bookmarked_courses_list', bookmarkedCourses);
+      }
+
+      // Nếu không còn bookmark nào, xóa khỏi list
+      if (_bookmarkedCards.isEmpty) {
+        bookmarkedCourses.remove(courseId);
+        LocalStorageHelper.setValue('bookmarked_courses_list', bookmarkedCourses);
+        LocalStorageHelper.deleteValue('bookmarked_cards_$courseId');
+      }
+    } catch (e) {
+      print('Error updating bookmarked courses list: $e');
     }
   }
 
@@ -204,8 +278,8 @@ class DetailFlashCardNotifier extends ChangeNotifier {
           break;
 
         case LearningMode.bookmarked:
-          // Chỉ giữ thẻ đã bookmark
-          final bookmarkedCards = await getBookmarkedCards();
+          // Chỉ giữ thẻ đã bookmark (của course này)
+          final bookmarkedCards = await getBookmarkedCardsByCourse(courseId);
           final bookmarkedIds =
               bookmarkedCards.map((card) => card['id'] as String).toSet();
           _originalCards =
@@ -502,10 +576,29 @@ class DetailFlashCardNotifier extends ChangeNotifier {
       final learnedCardsKey = 'learned_cards_$courseId';
       final data = LocalStorageHelper.getValue(learnedCardsKey);
       if (data != null) {
-        final Map<String, dynamic> learnedData = Map<String, dynamic>.from(
-          data as Map<dynamic, dynamic>,
-        );
-        return List<Map<String, dynamic>>.from(learnedData['cards'] ?? []);
+        // Convert Map<dynamic, dynamic> to Map<String, dynamic> safely
+        final rawData = data as Map<dynamic, dynamic>;
+        final Map<String, dynamic> learnedData = {};
+
+        rawData.forEach((key, value) {
+          learnedData[key.toString()] = value;
+        });
+
+        // Convert cards list
+        final rawCards = learnedData['cards'] as List<dynamic>? ?? [];
+        final List<Map<String, dynamic>> cards = [];
+
+        for (final rawCard in rawCards) {
+          if (rawCard is Map) {
+            final Map<String, dynamic> card = {};
+            (rawCard as Map<dynamic, dynamic>).forEach((k, v) {
+              card[k.toString()] = v;
+            });
+            cards.add(card);
+          }
+        }
+
+        return cards;
       }
       return [];
     } catch (e) {
@@ -526,10 +619,29 @@ class DetailFlashCardNotifier extends ChangeNotifier {
       final data = LocalStorageHelper.getValue(unlearnedCardsKey);
 
       if (data != null) {
-        final Map<String, dynamic> unlearnedData = Map<String, dynamic>.from(
-          data as Map<dynamic, dynamic>,
-        );
-        return List<Map<String, dynamic>>.from(unlearnedData['cards'] ?? []);
+        // Convert Map<dynamic, dynamic> to Map<String, dynamic> safely
+        final rawData = data as Map<dynamic, dynamic>;
+        final Map<String, dynamic> unlearnedData = {};
+
+        rawData.forEach((key, value) {
+          unlearnedData[key.toString()] = value;
+        });
+
+        // Convert cards list
+        final rawCards = unlearnedData['cards'] as List<dynamic>? ?? [];
+        final List<Map<String, dynamic>> cards = [];
+
+        for (final rawCard in rawCards) {
+          if (rawCard is Map) {
+            final Map<String, dynamic> card = {};
+            (rawCard as Map<dynamic, dynamic>).forEach((k, v) {
+              card[k.toString()] = v;
+            });
+            cards.add(card);
+          }
+        }
+
+        return cards;
       }
       return [];
     } catch (e) {
@@ -551,6 +663,121 @@ class DetailFlashCardNotifier extends ChangeNotifier {
     }
   }
 
+  // Load bookmarks của 1 course cụ thể
+  static Future<List<Map<String, dynamic>>> getBookmarkedCardsByCourse(
+    String courseId,
+  ) async {
+    try {
+      final key = 'bookmarked_cards_$courseId';
+      final data = LocalStorageHelper.getValue(key);
+      if (data != null) {
+        // Convert Map<dynamic, dynamic> to Map<String, dynamic> safely
+        final rawData = data as Map<dynamic, dynamic>;
+        final Map<String, dynamic> bookmarkedData = {};
+
+        rawData.forEach((key, value) {
+          bookmarkedData[key.toString()] = value;
+        });
+
+        // Convert cards list
+        final rawCards = bookmarkedData['cards'] as List<dynamic>? ?? [];
+        final List<Map<String, dynamic>> cards = [];
+
+        for (final rawCard in rawCards) {
+          if (rawCard is Map) {
+            final Map<String, dynamic> card = {};
+            (rawCard as Map<dynamic, dynamic>).forEach((k, v) {
+              card[k.toString()] = v;
+            });
+            cards.add(card);
+          }
+        }
+
+        return cards;
+      }
+      return [];
+    } catch (e) {
+      print('Error getting bookmarked cards for course $courseId: $e');
+      return [];
+    }
+  }
+
+  // Load tất cả bookmarks (aggregate từ tất cả courses)
+  static Future<List<Map<String, dynamic>>> getAllBookmarkedCourses() async {
+    try {
+      final bookmarkedCourses =
+          LocalStorageHelper.getValue('bookmarked_courses_list')
+              as List<dynamic>? ??
+          [];
+
+      print('🔍 getAllBookmarkedCourses: Found ${bookmarkedCourses.length} courses in list');
+      print('🔍 Courses list: $bookmarkedCourses');
+
+      final List<Map<String, dynamic>> allBookmarkedCourses = [];
+
+      for (final courseId in bookmarkedCourses) {
+        final key = 'bookmarked_cards_$courseId';
+        final data = LocalStorageHelper.getValue(key);
+
+        print('🔍 Loading $key...');
+
+        if (data != null) {
+          try {
+            // Convert Map<dynamic, dynamic> to Map<String, dynamic> safely
+            final rawData = data as Map<dynamic, dynamic>;
+            final Map<String, dynamic> bookmarkedData = {};
+
+            rawData.forEach((key, value) {
+              bookmarkedData[key.toString()] = value;
+            });
+
+            // Convert cards list
+            final rawCards = bookmarkedData['cards'] as List<dynamic>? ?? [];
+            final List<Map<String, dynamic>> cards = [];
+
+            for (final rawCard in rawCards) {
+              if (rawCard is Map) {
+                final Map<String, dynamic> card = {};
+                (rawCard as Map<dynamic, dynamic>).forEach((k, v) {
+                  card[k.toString()] = v;
+                });
+                cards.add(card);
+              }
+            }
+
+            print('🔍   Found ${cards.length} bookmarked cards for course $courseId');
+
+            if (cards.isNotEmpty) {
+              final courseData = {
+                'courseId': bookmarkedData['courseId']?.toString() ?? courseId.toString(),
+                'courseTitle': bookmarkedData['courseTitle']?.toString() ?? 'Không có tiêu đề',
+                'courseTopic': bookmarkedData['courseTopic']?.toString() ?? '',
+                'courseDescription': bookmarkedData['courseDescription']?.toString() ?? '',
+                'bookmarkedCount': cards.length,
+                'bookmarkedCards': cards,
+                'lastUpdated': bookmarkedData['lastUpdated']?.toString() ?? DateTime.now().toIso8601String(),
+              };
+              allBookmarkedCourses.add(courseData);
+              print('🔍   Added to result: ${courseData['courseTitle']}');
+            }
+          } catch (e) {
+            print('❌ Error parsing data for $key: $e');
+          }
+        } else {
+          print('🔍   No data found for $key');
+        }
+      }
+
+      print('🔍 Total bookmarked courses to return: ${allBookmarkedCourses.length}');
+      return allBookmarkedCourses;
+    } catch (e) {
+      print('❌ Error getting all bookmarked courses: $e');
+      return [];
+    }
+  }
+
+  // Deprecated: Giữ lại cho backward compatibility
+  @Deprecated('Use getBookmarkedCardsByCourse(courseId) instead')
   static Future<List<Map<String, dynamic>>> getBookmarkedCards() async {
     try {
       final data = LocalStorageHelper.getValue('bookmarked_cards');
@@ -567,6 +794,8 @@ class DetailFlashCardNotifier extends ChangeNotifier {
     }
   }
 
+  // Deprecated: Giữ lại cho backward compatibility
+  @Deprecated('Use getAllBookmarkedCourses() instead')
   static Future<Map<String, dynamic>?> getBookmarkedCourseInfo() async {
     try {
       final data = LocalStorageHelper.getValue('bookmarked_cards');
@@ -612,13 +841,38 @@ class DetailFlashCardNotifier extends ChangeNotifier {
 
   void toggleBookmark(Flashcard card) {
     final cardId = card.id;
-    if (_bookmarkedCardIds.contains(cardId)) {
+    final isRemoving = _bookmarkedCardIds.contains(cardId);
+
+    if (isRemoving) {
       _bookmarkedCardIds.remove(cardId);
       _bookmarkedCards.removeWhere((c) => c.id == cardId);
+
+      // Nếu đang ở chế độ bookmarked, remove card khỏi _originalCards
+      if (_learningMode == LearningMode.bookmarked) {
+        final removedIndex = _originalCards.indexWhere((c) => c.id == cardId);
+        if (removedIndex != -1) {
+          _originalCards.removeAt(removedIndex);
+
+          // Điều chỉnh currentCardIndex nếu cần
+          if (_currentCardIndex >= _originalCards.length && _originalCards.isNotEmpty) {
+            _currentCardIndex = _originalCards.length - 1;
+          }
+
+          if (_originalCards.isEmpty) {
+            print('🔖 Removed last bookmark - list now empty');
+          } else {
+            print('🔖 Removed bookmark: ${card.frontText}');
+            print('📊 Remaining cards: ${_originalCards.length}');
+            print('📊 Current index adjusted to: $_currentCardIndex');
+          }
+        }
+      }
     } else {
       _bookmarkedCardIds.add(cardId);
       _bookmarkedCards.add(card);
+      print('🔖 Added bookmark: ${card.frontText}');
     }
+
     _saveBookmarkedCards();
     notifyListeners();
   }

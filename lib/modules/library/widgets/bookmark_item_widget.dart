@@ -23,7 +23,12 @@ class BookmarkItemWidget extends StatelessWidget {
     final courseTopic = courseData['courseTopic'] as String?;
     final unlearnedCount = courseData['unlearnedCount'] as int?;
     final bookmarkedCount = courseData['bookmarkedCount'] as int?;
+    final reviewCount = courseData['reviewCount'] as int?;
     final lastUpdated = courseData['lastUpdated'] as String? ?? '';
+
+    // Xác định loại card: review, bookmark, hoặc unlearned
+    final isReview = reviewCount != null && reviewCount > 0;
+    final hasBookmark = bookmarkedCount != null && bookmarkedCount > 0;
 
     return GestureDetector(
       onTap: onTap,
@@ -76,15 +81,19 @@ class BookmarkItemWidget extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: (isBookmarked
-                            ? AppColors.highlight
-                            : context.colors.error)
+                    color: (isReview
+                            ? context.brandColors.progressValue
+                            : (isBookmarked
+                                ? AppColors.highlight
+                                : context.colors.error))
                         .withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: (isBookmarked
-                              ? AppColors.highlight
-                              : context.colors.error)
+                      color: (isReview
+                              ? context.brandColors.progressValue
+                              : (isBookmarked
+                                  ? AppColors.highlight
+                                  : context.colors.error))
                           .withOpacity(0.3),
                       width: 1,
                     ),
@@ -92,7 +101,14 @@ class BookmarkItemWidget extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      if (isBookmarked) ...[
+                      if (isReview) ...[
+                        Icon(
+                          Icons.schedule,
+                          size: 14,
+                          color: context.brandColors.progressValue,
+                        ),
+                        const SizedBox(width: 4),
+                      ] else if (isBookmarked) ...[
                         Icon(
                           Icons.bookmark,
                           size: 14,
@@ -101,14 +117,18 @@ class BookmarkItemWidget extends StatelessWidget {
                         const SizedBox(width: 4),
                       ],
                       Text(
-                        isBookmarked
-                            ? '$bookmarkedCount thẻ đã đánh dấu'
-                            : '$unlearnedCount thẻ',
+                        isReview
+                            ? '$reviewCount thẻ cần ôn'
+                            : (isBookmarked
+                                ? '$bookmarkedCount thẻ đã đánh dấu'
+                                : '$unlearnedCount thẻ'),
                         style: AppTextStyles.textContent3.copyWith(
                           color:
-                              isBookmarked
-                                  ? AppColors.highlight
-                                  : context.colors.error,
+                              isReview
+                                  ? context.brandColors.progressValue
+                                  : (isBookmarked
+                                      ? AppColors.highlight
+                                      : context.colors.error),
                           fontWeight: FontWeight.w600,
                         ),
                       ),

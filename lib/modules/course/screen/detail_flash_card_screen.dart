@@ -160,6 +160,24 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
           print('Course ID: ${notifier.courseId}');
           print('==============================');
 
+          // Check nếu đang ở bookmark mode và hết cards → auto navigate back
+          if (notifier.learningMode == LearningMode.bookmarked &&
+              notifier.totalCards == 0 &&
+              !notifier.isLoading) {
+            print('🔖 Bookmark mode with 0 cards - navigating back');
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) {
+                Navigator.of(context).pop();
+              }
+            });
+            return FunctionScreenTemplate(
+              screen: Scaffold(
+                backgroundColor: context.colors.primary,
+                body: const Center(child: SizedBox.shrink()),
+              ),
+            );
+          }
+
           if (notifier.hasExistingLearningData && notifier.totalCards > 0) {
             print('🚨 TRIGGERING NAVIGATION TO RESULT SCREEN');
             WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -522,6 +540,20 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
               onPressed: () {
                 notifier.toggleBookmark(flashcard);
                 HapticFeedback.mediumImpact();
+
+                // Nếu xóa card cuối trong bookmark mode, hiện thông báo
+                if (notifier.learningMode == LearningMode.bookmarked &&
+                    notifier.totalCards == 0) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text(
+                        'Đã xóa hết thẻ đã đánh dấu',
+                      ),
+                      backgroundColor: context.brandColors.progressValue,
+                      duration: const Duration(seconds: 1),
+                    ),
+                  );
+                }
               },
             ),
           ),

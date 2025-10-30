@@ -1,5 +1,6 @@
 import 'package:card_mind/init.dart';
 import 'package:card_mind/core/helpers/local_storage_helper.dart';
+import 'package:card_mind/core/services/spaced_repetition_service.dart';
 import 'package:card_mind/modules/course/provider/detail_flash_card_notifier.dart';
 import 'package:flutter/foundation.dart';
 
@@ -8,6 +9,8 @@ class BookMarkNotifier extends ChangeNotifier {
   List<Map<String, dynamic>> _filteredUnlearnedCardsByCourse = [];
   List<Map<String, dynamic>> _bookmarkedCoursesByCourse = [];
   List<Map<String, dynamic>> _filteredBookmarkedCoursesByCourse = [];
+  List<Map<String, dynamic>> _coursesNeedingReview = [];
+  List<Map<String, dynamic>> _filteredCoursesNeedingReview = [];
   bool _isLoading = false;
   String? _errorMessage;
   String _searchQuery = '';
@@ -22,6 +25,11 @@ class BookMarkNotifier extends ChangeNotifier {
           ? _bookmarkedCoursesByCourse
           : _filteredBookmarkedCoursesByCourse;
 
+  List<Map<String, dynamic>> get coursesNeedingReview =>
+      _searchQuery.isEmpty
+          ? _coursesNeedingReview
+          : _filteredCoursesNeedingReview;
+
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   bool get hasError => _errorMessage != null;
@@ -30,6 +38,7 @@ class BookMarkNotifier extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
     try {
+      await _loadCoursesNeedingReview();
       await _loadUnlearnedCardsByCourse();
       await _loadBookmarkedCoursesByCourse();
       _errorMessage = null;
@@ -38,6 +47,43 @@ class BookMarkNotifier extends ChangeNotifier {
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  Future<void> _loadCoursesNeedingReview() async {
+    try {
+      final coursesWithReview =
+          await SpacedRepetitionService().getCoursesWithCardsNeedingReview();
+
+      final List<Map<String, dynamic>> reviewCoursesList = [];
+
+      for (final entry in coursesWithReview.entries) {
+        final courseId = entry.key;
+        final reviewCount = entry.value;
+
+        final courseData = await _getCourseData(courseId);
+
+        if (courseData != null) {
+          reviewCoursesList.add({
+            'courseId': courseId,
+            'courseTitle': courseData['title'] ?? 'Không có tiêu đề',
+            'courseDescription': courseData['description'] ?? '',
+            'courseCategory': courseData['topic'] ?? '',
+            'reviewCount': reviewCount,
+            'lastUpdated':
+                courseData['updatedAt'] ?? DateTime.now().toIso8601String(),
+          });
+        }
+      }
+
+      reviewCoursesList.sort(
+        (a, b) => (b['reviewCount'] as int).compareTo(a['reviewCount'] as int),
+      );
+
+      _coursesNeedingReview = reviewCoursesList;
+    } catch (e) {
+      print('Error loading courses needing review: $e');
+      _coursesNeedingReview = [];
     }
   }
 
@@ -84,28 +130,19 @@ class BookMarkNotifier extends ChangeNotifier {
 
   Future<void> _loadBookmarkedCoursesByCourse() async {
     try {
-      final bookmarkedCards =
-          await DetailFlashCardNotifier.getBookmarkedCards();
+      // Sử dụng method mới để load tất cả bookmarks từ tất cả courses
+      final allBookmarkedCourses =
+          await DetailFlashCardNotifier.getAllBookmarkedCourses();
 
-      final courseInfo =
-          await DetailFlashCardNotifier.getBookmarkedCourseInfo();
+      _bookmarkedCoursesByCourse = allBookmarkedCourses;
 
-      if (bookmarkedCards.isEmpty || courseInfo == null) {
-        _bookmarkedCoursesByCourse = [];
-        return;
+      print('📚 Loaded ${_bookmarkedCoursesByCourse.length} courses with bookmarks');
+      print('📚 Bookmarked courses data: $_bookmarkedCoursesByCourse');
+
+      // Debug: Print chi tiết từng course
+      for (var course in _bookmarkedCoursesByCourse) {
+        print('  - Course ${course['courseId']}: ${course['courseTitle']} (${course['bookmarkedCount']} cards)');
       }
-
-      _bookmarkedCoursesByCourse = [
-        {
-          'courseId': courseInfo['courseId'],
-          'courseTitle': courseInfo['courseTitle'],
-          'courseTopic': courseInfo['courseTopic'],
-          'courseDescription': courseInfo['courseDescription'],
-          'bookmarkedCount': bookmarkedCards.length,
-          'bookmarkedCards': bookmarkedCards,
-          'lastUpdated': courseInfo['lastUpdated'],
-        },
-      ];
     } catch (e) {
       print('Error loading bookmarked courses: $e');
       _bookmarkedCoursesByCourse = [];
@@ -143,11 +180,21 @@ class BookMarkNotifier extends ChangeNotifier {
 
   int get coursesWithUnlearnedCards => _unlearnedCardsByCourse.length;
 
+  int get totalReviewCards {
+    return _coursesNeedingReview.fold(
+      0,
+      (sum, course) => sum + (course['reviewCount'] as int),
+    );
+  }
+
+  int get coursesWithReviewCards => _coursesNeedingReview.length;
+
   void searchBookmarks(String query) {
     _searchQuery = query;
     if (query.isEmpty) {
       _filteredUnlearnedCardsByCourse = [];
       _filteredBookmarkedCoursesByCourse = [];
+      _filteredCoursesNeedingReview = [];
     } else {
       _filteredUnlearnedCardsByCourse =
           _unlearnedCardsByCourse.where((courseData) {
@@ -172,6 +219,19 @@ class BookMarkNotifier extends ChangeNotifier {
             return courseTitle.toLowerCase().contains(query.toLowerCase()) ||
                 courseDescription.toLowerCase().contains(query.toLowerCase()) ||
                 courseTopic.toLowerCase().contains(query.toLowerCase());
+          }).toList();
+
+      _filteredCoursesNeedingReview =
+          _coursesNeedingReview.where((courseData) {
+            final courseTitle = courseData['courseTitle'] as String? ?? '';
+            final courseDescription =
+                courseData['courseDescription'] as String? ?? '';
+            final courseCategory =
+                courseData['courseCategory'] as String? ?? '';
+
+            return courseTitle.toLowerCase().contains(query.toLowerCase()) ||
+                courseDescription.toLowerCase().contains(query.toLowerCase()) ||
+                courseCategory.toLowerCase().contains(query.toLowerCase());
           }).toList();
     }
     notifyListeners();
