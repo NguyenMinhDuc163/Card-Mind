@@ -32,6 +32,52 @@ class NotificationConfig {
   /// Mặc định: 0 phút (9:00)
   static const int defaultNotificationMinute = 0;
 
+  // ============ DAILY REMINDER TIMING ============
+
+  /// Có bật daily reminder không?
+  static const String dailyReminderEnabledKey = 'daily_reminder_enabled';
+
+  /// Thời gian gửi reminder buổi sáng (giờ)
+  static const int morningReminderHour = 8;
+  static const int morningReminderMinute = 0;
+
+  /// Thời gian gửi reminder buổi trưa (giờ)
+  static const int afternoonReminderHour = 13;
+  static const int afternoonReminderMinute = 0;
+
+  /// Thời gian gửi reminder buổi tối (giờ)
+  static const int eveningReminderHour = 20;
+  static const int eveningReminderMinute = 0;
+
+  // ============ DAILY REMINDER MESSAGES ============
+
+  /// Danh sách tin nhắn vui nhộn cho buổi sáng
+  static const List<String> morningMessages = [
+    'Chào buổi sáng! ☀️ Bắt đầu ngày mới với vài thẻ học nào!',
+    'Sáng nay học một chút, tối đi chơi thoải mái! 😎',
+    'Cà phê đã uống, giờ đến lượt thẻ học rồi! ☕',
+    'Sáng sớm tinh thần minh mẫn, học ngay thôi! 🌅',
+    'Một ngày mới, một cơ hội mới để học hỏi! 🎯',
+  ];
+
+  /// Danh sách tin nhắn vui nhộn cho buổi trưa
+  static const List<String> afternoonMessages = [
+    'Giờ nghỉ trưa học chút cho máu não lưu thông! 🧠',
+    'Ăn trưa xong rồi, học 5 phút cho tỉnh ngủ nào! 😴',
+    'Trưa nay bạn đã học gì chưa nhỉ? 🤔',
+    'Nghỉ trưa mà không học thì phí cả buổi! ⏰',
+    'Hôm nay là một ngày tốt lành để học! 🌤️',
+  ];
+
+  /// Danh sách tin nhắn vui nhộn cho buổi tối
+  static const List<String> eveningMessages = [
+    'Tối rồi! Ôn lại kiến thức trước khi ngủ nhé! 🌙',
+    'Học trước khi ngủ giúp não ghi nhớ tốt hơn đấy! 💡',
+    'Hôm nay bạn chưa học gì phải không? 🙃',
+    'Tối nay chill một chút với mấy thẻ học nào! 😌',
+    'Ngày sắp hết rồi, dành 5 phút cho bộ não thôi! 🎓',
+  ];
+
   /// Có gửi notification ngay lập tức cho thẻ cần ôn ngay không?
   /// true: gửi ngay khi thẻ cần ôn (sau vài giờ)
   /// false: chờ đến thời gian mặc định ngày hôm sau
@@ -210,5 +256,26 @@ class NotificationConfig {
     return date1.year == date2.year &&
         date1.month == date2.month &&
         date1.day == date2.day;
+  }
+
+  /// Lấy random message cho daily reminder dựa vào thời gian trong ngày
+  static String getRandomDailyReminderMessage(DateTime time) {
+    final hour = time.hour;
+
+    // Sáng: 6h - 11h
+    if (hour >= 6 && hour < 12) {
+      final index = time.day % morningMessages.length;
+      return morningMessages[index];
+    }
+    // Trưa: 12h - 17h
+    else if (hour >= 12 && hour < 18) {
+      final index = time.day % afternoonMessages.length;
+      return afternoonMessages[index];
+    }
+    // Tối: 18h - 23h
+    else {
+      final index = time.day % eveningMessages.length;
+      return eveningMessages[index];
+    }
   }
 }

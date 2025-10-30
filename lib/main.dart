@@ -37,6 +37,18 @@ void main() async {
   // Request notification permissions
   await NotificationService().requestPermissions();
 
+  // Force enable notifications if disabled (for development/testing)
+  // TODO: Remove this in production, let user control via settings
+  await NotificationService().setNotificationsEnabled(true);
+
+  // Schedule daily reminders (sáng, trưa, tối)
+  // Note: Mỗi lần mở app sẽ reschedule để đảm bảo notifications không bị mất
+  await NotificationService().scheduleDailyReminders();
+
+  // Reschedule tất cả review notifications khi app mở lại
+  // Điều này đảm bảo notifications không bị mất khi app ở background
+  await NotificationService().rescheduleAllReviewNotifications();
+
   // Khởi tạo sample data nếu cần
   await SampleDataService.initializeSampleData();
 

@@ -1,4 +1,5 @@
 import 'package:card_mind/core/widgets/app_gap.dart';
+import 'package:card_mind/modules/settings/screen/notification_settings_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:card_mind/core/widgets/switch_botton_widget.dart';
 import 'package:card_mind/core/theme/theme_extensions.dart';
@@ -98,6 +99,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     ),
                     title: 'common.dark_mode'.tr(),
                     onTap: () => Navigator.pop(context),
+                    // onTap: () => Navigator.pushNamed(context, NotificationSettingsScreen.routeName),
                   ),
                 ),
                 Padding(
