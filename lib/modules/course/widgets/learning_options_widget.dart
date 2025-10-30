@@ -1,16 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:card_mind/core/theme/theme_extensions.dart';
 
-enum LearningMode { flashcards, learn, test, match, blast, gravity, delete }
+enum LearningMode { flashcards, review, learn, test, match, blast, gravity, delete }
 
 class LearningOptionsWidget extends StatelessWidget {
   final Function(LearningMode)? onOptionTap;
+  final int reviewCardsCount;
 
-  const LearningOptionsWidget({super.key, this.onOptionTap});
+  const LearningOptionsWidget({
+    super.key,
+    this.onOptionTap,
+    this.reviewCardsCount = 0,
+  });
 
   @override
   Widget build(BuildContext context) {
     final options = [
+      if (reviewCardsCount > 0)
+        LearningOption(
+          mode: LearningMode.review,
+          title: 'Ôn tập ($reviewCardsCount thẻ)',
+          icon: Icons.schedule,
+          description: 'Ôn lại những thẻ cần ôn tập hôm nay',
+          isHighlighted: true,
+        ),
       LearningOption(
         mode: LearningMode.flashcards,
         title: 'Thẻ ghi nhớ',
@@ -67,7 +80,9 @@ class LearningOptionsWidget extends StatelessWidget {
         color:
             option.isDestructive
                 ? context.brandColors.buttonDestructive.withOpacity(0.2)
-                : context.brandColors.cardBackground,
+                : option.isHighlighted
+                    ? context.brandColors.progressValue.withOpacity(0.1)
+                    : context.brandColors.cardBackground,
         borderRadius: BorderRadius.circular(12),
         border:
             option.isDestructive
@@ -75,7 +90,12 @@ class LearningOptionsWidget extends StatelessWidget {
                   color: context.brandColors.buttonDestructive.withOpacity(0.3),
                   width: 1,
                 )
-                : null,
+                : option.isHighlighted
+                    ? Border.all(
+                      color: context.brandColors.progressValue.withOpacity(0.5),
+                      width: 2,
+                    )
+                    : null,
       ),
       child: Material(
         color: Colors.transparent,
@@ -95,7 +115,9 @@ class LearningOptionsWidget extends StatelessWidget {
                             ? context.brandColors.buttonDestructive.withOpacity(
                               0.2,
                             )
-                            : context.brandColors.avatarBackground,
+                            : option.isHighlighted
+                                ? context.brandColors.progressValue
+                                : context.brandColors.avatarBackground,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
@@ -103,7 +125,9 @@ class LearningOptionsWidget extends StatelessWidget {
                     color:
                         option.isDestructive
                             ? context.brandColors.buttonDestructive
-                            : context.brandColors.textPrimary,
+                            : option.isHighlighted
+                                ? Colors.white
+                                : context.brandColors.textPrimary,
                     size: 24,
                   ),
                 ),
@@ -118,7 +142,9 @@ class LearningOptionsWidget extends StatelessWidget {
                           color:
                               option.isDestructive
                                   ? context.brandColors.buttonDestructive
-                                  : context.brandColors.textPrimary,
+                                  : option.isHighlighted
+                                      ? context.brandColors.progressValue
+                                      : context.brandColors.textPrimary,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -163,6 +189,7 @@ class LearningOption {
   final IconData icon;
   final String description;
   final bool isDestructive;
+  final bool isHighlighted;
 
   const LearningOption({
     required this.mode,
@@ -170,5 +197,6 @@ class LearningOption {
     required this.icon,
     required this.description,
     this.isDestructive = false,
+    this.isHighlighted = false,
   });
 }

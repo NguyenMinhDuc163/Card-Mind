@@ -42,8 +42,24 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
       courseId = arguments;
     } else if (arguments is Map<String, dynamic>) {
       courseId = arguments['courseId'] as String?;
-      learningMode =
-          arguments['learningMode'] as LearningMode? ?? LearningMode.fullCourse;
+
+      // Parse learningMode từ string
+      final learningModeStr = arguments['learningMode'] as String?;
+      if (learningModeStr != null) {
+        switch (learningModeStr) {
+          case 'review':
+            learningMode = LearningMode.review;
+            break;
+          case 'bookmarked':
+            learningMode = LearningMode.bookmarked;
+            break;
+          case 'unlearned':
+            learningMode = LearningMode.unlearned;
+            break;
+          default:
+            learningMode = LearningMode.fullCourse;
+        }
+      }
     }
 
     await notifier.initializeData(

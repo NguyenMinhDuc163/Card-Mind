@@ -53,6 +53,7 @@
 
 ### 🏠 **Trang chủ thông minh**
 - Hiển thị các khóa học được đề xuất
+- **"Cần ôn tập hôm nay"** - Section đề xuất các thẻ cần ôn theo lịch Spaced Repetition ⭐ **NEW!**
 - Tìm kiếm toàn cục các bộ flashcard
 - Giao diện responsive trên mọi thiết bị
 
@@ -63,11 +64,14 @@
 
 ### 🧪 **Hệ thống học tập thông minh**
 - Chế độ học flashcard với hiệu ứng lật thẻ mượt mà
-- **🧠 Spaced Repetition Algorithm** - Thuật toán học ngắt quãn khoa học
+- **🧠 Spaced Repetition Algorithm** - Thuật toán học ngắt quãn khoa học ⭐ **NEW!**
   - Tự động điều chỉnh tần suất ôn tập dựa trên độ khó của từng thẻ
   - Tối ưu hóa thời gian học tập và tăng hiệu quả ghi nhớ lâu dài
   - Dựa trên nghiên cứu khoa học về trí nhớ và học tập
   - Thẻ dễ nhớ sẽ xuất hiện ít hơn, thẻ khó nhớ sẽ được lặp lại nhiều hơn
+  - **Interval tăng dần**: 1 ngày → 3 ngày → 7 ngày → ... (tối đa 180 ngày)
+  - **Ease Factor động**: Điều chỉnh độ khó dựa trên kết quả học tập
+  - 📖 **[Xem hướng dẫn chi tiết](SPACED_REPETITION_GUIDE.md)**
 - Bài kiểm tra đánh giá kiến thức với nhiều dạng câu hỏi
 - Theo dõi tiến độ học tập chi tiết và thống kê hiệu quả
 - Hệ thống điểm số và streak để tạo động lực học tập
@@ -118,8 +122,13 @@ Dự án được xây dựng theo mô hình **Clean Architecture** với các t
 ```
 lib/
 ├── core/           # Tầng cốt lõi (theme, routes, services)
+│   ├── services/   # SpacedRepetitionService, SampleDataService
+│   └── helpers/    # LocalStorageHelper
 ├── data/           # Tầng dữ liệu (API, local storage)
+│   └── models/     # Flashcard, Course, CardReviewData
 ├── modules/        # Tầng giao diện (screens, widgets)
+│   ├── home/       # HomeScreen với "Cần ôn tập hôm nay"
+│   └── course/     # DetailFlashCardScreen với spaced repetition
 ├── providers/      # State management
 └── utils/          # Tiện ích hỗ trợ
 ```
@@ -154,8 +163,8 @@ flutter pub get
 flutter run
 ```
 
-### 🌐 **Demo trực tuyến**
-- **Web App**: [card_mind.nguyenduc.click](https://card_mind.nguyenduc.click)
+### 🌐 **Demo trực tuyến**Tie
+- **Web App**: [Tại đây](https://nguyenminhduc163.github.io/Card-Mind/)
 - **Tương thích**: Chrome, Firefox, Safari, Edge
 - **Không cần cài đặt**: Chạy trực tiếp trên trình duyệt
 
@@ -171,13 +180,23 @@ flutter run
 ### ✅ **Đã hoàn thành**
 - [x] Giao diện người dùng thân thiện và responsive
 - [x] Hệ thống flashcard cơ bản với hiệu ứng mượt mà
-- [x] **Spaced Repetition Algorithm** - Thuật toán học ngắt quãn khoa học
+- [x] **Spaced Repetition Algorithm** - Thuật toán học ngắt quãn khoa học ⭐ **NEW! (v1.0.10)**
+  - [x] CardReviewData model với đầy đủ metadata
+  - [x] SpacedRepetitionService với SM-2 simplified algorithm
+  - [x] Tự động lưu review data khi học flashcard
+  - [x] Section "Cần ôn tập hôm nay" trên HomeScreen
+  - [x] Interval progression: 1d → 3d → 7d → ... (max 180d)
 - [x] Đồng bộ dữ liệu với Firebase Cloud Firestore
 - [x] Hỗ trợ đa ngôn ngữ (Tiếng Việt & Tiếng Anh)
 - [x] Chatbot AI hỗ trợ học tập
 - [x] Hệ thống xác thực và bảo mật
 
 ### 🚀 **Đang phát triển**
+- [ ] **Spaced Repetition nâng cao**:
+  - [ ] Statistics Dashboard với biểu đồ tiến độ
+  - [ ] Notification nhắc nhở khi có thẻ cần ôn
+  - [ ] Review history và analytics
+  - [ ] Custom intervals cho từng khóa học
 - [ ] Tích hợp AI để tạo flashcard tự động từ nội dung
 - [ ] Hệ thống gamification với điểm số và thành tích
 - [ ] Chia sẻ và cộng tác nhóm học tập

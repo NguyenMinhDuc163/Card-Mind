@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:card_mind/init.dart';
 import 'package:card_mind/core/helpers/local_storage_helper.dart';
+import 'package:card_mind/core/services/spaced_repetition_service.dart';
 import 'package:card_mind/modules/course/model/course_data.dart';
 import 'package:card_mind/data/models/course.dart';
 import 'package:card_mind/data/models/flashcard.dart';
@@ -14,6 +15,7 @@ class CourseInfoNotifier extends ChangeNotifier {
   bool _isLoading = false;
   String? _errorMessage;
   String? _currentCourseId;
+  int _reviewCardsCount = 0;
 
   CourseData? get courseData => _courseData;
 
@@ -27,7 +29,10 @@ class CourseInfoNotifier extends ChangeNotifier {
 
   bool get hasError => _errorMessage != null;
 
+  int get reviewCardsCount => _reviewCardsCount;
+
   StreamSubscription<CourseEvent>? _eventSubscription;
+  StreamSubscription<ReviewEvent>? _reviewEventSubscription;
 
   Future<void> initializeData({String? courseId}) async {
     _isLoading = true;
@@ -36,6 +41,7 @@ class CourseInfoNotifier extends ChangeNotifier {
     try {
       if (courseId != null) {
         await _loadCourseFromHive(courseId);
+        await _loadReviewCardsCount(courseId);
         _setupEventListeners();
       }
       _errorMessage = null;
@@ -55,11 +61,31 @@ class CourseInfoNotifier extends ChangeNotifier {
         notifyListeners();
       }
     });
+
+    _reviewEventSubscription?.cancel();
+    _reviewEventSubscription = EventService().reviewEvents.listen((event) {
+      if (event.courseId == _currentCourseId) {
+        // Refresh số lượng thẻ cần ôn tập khi có thay đổi
+        _loadReviewCardsCount(_currentCourseId!);
+      }
+    });
+  }
+
+  Future<void> _loadReviewCardsCount(String courseId) async {
+    try {
+      final cardsNeedingReview = await SpacedRepetitionService().getCardsNeedingReview(courseId);
+      _reviewCardsCount = cardsNeedingReview.length;
+      notifyListeners();
+    } catch (e) {
+      print('❌ Error loading review cards count: $e');
+      _reviewCardsCount = 0;
+    }
   }
 
   @override
   void dispose() {
     _eventSubscription?.cancel();
+    _reviewEventSubscription?.cancel();
     super.dispose();
   }
 

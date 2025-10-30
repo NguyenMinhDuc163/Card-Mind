@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:card_mind/core/widgets/switch_botton_widget.dart';
 import 'package:card_mind/core/theme/theme_extensions.dart';
 import 'package:card_mind/core/services/data_management_service.dart';
+import 'package:card_mind/modules/settings/screen/spaced_repetition_settings_screen.dart';
 import 'package:card_mind/init.dart';
 
 class DrawerWidget extends StatelessWidget {
@@ -59,6 +60,21 @@ class DrawerWidget extends StatelessWidget {
                   child: SwitchBottomWidget(onChanged: (value) {}),
                 ),
               ],
+            ),
+            _buildDrawerItem(
+              context,
+              icon: Icon(
+                Icons.schedule,
+                color: context.colors.onPrimary,
+              ),
+              title: 'Cài đặt Spaced Repetition',
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(
+                  context,
+                  SpacedRepetitionSettingsScreen.routeName,
+                );
+              },
             ),
             _buildDrawerItem(
               context,

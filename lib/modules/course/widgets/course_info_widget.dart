@@ -4,8 +4,13 @@ import '../../../core/theme/theme_extensions.dart';
 
 class CourseInfoWidget extends StatelessWidget {
   final Course course;
+  final int? reviewCardsCount;
 
-  const CourseInfoWidget({super.key, required this.course});
+  const CourseInfoWidget({
+    super.key,
+    required this.course,
+    this.reviewCardsCount,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -133,6 +138,38 @@ class CourseInfoWidget extends StatelessWidget {
               ),
             ],
           ),
+          if (reviewCardsCount != null && reviewCardsCount! > 0) ...[
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: context.brandColors.progressValue.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: context.brandColors.progressValue.withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.schedule,
+                    color: context.brandColors.progressValue,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Có $reviewCardsCount thẻ cần ôn tập',
+                    style: TextStyle(
+                      color: context.brandColors.textPrimary,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );

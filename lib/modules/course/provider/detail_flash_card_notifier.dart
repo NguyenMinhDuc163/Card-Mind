@@ -1,5 +1,7 @@
 import 'package:card_mind/init.dart';
 import 'package:card_mind/core/helpers/local_storage_helper.dart';
+import 'package:card_mind/core/services/spaced_repetition_service.dart';
+import 'package:card_mind/core/event_service.dart';
 import 'package:card_mind/modules/course/model/course_data.dart';
 import 'package:card_mind/data/models/course.dart';
 import 'package:card_mind/data/models/flashcard.dart';
@@ -9,6 +11,7 @@ enum LearningMode {
   fullCourse, // Học tất cả thẻ trong khóa học
   bookmarked, // Chỉ học thẻ đã bookmark
   unlearned, // Chỉ học thẻ chưa thuộc
+  review, // Chỉ học thẻ cần ôn tập
 }
 
 class DetailFlashCardNotifier extends ChangeNotifier {
@@ -225,6 +228,18 @@ class DetailFlashCardNotifier extends ChangeNotifier {
                   .toList();
           print('📚 Learning mode: Unlearned - ${_originalCards.length} cards');
           break;
+
+        case LearningMode.review:
+          // Chỉ giữ thẻ cần ôn tập
+          final reviewCards = await SpacedRepetitionService().getCardsNeedingReview(courseId);
+          final reviewCardIds =
+              reviewCards.map((data) => data.cardId).toSet();
+          _originalCards =
+              _originalCards
+                  .where((card) => reviewCardIds.contains(card.id))
+                  .toList();
+          print('📚 Learning mode: Review - ${_originalCards.length} cards');
+          break;
       }
     } catch (e) {
       print('❌ Error filtering cards by learning mode: $e');
@@ -276,6 +291,24 @@ class DetailFlashCardNotifier extends ChangeNotifier {
       _learnedCardIds.add(card.id);
     }
 
+    // Cập nhật spaced repetition data (đã học = true)
+    if (_courseId != null) {
+      SpacedRepetitionService().updateAfterReview(
+        courseId: _courseId!,
+        cardId: card.id,
+        isCorrect: true,
+      );
+
+      // Emit review event để HomeNotifier biết và refresh
+      EventService().emitReviewEvent(
+        ReviewEvent(
+          type: ReviewEventType.reviewUpdated,
+          courseId: _courseId!,
+          cardId: card.id,
+        ),
+      );
+    }
+
     // Chuyển sang thẻ tiếp theo
     _currentCardIndex++;
 
@@ -292,6 +325,24 @@ class DetailFlashCardNotifier extends ChangeNotifier {
     // Thêm vào list C (unlearned) - tạm thời, không lưu Hive
     if (!_unlearnedCards.any((c) => c.id == card.id)) {
       _unlearnedCards.add(card);
+    }
+
+    // Cập nhật spaced repetition data (chưa học = false)
+    if (_courseId != null) {
+      SpacedRepetitionService().updateAfterReview(
+        courseId: _courseId!,
+        cardId: card.id,
+        isCorrect: false,
+      );
+
+      // Emit review event để HomeNotifier biết và refresh
+      EventService().emitReviewEvent(
+        ReviewEvent(
+          type: ReviewEventType.reviewUpdated,
+          courseId: _courseId!,
+          cardId: card.id,
+        ),
+      );
     }
 
     // Chuyển sang thẻ tiếp theo

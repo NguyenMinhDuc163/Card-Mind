@@ -11,12 +11,17 @@ class EventService {
       StreamController<CourseEvent>.broadcast();
   final StreamController<ClassEvent> _classEventController =
       StreamController<ClassEvent>.broadcast();
+  final StreamController<ReviewEvent> _reviewEventController =
+      StreamController<ReviewEvent>.broadcast();
 
   /// Stream để lắng nghe các event liên quan đến khóa học
   Stream<CourseEvent> get courseEvents => _courseEventController.stream;
 
   /// Stream để lắng nghe các event liên quan đến Chủ đề
   Stream<ClassEvent> get classEvents => _classEventController.stream;
+
+  /// Stream để lắng nghe các event liên quan đến review/ôn tập
+  Stream<ReviewEvent> get reviewEvents => _reviewEventController.stream;
 
   /// Emit event khi có thay đổi về khóa học
   void emitCourseEvent(CourseEvent event) {
@@ -28,10 +33,16 @@ class EventService {
     _classEventController.add(event);
   }
 
+  /// Emit event khi có thay đổi về review/ôn tập
+  void emitReviewEvent(ReviewEvent event) {
+    _reviewEventController.add(event);
+  }
+
   /// Dispose resources
   void dispose() {
     _courseEventController.close();
     _classEventController.close();
+    _reviewEventController.close();
   }
 }
 
@@ -40,6 +51,9 @@ enum CourseEventType { courseCreated, courseUpdated, courseDeleted }
 
 /// Các loại event liên quan đến Chủ đề
 enum ClassEventType { classCreated, classUpdated, classDeleted }
+
+/// Các loại event liên quan đến review/ôn tập
+enum ReviewEventType { reviewUpdated, reviewCompleted }
 
 /// Event object cho khóa học
 class CourseEvent {
@@ -59,4 +73,19 @@ class ClassEvent {
 
   ClassEvent({required this.type, this.classId, DateTime? timestamp})
     : timestamp = timestamp ?? DateTime.now();
+}
+
+/// Event object cho review/ôn tập
+class ReviewEvent {
+  final ReviewEventType type;
+  final String? courseId;
+  final String? cardId;
+  final DateTime timestamp;
+
+  ReviewEvent({
+    required this.type,
+    this.courseId,
+    this.cardId,
+    DateTime? timestamp,
+  }) : timestamp = timestamp ?? DateTime.now();
 }

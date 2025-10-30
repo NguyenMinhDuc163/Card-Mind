@@ -23,6 +23,7 @@ class CourseItem extends Equatable {
   final String description;
   final int totalTerms;
   final String author;
+  final int reviewCardsCount; // Số lượng thẻ cần ôn tập (spaced repetition)
 
   const CourseItem({
     required this.id,
@@ -30,10 +31,12 @@ class CourseItem extends Equatable {
     required this.description,
     required this.totalTerms,
     required this.author,
+    this.reviewCardsCount = 0,
   });
 
   @override
-  List<Object?> get props => [id, title, description, totalTerms, author];
+  List<Object?> get props =>
+      [id, title, description, totalTerms, author, reviewCardsCount];
 }
 
 class ClassItem extends Equatable {

@@ -98,6 +98,143 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
+          // Section: Cần ôn tập (Spaced Repetition)
+          Consumer<HomeNotifier>(
+            builder: (context, notifier, child) {
+              final coursesNeedingReview = notifier.coursesNeedingReview;
+
+              if (coursesNeedingReview.isEmpty) {
+                return const SliverToBoxAdapter(child: SizedBox.shrink());
+              }
+
+              return SliverPadding(
+                padding: AppPad.h16,
+                sliver: SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.schedule,
+                            color: context.brandColors.progressValue,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Cần ôn tập hôm nay',
+                              style: AppTextStyles.textHeader3.copyWith(
+                                color: context.brandColors.textPrimary,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        height: 140,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: coursesNeedingReview.length,
+                          itemBuilder: (context, index) {
+                            final course = coursesNeedingReview[index];
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 12),
+                              child: InkWell(
+                                onTap:
+                                    () => Navigator.pushNamed(
+                                      context,
+                                      CourseInfoScreen.routeName,
+                                      arguments: course.id,
+                                    ),
+                                child: Container(
+                                  width: 200,
+                                  decoration: BoxDecoration(
+                                    color: context.brandColors.cardBackground
+                                        .withOpacity(0.9),
+                                    borderRadius: BorderRadius.circular(16),
+                                    border: Border.all(
+                                      color: context.brandColors.progressValue
+                                          .withOpacity(0.5),
+                                      width: 2,
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: context.brandColors.progressValue
+                                            .withOpacity(0.2),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  padding: const EdgeInsets.all(14),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 8,
+                                              vertical: 4,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: context
+                                                  .brandColors.progressValue,
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                            child: Text(
+                                              '${course.reviewCardsCount} thẻ',
+                                              style: AppTextStyles.textContent4
+                                                  .copyWith(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Text(
+                                        course.title,
+                                        style: AppTextStyles.textContent2
+                                            .copyWith(
+                                              color:
+                                                  context.brandColors.textPrimary,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      Text(
+                                        '${course.totalTerms} thẻ · ${course.author}',
+                                        style:
+                                            AppTextStyles.textContent4.copyWith(
+                                              color: context
+                                                  .brandColors.searchBarText,
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+
           SliverPadding(
             padding: AppPad.h16,
             sliver: SliverToBoxAdapter(

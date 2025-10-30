@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:card_mind/init.dart';
 import 'package:card_mind/core/helpers/local_storage_helper.dart';
 import 'package:card_mind/core/event_service.dart';
+import 'package:card_mind/core/services/spaced_repetition_service.dart';
 import 'package:card_mind/modules/home/model/home_data.dart';
 
 class HomeNotifier extends ChangeNotifier {
@@ -10,6 +11,8 @@ class HomeNotifier extends ChangeNotifier {
   String? _errorMessage;
   StreamSubscription<CourseEvent>? _courseEventSubscription;
   StreamSubscription<ClassEvent>? _classEventSubscription;
+  StreamSubscription<ReviewEvent>? _reviewEventSubscription;
+  Map<String, int> _coursesNeedingReview = {}; // courseId -> số lượng thẻ cần ôn
 
   HomeData get homeData => _homeData;
 
@@ -19,16 +22,25 @@ class HomeNotifier extends ChangeNotifier {
 
   bool get hasError => _errorMessage != null;
 
+  /// Lấy danh sách courses cần ôn tập (có ít nhất 1 thẻ cần ôn)
+  List<CourseItem> get coursesNeedingReview {
+    return _homeData.courses
+        .where((course) => course.reviewCardsCount > 0)
+        .toList();
+  }
+
   Future<void> initializeData() async {
     _isLoading = true;
     notifyListeners();
     try {
+      await _loadCoursesNeedingReview();
       await _loadCourses();
       await _loadClasses();
       _errorMessage = null;
 
       _setupCourseEventSubscription();
       _setupClassEventSubscription();
+      _setupReviewEventSubscription();
     } catch (e) {
       _errorMessage = 'Không thể tải dữ liệu: $e';
     } finally {
@@ -59,13 +71,36 @@ class HomeNotifier extends ChangeNotifier {
     });
   }
 
+  void _setupReviewEventSubscription() {
+    _reviewEventSubscription?.cancel();
+    _reviewEventSubscription = EventService().reviewEvents.listen((event) {
+      if (event.type == ReviewEventType.reviewUpdated ||
+          event.type == ReviewEventType.reviewCompleted) {
+        // Refresh lại danh sách courses cần ôn tập
+        _refreshData();
+      }
+    });
+  }
+
   Future<void> _refreshData() async {
     try {
+      await _loadCoursesNeedingReview();
       await _loadCourses();
       await _loadClasses();
       notifyListeners();
     } catch (e) {
       print('Error refreshing data: $e');
+    }
+  }
+
+  Future<void> _loadCoursesNeedingReview() async {
+    try {
+      _coursesNeedingReview =
+          await SpacedRepetitionService().getCoursesWithCardsNeedingReview();
+      print('📚 Loaded courses needing review: $_coursesNeedingReview');
+    } catch (e) {
+      print('Error loading courses needing review: $e');
+      _coursesNeedingReview = {};
     }
   }
 
@@ -82,12 +117,16 @@ class HomeNotifier extends ChangeNotifier {
             courseData,
           );
 
+          final courseId = jsonData['id'] as String;
+          final reviewCardsCount = _coursesNeedingReview[courseId] ?? 0;
+
           final courseItem = CourseItem(
-            id: jsonData['id'] as String,
+            id: courseId,
             title: jsonData['title'] as String,
             description: jsonData['description'] as String? ?? '',
             totalTerms: (jsonData['terms'] as List<dynamic>).length,
             author: jsonData['topic'] as String? ?? 'Unknown',
+            reviewCardsCount: reviewCardsCount,
           );
 
           coursesList.add(courseItem);
@@ -270,6 +309,7 @@ class HomeNotifier extends ChangeNotifier {
   void dispose() {
     _courseEventSubscription?.cancel();
     _classEventSubscription?.cancel();
+    _reviewEventSubscription?.cancel();
     super.dispose();
   }
 }
