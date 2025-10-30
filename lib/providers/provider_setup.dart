@@ -9,12 +9,14 @@ import 'package:card_mind/modules/library/provider/book_mark_notifier.dart';
 import 'package:card_mind/modules/library/provider/content_notifier.dart';
 import 'package:card_mind/modules/library/provider/class_notifier.dart';
 import 'package:card_mind/modules/message/provider/chat_notifier.dart';
+import 'package:card_mind/providers/auth_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
 class ProviderSetup {
   static List<SingleChildWidget> getProviders() {
     return [
+      ChangeNotifierProvider(create: (_) => AuthProvider()),
       ChangeNotifierProvider(create: (_) => CreateCourseNotifier()),
       ChangeNotifierProvider(create: (_) => HomeNotifier()),
       ChangeNotifierProvider(create: (_) => GlobalSearchNotifier()),

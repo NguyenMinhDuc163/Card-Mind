@@ -5,6 +5,7 @@ import 'package:card_mind/modules/home/provider/home_notifier.dart';
 import 'package:card_mind/modules/home/screen/global_search_screen.dart';
 import 'package:card_mind/modules/library/screen/class_detail_screen.dart';
 import 'package:card_mind/modules/dashboard/screen/dashboard_screen.dart';
+import 'package:card_mind/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -87,13 +88,39 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  CircleAvatar(
-                    radius: 18,
-                    backgroundColor: context.brandColors.avatarBackground,
-                    child: Icon(
-                      Icons.person,
-                      color: context.brandColors.searchBarIcon,
-                    ),
+                  Consumer<AuthProvider>(
+                    builder: (context, authProvider, child) {
+                      return GestureDetector(
+                        onTap: () => _handleAvatarTap(context, authProvider),
+                        onLongPress: authProvider.isSignedIn
+                            ? () => _showSignOutDialog(context, authProvider)
+                            : null,
+                        child: CircleAvatar(
+                          radius: 18,
+                          backgroundColor: context.brandColors.avatarBackground,
+                          backgroundImage: authProvider.photoURL != null
+                              ? NetworkImage(authProvider.photoURL!)
+                              : null,
+                          child: authProvider.isLoading
+                              ? const SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white,
+                                    ),
+                                  ),
+                                )
+                              : authProvider.photoURL == null
+                                  ? Icon(
+                                      Icons.person,
+                                      color: context.brandColors.searchBarIcon,
+                                    )
+                                  : null,
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
@@ -812,5 +839,168 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       );
     }
+  }
+
+  /// Handle avatar tap - Sign in if not signed in, show user info if signed in
+  Future<void> _handleAvatarTap(
+    BuildContext context,
+    AuthProvider authProvider,
+  ) async {
+    if (authProvider.isSignedIn) {
+      // Already signed in - show user info dialog
+      _showUserInfoDialog(context, authProvider);
+    } else {
+      // Not signed in - trigger Google Sign-In
+      final success = await authProvider.signInWithGoogle();
+
+      if (success && mounted) {
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Đăng nhập thành công! Xin chào ${authProvider.displayName ?? authProvider.email}',
+            ),
+            backgroundColor: context.brandColors.progressValue,
+          ),
+        );
+      } else if (authProvider.errorMessage != null && mounted) {
+        // Show error message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(authProvider.errorMessage!),
+            backgroundColor: context.brandColors.buttonDestructive,
+          ),
+        );
+      }
+    }
+  }
+
+  /// Show user info dialog when avatar is tapped while signed in
+  void _showUserInfoDialog(BuildContext context, AuthProvider authProvider) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: context.brandColors.cardBackground,
+          title: Row(
+            children: [
+              CircleAvatar(
+                radius: 20,
+                backgroundImage: authProvider.photoURL != null
+                    ? NetworkImage(authProvider.photoURL!)
+                    : null,
+                child: authProvider.photoURL == null
+                    ? Icon(
+                        Icons.person,
+                        color: context.brandColors.searchBarIcon,
+                      )
+                    : null,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  authProvider.displayName ?? 'Người dùng',
+                  style: TextStyle(color: context.brandColors.textPrimary),
+                ),
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Email:',
+                style: TextStyle(
+                  color: context.brandColors.textSecondary,
+                  fontSize: 12,
+                ),
+              ),
+              Text(
+                authProvider.email ?? 'N/A',
+                style: TextStyle(color: context.brandColors.textPrimary),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                'Đóng',
+                style: TextStyle(color: context.brandColors.textSecondary),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _showSignOutDialog(context, authProvider);
+              },
+              child: Text(
+                'Đăng xuất',
+                style: TextStyle(color: context.brandColors.buttonDestructive),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Show sign out confirmation dialog
+  void _showSignOutDialog(BuildContext context, AuthProvider authProvider) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: context.brandColors.cardBackground,
+          title: Row(
+            children: [
+              Icon(
+                Icons.logout,
+                color: context.brandColors.buttonDestructive,
+                size: 24,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Đăng xuất',
+                style: TextStyle(color: context.brandColors.textPrimary),
+              ),
+            ],
+          ),
+          content: Text(
+            'Bạn có chắc chắn muốn đăng xuất?',
+            style: TextStyle(color: context.brandColors.textSecondary),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                'Hủy',
+                style: TextStyle(color: context.brandColors.textSecondary),
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                await authProvider.signOut();
+
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text('Đã đăng xuất thành công'),
+                      backgroundColor: context.brandColors.progressValue,
+                    ),
+                  );
+                }
+              },
+              child: Text(
+                'Đăng xuất',
+                style: TextStyle(color: context.brandColors.buttonDestructive),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
