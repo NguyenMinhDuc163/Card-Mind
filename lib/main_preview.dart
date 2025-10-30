@@ -10,7 +10,6 @@ import 'package:card_mind/core/services/notification_service.dart';
 import 'package:card_mind/providers/provider_setup.dart';
 import 'package:device_preview_plus/device_preview_plus.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_ce_flutter/adapters.dart';
@@ -24,12 +23,10 @@ import 'modules/dashboard/screen/dashboard_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Chỉ khởi tạo Firebase nếu không phải web
-  if (!kIsWeb) {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-  }
+  // Khởi tạo Firebase cho tất cả platforms (Android, Web)
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   Bloc.observer = AppBlocObserver();
   await EasyLocalization.ensureInitialized();

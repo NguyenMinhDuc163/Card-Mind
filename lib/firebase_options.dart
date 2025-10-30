@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -51,6 +48,15 @@ class DefaultFirebaseOptions {
         );
     }
   }
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyAbLSL0yLnkGlqGRFJ94ONbB17b5ZLPb3g',
+    authDomain: 'card-mind.firebaseapp.com',
+    projectId: 'card-mind',
+    storageBucket: 'card-mind.firebasestorage.app',
+    messagingSenderId: '154797023123',
+    appId: '1:154797023123:web:8e8c20e1fdda5f1a589266',
+  );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBcIR9YU0gvWV1vKNNC7NU-7C1yPcSrAOc',

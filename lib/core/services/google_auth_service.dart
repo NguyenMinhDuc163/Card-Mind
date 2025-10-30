@@ -27,6 +27,30 @@ class GoogleAuthService {
     try {
       print('🔐 [GoogleAuth] Starting Google Sign-In...');
 
+      // Web platform: Sử dụng Firebase Auth popup thay vì Google Sign-In package
+      if (kIsWeb) {
+        print('🔐 [GoogleAuth] Using Firebase Auth popup for Web');
+
+        final GoogleAuthProvider googleProvider = GoogleAuthProvider();
+
+        // Thêm scopes nếu cần
+        googleProvider.addScope('email');
+        googleProvider.addScope('profile');
+
+        // Sign in with popup
+        final UserCredential userCredential = await _auth.signInWithPopup(googleProvider);
+
+        print('🔐 [GoogleAuth] ✅ Successfully signed in to Firebase');
+        print('🔐 [GoogleAuth] User: ${userCredential.user?.displayName}');
+        print('🔐 [GoogleAuth] Email: ${userCredential.user?.email}');
+        print('🔐 [GoogleAuth] Photo: ${userCredential.user?.photoURL}');
+
+        return userCredential;
+      }
+
+      // Mobile/Desktop platforms: Sử dụng Google Sign-In package
+      print('🔐 [GoogleAuth] Using Google Sign-In package for Mobile');
+
       // Trigger the authentication flow
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
 

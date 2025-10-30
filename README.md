@@ -22,7 +22,7 @@
 - **Thuật toán Spaced Repetition tiên tiến**: Sử dụng phương pháp học ngắt quãn khoa học đã được chứng minh hiệu quả, giúp tăng khả năng ghi nhớ lâu dài lên đến 200%
 - **Học tập thông minh**: Ứng dụng tự động điều chỉnh lịch học dựa trên khả năng tiếp thu của từng người dùng
 - **Tối ưu hóa thời gian**: Chỉ học những gì cần thiết, không lãng phí thời gian ôn tập những kiến thức đã thuộc
-- **🌐 Trải nghiệm ngay**: [Truy cập demo trực tiếp](https://card_mind.nguyenduc.click) để khám phá tất cả tính năng
+- **🌐 Trải nghiệm ngay**: [Truy cập demo trực tiếp](https://nguyenminhduc163.github.io/Card-Mind) để khám phá tất cả tính năng
 
 ## 📸 Demo ứng dụng
 
