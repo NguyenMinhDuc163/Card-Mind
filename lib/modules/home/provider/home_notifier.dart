@@ -12,6 +12,7 @@ class HomeNotifier extends ChangeNotifier {
   StreamSubscription<CourseEvent>? _courseEventSubscription;
   StreamSubscription<ClassEvent>? _classEventSubscription;
   StreamSubscription<ReviewEvent>? _reviewEventSubscription;
+  Timer? _autoRefreshTimer; // Timer để tự động refresh
   Map<String, int> _coursesNeedingReview = {}; // courseId -> số lượng thẻ cần ôn
 
   HomeData get homeData => _homeData;
@@ -41,12 +42,30 @@ class HomeNotifier extends ChangeNotifier {
       _setupCourseEventSubscription();
       _setupClassEventSubscription();
       _setupReviewEventSubscription();
+      _setupAutoRefreshTimer();
     } catch (e) {
       _errorMessage = 'Không thể tải dữ liệu: $e';
     } finally {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  /// Setup timer để tự động refresh data theo chu kỳ
+  void _setupAutoRefreshTimer() {
+    _autoRefreshTimer?.cancel();
+
+    // Lấy autoRefreshInterval từ SpacedRepetitionService config
+    final service = SpacedRepetitionService();
+    final refreshIntervalSeconds = service.autoRefreshInterval;
+    final refreshInterval = Duration(seconds: refreshIntervalSeconds);
+
+    print('🔄 Home Auto-refresh enabled: every $refreshIntervalSeconds seconds');
+
+    _autoRefreshTimer = Timer.periodic(refreshInterval, (timer) {
+      print('⏰ Auto-refreshing courses needing review...');
+      _refreshData();
+    });
   }
 
   void _setupCourseEventSubscription() {
@@ -310,6 +329,7 @@ class HomeNotifier extends ChangeNotifier {
     _courseEventSubscription?.cancel();
     _classEventSubscription?.cancel();
     _reviewEventSubscription?.cancel();
+    _autoRefreshTimer?.cancel();
     super.dispose();
   }
 }

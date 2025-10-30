@@ -77,6 +77,15 @@ class CardReviewData extends Equatable {
   /// Kiểm tra xem thẻ có cần ôn tập không
   bool needsReview() {
     final now = DateTime.now();
+    final service = SpacedRepetitionService();
+
+    // Nếu đang dùng minutes (test mode) -> so sánh chính xác đến phút/giây
+    if (service.timeUnit == 'minutes') {
+      return nextReviewDate.isBefore(now) ||
+             nextReviewDate.isAtSameMomentAs(now);
+    }
+
+    // Nếu đang dùng days (production) -> so sánh theo ngày (bỏ qua giờ)
     return nextReviewDate.isBefore(now) ||
            nextReviewDate.isAtSameMomentAs(now) ||
            _isSameDay(nextReviewDate, now);

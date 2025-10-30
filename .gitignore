@@ -47,3 +47,11 @@ app.*.map.json
 # FVM Version Cache
 .fvm/
 /env/.env.dev
+
+# Windows device names (avoid accidental creation)
+nul
+con
+prn
+aux
+com[1-9]
+lpt[1-9]

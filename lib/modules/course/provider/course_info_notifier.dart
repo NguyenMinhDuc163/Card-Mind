@@ -75,11 +75,67 @@ class CourseInfoNotifier extends ChangeNotifier {
     try {
       final cardsNeedingReview = await SpacedRepetitionService().getCardsNeedingReview(courseId);
       _reviewCardsCount = cardsNeedingReview.length;
+
+      // Log thông tin repetitions của từng card trong course
+      await _printCourseRepetitionsInfo(courseId);
+
       notifyListeners();
     } catch (e) {
       print('❌ Error loading review cards count: $e');
       _reviewCardsCount = 0;
     }
+  }
+
+  Future<void> _printCourseRepetitionsInfo(String courseId) async {
+    try {
+      final service = SpacedRepetitionService();
+      final allReviewData = await service.getCourseReviewData(courseId);
+
+      if (allReviewData.isEmpty) {
+        print('\n📚 [Course Info] Khóa học này chưa có dữ liệu ôn tập');
+        return;
+      }
+
+      print('\n📚 ============================================');
+      print('📚 [Course Info] Thông tin ôn tập - Course: $courseId');
+      print('📚 ============================================');
+
+      for (var reviewData in allReviewData) {
+        final card = _flashcards.firstWhere(
+          (c) => c.id == reviewData.cardId,
+          orElse: () => Flashcard(
+            id: reviewData.cardId,
+            frontText: 'Unknown',
+            backText: '',
+            category: '',
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+          ),
+        );
+
+        final needsReview = reviewData.needsReview();
+        final status = needsReview ? '⏰ CẦN ÔN TẬP' : '✅ Chưa đến lúc';
+
+        print('📝 Card: "${card.frontText}"');
+        print('   - Số lần ôn tập: ${reviewData.repetitions} lần');
+        print('   - Interval hiện tại: ${reviewData.intervalDays} ${service.timeUnitVi}');
+        print('   - Lần ôn cuối: ${_formatDateTime(reviewData.lastReviewDate)}');
+        print('   - Lần ôn tiếp theo: ${_formatDateTime(reviewData.nextReviewDate)}');
+        print('   - Trạng thái: $status');
+        print('   - Ease factor: ${reviewData.easeFactor.toStringAsFixed(2)}');
+        print('');
+      }
+
+      print('📚 Tổng số thẻ đã học: ${allReviewData.length}/${_flashcards.length}');
+      print('📚 Số thẻ cần ôn tập: $_reviewCardsCount');
+      print('📚 ============================================\n');
+    } catch (e) {
+      print('❌ Error printing course repetitions info: $e');
+    }
+  }
+
+  String _formatDateTime(DateTime dt) {
+    return '${dt.day}/${dt.month}/${dt.year} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}:${dt.second.toString().padLeft(2, '0')}';
   }
 
   @override

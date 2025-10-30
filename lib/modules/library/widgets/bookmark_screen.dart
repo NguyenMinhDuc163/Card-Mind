@@ -7,7 +7,6 @@ import 'package:card_mind/modules/course/screen/detail_flash_card_screen.dart';
 import 'package:card_mind/modules/course/provider/detail_flash_card_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 class BookmarkScreen extends StatefulWidget {
   const BookmarkScreen({super.key, this.searchQuery = ''});
 

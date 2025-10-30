@@ -21,6 +21,7 @@ class _SpacedRepetitionSettingsScreenState
   late int _interval1;
   late int _interval2;
   late int _maxInterval;
+  late int _autoRefreshInterval;
 
   @override
   void initState() {
@@ -35,6 +36,7 @@ class _SpacedRepetitionSettingsScreenState
     _interval1 = _service.interval1;
     _interval2 = _service.interval2;
     _maxInterval = _service.maxInterval;
+    _autoRefreshInterval = _service.autoRefreshInterval;
   }
 
   void _adjustIntervalsForTimeUnit() {
@@ -57,6 +59,7 @@ class _SpacedRepetitionSettingsScreenState
       interval1: _interval1,
       interval2: _interval2,
       maxInterval: _maxInterval,
+      autoRefreshInterval: _autoRefreshInterval,
     );
 
     if (mounted) {
@@ -239,6 +242,22 @@ class _SpacedRepetitionSettingsScreenState
               divisions: _timeUnit == 'days' ? 67 : 40,
               onChanged: (value) {
                 setState(() => _maxInterval = value.round());
+              },
+            ),
+
+            SizedBox(height: 24),
+
+            // Auto Refresh Interval
+            _buildSectionTitle('Tự động làm mới dữ liệu'),
+            _buildSliderSetting(
+              title: 'Khoảng thời gian tự động làm mới',
+              subtitle: 'Làm mới mỗi $_autoRefreshInterval giây',
+              value: _autoRefreshInterval.toDouble(),
+              min: 10,
+              max: 300,
+              divisions: 29,
+              onChanged: (value) {
+                setState(() => _autoRefreshInterval = value.round());
               },
             ),
 

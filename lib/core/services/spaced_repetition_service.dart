@@ -25,6 +25,7 @@ class SpacedRepetitionService {
   static const double _defaultEaseFactorDecrement = 0.2;
   static const double _defaultMinEaseFactor = 1.3;
   static const double _defaultMaxEaseFactor = 2.5;
+  static const int _defaultAutoRefreshInterval = 60; // Tính bằng giây, mặc định 60s (1 phút)
 
   Map<String, dynamic>? _cachedConfig;
 
@@ -51,6 +52,7 @@ class SpacedRepetitionService {
       'easeFactorDecrement': _defaultEaseFactorDecrement,
       'minEaseFactor': _defaultMinEaseFactor,
       'maxEaseFactor': _defaultMaxEaseFactor,
+      'autoRefreshInterval': _defaultAutoRefreshInterval,
     };
   }
 
@@ -63,6 +65,7 @@ class SpacedRepetitionService {
   double get easeFactorDecrement => (_loadConfig()['easeFactorDecrement'] as num?)?.toDouble() ?? _defaultEaseFactorDecrement;
   double get minEaseFactor => (_loadConfig()['minEaseFactor'] as num?)?.toDouble() ?? _defaultMinEaseFactor;
   double get maxEaseFactor => (_loadConfig()['maxEaseFactor'] as num?)?.toDouble() ?? _defaultMaxEaseFactor;
+  int get autoRefreshInterval => _loadConfig()['autoRefreshInterval'] as int? ?? _defaultAutoRefreshInterval;
 
   Duration getDuration(int interval) {
     return timeUnit == 'minutes' ? Duration(minutes: interval) : Duration(days: interval);
@@ -82,8 +85,11 @@ class SpacedRepetitionService {
     double? easeFactorDecrement,
     double? minEaseFactor,
     double? maxEaseFactor,
+    int? autoRefreshInterval,
   }) async {
     final config = _loadConfig();
+    final oldAutoRefreshInterval = config['autoRefreshInterval'] as int?;
+
     if (timeUnit != null) config['timeUnit'] = timeUnit;
     if (interval1 != null) config['interval1'] = interval1;
     if (interval2 != null) config['interval2'] = interval2;
@@ -93,9 +99,17 @@ class SpacedRepetitionService {
     if (easeFactorDecrement != null) config['easeFactorDecrement'] = easeFactorDecrement;
     if (minEaseFactor != null) config['minEaseFactor'] = minEaseFactor;
     if (maxEaseFactor != null) config['maxEaseFactor'] = maxEaseFactor;
+    if (autoRefreshInterval != null) config['autoRefreshInterval'] = autoRefreshInterval;
+
     LocalStorageHelper.setValue(_configKey, config);
     _cachedConfig = config;
     print('✅ Đã cập nhật config: $config');
+
+    // Nếu autoRefreshInterval thay đổi, thông báo để restart timer
+    if (autoRefreshInterval != null && autoRefreshInterval != oldAutoRefreshInterval) {
+      print('⚠️ autoRefreshInterval đã thay đổi: $oldAutoRefreshInterval → $autoRefreshInterval');
+      print('⚠️ Vui lòng restart app hoặc quay lại màn hình Home để áp dụng');
+    }
   }
 
   Future<void> resetToDefault() async {

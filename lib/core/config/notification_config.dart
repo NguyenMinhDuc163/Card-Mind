@@ -124,17 +124,18 @@ class NotificationConfig {
 
   /// Tính thời gian gửi notification dựa trên nextReviewDate
   static DateTime calculateNotificationTime(DateTime nextReviewDate) {
-    // Nếu nextReviewDate là hôm nay hoặc quá khứ
-    if (nextReviewDate.isBefore(DateTime.now()) ||
-        _isSameDay(nextReviewDate, DateTime.now())) {
+    final now = DateTime.now();
+
+    // Nếu nextReviewDate là quá khứ hoặc hiện tại
+    if (nextReviewDate.isBefore(now) || nextReviewDate.isAtSameMomentAs(now)) {
       if (sendImmediateNotifications) {
         // Gửi sau vài giờ
-        return DateTime.now().add(
+        return now.add(
           Duration(hours: immediateNotificationDelayHours),
         );
       } else {
         // Gửi vào thời gian mặc định ngày mai
-        final tomorrow = DateTime.now().add(const Duration(days: 1));
+        final tomorrow = now.add(const Duration(days: 1));
         return DateTime(
           tomorrow.year,
           tomorrow.month,
@@ -142,6 +143,38 @@ class NotificationConfig {
           defaultNotificationHour,
           defaultNotificationMinute,
         );
+      }
+    }
+
+    // Nếu nextReviewDate là cùng ngày (chỉ áp dụng cho days mode)
+    if (_isSameDay(nextReviewDate, now)) {
+      if (sendImmediateNotifications) {
+        // Gửi sau vài giờ
+        return now.add(
+          Duration(hours: immediateNotificationDelayHours),
+        );
+      } else {
+        // Gửi vào thời gian mặc định hôm nay
+        final today = DateTime(
+          now.year,
+          now.month,
+          now.day,
+          defaultNotificationHour,
+          defaultNotificationMinute,
+        );
+
+        // Nếu thời gian đó đã qua, gửi ngày mai
+        if (today.isBefore(now)) {
+          final tomorrow = now.add(const Duration(days: 1));
+          return DateTime(
+            tomorrow.year,
+            tomorrow.month,
+            tomorrow.day,
+            defaultNotificationHour,
+            defaultNotificationMinute,
+          );
+        }
+        return today;
       }
     }
 

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:card_mind/init.dart';
 import 'package:card_mind/core/helpers/local_storage_helper.dart';
 import 'package:card_mind/core/services/spaced_repetition_service.dart';
@@ -14,6 +15,7 @@ class BookMarkNotifier extends ChangeNotifier {
   bool _isLoading = false;
   String? _errorMessage;
   String _searchQuery = '';
+  Timer? _autoRefreshTimer; // Timer để tự động refresh
 
   List<Map<String, dynamic>> get unlearnedCardsByCourse =>
       _searchQuery.isEmpty
@@ -42,11 +44,40 @@ class BookMarkNotifier extends ChangeNotifier {
       await _loadUnlearnedCardsByCourse();
       await _loadBookmarkedCoursesByCourse();
       _errorMessage = null;
+      _setupAutoRefreshTimer();
     } catch (e) {
       _errorMessage = 'Không thể tải dữ liệu: $e';
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  /// Setup timer để tự động refresh data theo chu kỳ
+  void _setupAutoRefreshTimer() {
+    _autoRefreshTimer?.cancel();
+
+    // Lấy autoRefreshInterval từ SpacedRepetitionService config
+    final service = SpacedRepetitionService();
+    final refreshIntervalSeconds = service.autoRefreshInterval;
+    final refreshInterval = Duration(seconds: refreshIntervalSeconds);
+
+    print('🔄 BookMark Auto-refresh enabled: every $refreshIntervalSeconds seconds');
+
+    _autoRefreshTimer = Timer.periodic(refreshInterval, (timer) {
+      print('⏰ Auto-refreshing bookmark data...');
+      _refreshData();
+    });
+  }
+
+  Future<void> _refreshData() async {
+    try {
+      await _loadCoursesNeedingReview();
+      await _loadUnlearnedCardsByCourse();
+      await _loadBookmarkedCoursesByCourse();
+      notifyListeners();
+    } catch (e) {
+      print('Error refreshing bookmark data: $e');
     }
   }
 
@@ -235,5 +266,11 @@ class BookMarkNotifier extends ChangeNotifier {
           }).toList();
     }
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _autoRefreshTimer?.cancel();
+    super.dispose();
   }
 }
