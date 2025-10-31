@@ -1,13 +1,16 @@
 import 'package:card_mind/core/widgets/app_gap.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:card_mind/core/widgets/switch_botton_widget.dart';
+import 'package:card_mind/core/widgets/switch_Lang.dart';
 import 'package:card_mind/core/theme/theme_extensions.dart';
+import 'package:card_mind/core/theme/locale_cubit.dart';
 import 'package:card_mind/core/services/data_management_service.dart';
 import 'package:card_mind/core/services/notification_service.dart';
 import 'package:card_mind/core/services/data_sync_service.dart';
 import 'package:card_mind/modules/settings/screen/spaced_repetition_settings_screen.dart';
 import 'package:card_mind/providers/auth_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:card_mind/init.dart';
 
 class DrawerWidget extends StatefulWidget {
@@ -214,6 +217,43 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                 Padding(
                   padding: AppPad.h10,
                   child: SwitchBottomWidget(onChanged: (value) {}),
+                ),
+              ],
+            ),
+            // Language switcher
+            Row(
+              children: [
+                Expanded(
+                  child: _buildDrawerItem(
+                    context,
+                    icon: Icon(
+                      Icons.language,
+                      color: context.colors.onPrimary,
+                    ),
+                    title: 'common.language'.tr(),
+                    onTap: () {
+                      // Toggle ngôn ngữ khi tap vào item
+                      final localeCubit = context.read<LocaleCubit>();
+                      localeCubit.toggleLocale(context);
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: AppPad.h10,
+                  child: BlocBuilder<LocaleCubit, Locale>(
+                    builder: (context, locale) {
+                      final isEnglish = locale.languageCode == 'en';
+                      return SwitchLang(
+                        onTap: () {
+                          final localeCubit = context.read<LocaleCubit>();
+                          localeCubit.toggleLocale(context);
+                        },
+                        isEnglish: isEnglish,
+                        colorText: context.colors.onPrimary,
+                        colorBackground: context.colors.onPrimary.withOpacity(0.1),
+                      );
+                    },
+                  ),
                 ),
               ],
             ),

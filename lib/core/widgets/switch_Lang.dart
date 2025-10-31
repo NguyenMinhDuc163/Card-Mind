@@ -1,92 +1,82 @@
 import 'package:flutter/material.dart';
 import 'package:card_mind/core/theme/app_text_styles.dart';
 
-
+/// Widget chuyển đổi ngôn ngữ với giao diện đẹp
+/// isEnglish = true: Hiển thị "EN" với indicator
+/// isEnglish = false: Hiển thị "VI" với indicator
 class SwitchLang extends StatelessWidget {
   const SwitchLang({
     super.key,
     required this.onTap,
-    this.switchLang = true,
+    required this.isEnglish,
     this.colorText,
     this.colorBackground,
   });
 
   final VoidCallback onTap;
-  final bool switchLang;
+  final bool isEnglish;
   final Color? colorText;
   final Color? colorBackground;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Container(
-          margin: const EdgeInsets.only(
-            left: 15,
-          ),
-          padding: EdgeInsets.symmetric(
-            horizontal: 9,
-            vertical: 4,
-          ),
-          decoration: BoxDecoration(
-            color: colorBackground ?? Colors.white,
-            borderRadius: const BorderRadius.all(Radius.circular(20)),
-          ),
-          child: InkWell(
-            onTap: onTap,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                if (switchLang)
-                  Container(
-                    color: Colors.red,
-                    width: 10,
-                    height: 10,
-                  )
-                else
-                  Text(
-                    "VN ",
-                    style: AppTextStyles.text,
-                  ),
-                if (switchLang)
-                  Text(
-                    " EN",
-                    style: AppTextStyles.text,
-                  )
-                else
-                  Container(
-                    width: 16,
-                    height: 16,
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Center(
-                      child: Container(
-                        color: Colors.red,
-                        width: 10,
-                        height: 10,
-                      ),
-                    ),
-                  ),
-                SizedBox(width: 4,),
-                Padding(
-                  padding: EdgeInsets.only(top: 2),
-                  child: Center(
-                    child: Container(
-                      color: Colors.red,
-                      width: 10,
-                      height: 10,
-                    ),
-                  ),
-                )
-              ],
-            ),
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 6,
+        ),
+        decoration: BoxDecoration(
+          color: colorBackground ?? Colors.white.withOpacity(0.9),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: (colorText ?? Colors.black).withOpacity(0.1),
+            width: 1,
           ),
         ),
-      ],
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Tiếng Việt
+            Text(
+              'VI',
+              style: AppTextStyles.text.copyWith(
+                color: !isEnglish
+                    ? (colorText ?? Colors.blue)
+                    : (colorText ?? Colors.black).withOpacity(0.4),
+                fontWeight: !isEnglish ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+            const SizedBox(width: 4),
+            // Separator
+            Container(
+              width: 1,
+              height: 14,
+              color: (colorText ?? Colors.black).withOpacity(0.2),
+            ),
+            const SizedBox(width: 4),
+            // Tiếng Anh
+            Text(
+              'EN',
+              style: AppTextStyles.text.copyWith(
+                color: isEnglish
+                    ? (colorText ?? Colors.blue)
+                    : (colorText ?? Colors.black).withOpacity(0.4),
+                fontWeight: isEnglish ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+            const SizedBox(width: 6),
+            // Indicator
+            Icon(
+              Icons.language,
+              size: 16,
+              color: (colorText ?? Colors.blue).withOpacity(0.7),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

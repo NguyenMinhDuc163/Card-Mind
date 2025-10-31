@@ -2,6 +2,7 @@ import 'package:card_mind/core/app_bloc_observer.dart';
 import 'package:card_mind/core/helpers/local_storage_helper.dart';
 import 'package:card_mind/core/services/sample_data_service.dart';
 import 'package:card_mind/core/services/notification_service.dart';
+import 'package:card_mind/core/theme/locale_service.dart';
 import 'package:card_mind/providers/provider_setup.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -52,14 +53,15 @@ void main() async {
   // KHÔNG sync ở đây nữa - để SplashScreen xử lý
   // Lý do: Cần đợi sync xong trước khi render UI
 
-  Locale defaultLocale = const Locale('en', 'US');
+  // Load saved locale từ LocaleService
+  final Locale savedLocale = LocaleService.load();
 
   runApp(
     EasyLocalization(
       supportedLocales: const [Locale('en', 'US'), Locale('vi', 'VN')],
       path: 'assets/translations',
       fallbackLocale: const Locale('en', 'US'),
-      startLocale: defaultLocale,
+      startLocale: savedLocale, // Sử dụng locale đã lưu
       child: MultiProvider(
         providers: ProviderSetup.getProviders(),
         child: const App(),

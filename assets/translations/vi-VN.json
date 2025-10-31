@@ -1,11 +1,17 @@
 {
   "common": {
     "dark_mode": "Chế độ tối",
+    "language": "Ngôn ngữ",
     "account_information": "Thông tin tài khoản",
     "change_password": "Đổi mật khẩu",
     "settings": "Cài đặt",
     "logout": "Đăng xuất",
     "verified_profile": "Hồ sơ đã xác minh"
+  },
+  "language": {
+    "english": "Tiếng Anh",
+    "vietnamese": "Tiếng Việt",
+    "current": "Ngôn ngữ hiện tại"
   },
   "home_screen": {
     "title": "trang chủ",

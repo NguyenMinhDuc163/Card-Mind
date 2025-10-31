@@ -1,11 +1,17 @@
 {
   "common": {
     "dark_mode": "Dark Mode",
+    "language": "Language",
     "account_information": "Account Information",
     "change_password": "Change Password",
     "settings": "Settings",
     "logout": "Logout",
     "verified_profile": "Verified Profile"
+  },
+  "language": {
+    "english": "English",
+    "vietnamese": "Vietnamese",
+    "current": "Current language"
   },
   "home_screen": {
     "title": "Home Screen",
