@@ -1,5 +1,6 @@
 import 'package:card_mind/core/theme/theme_extensions.dart';
 import 'package:card_mind/data/models/flashcard.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flip_card/flip_card.dart';
@@ -141,7 +142,7 @@ class _FlipFlashcardWidgetState extends State<FlipFlashcardWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  isFront ? 'Mặt trước' : 'Mặt sau',
+                  isFront ? 'course_info.front_side'.tr() : 'course_info.back_side'.tr(),
                   style: const TextStyle(
                     color: Colors.white70,
                     fontSize: 12,
@@ -151,7 +152,7 @@ class _FlipFlashcardWidgetState extends State<FlipFlashcardWidget> {
                 Row(
                   children: [
                     Text(
-                      isFront ? 'Chạm để lật' : 'Chạm để lật lại',
+                      isFront ? 'course_info.tap_to_flip'.tr() : 'course_info.tap_to_flip_back'.tr(),
                       style: const TextStyle(
                         color: Colors.white70,
                         fontSize: 10,

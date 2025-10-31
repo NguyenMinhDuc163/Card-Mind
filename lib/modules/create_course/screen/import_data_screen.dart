@@ -4,6 +4,7 @@ import 'package:card_mind/core/theme/app_pad.dart';
 import 'package:card_mind/core/theme/app_text_styles.dart';
 import 'package:card_mind/modules/create_course/model/import_data_config.dart';
 import 'package:card_mind/modules/create_course/services/import_data_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class ImportDataScreen extends StatefulWidget {
@@ -77,7 +78,7 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
     if (_dataController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Vui lòng nhập dữ liệu trước khi import'),
+          content: Text('create_course_import.snackbar_empty'.tr()),
           backgroundColor: context.brandColors.buttonDestructive,
         ),
       );
@@ -91,7 +92,8 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            _parseResult?.errorMessage ?? 'Không thể parse dữ liệu',
+            _parseResult?.errorMessage ??
+                'create_course_import.snackbar_parse_error'.tr(),
           ),
           backgroundColor: context.brandColors.buttonDestructive,
         ),
@@ -106,9 +108,9 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
   @override
   Widget build(BuildContext context) {
     return FunctionScreenTemplate(
-      titleWidget: const Text(
-        'Nhập dữ liệu',
-        style: TextStyle(
+      titleWidget: Text(
+        'create_course_import.title'.tr(),
+        style: const TextStyle(
           color: Colors.white,
           fontSize: 18,
           fontWeight: FontWeight.w600,
@@ -147,7 +149,7 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Chép và dán dữ liệu ở đây (từ Word, Excel, Google Docs, v.v.)',
+          'create_course_import.data_input_label'.tr(),
           style: AppTextStyles.textContent2.copyWith(
             color: context.brandColors.textPrimary,
             fontWeight: FontWeight.w500,
@@ -171,7 +173,7 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
               color: context.brandColors.searchBarText,
             ),
             decoration: InputDecoration(
-              hintText: 'Dán dữ liệu...',
+              hintText: 'create_course_import.data_input_hint'.tr(),
               hintStyle: AppTextStyles.textContent2.copyWith(
                 color: context.brandColors.searchBarText.withOpacity(0.6),
               ),
@@ -192,7 +194,7 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'ĐỊNH DẠNG DỮ LIỆU',
+          'create_course_import.format_section_title'.tr(),
           style: AppTextStyles.textContent3.copyWith(
             color: context.brandColors.textPrimary,
             fontWeight: FontWeight.w600,
@@ -220,7 +222,7 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Giữa thuật ngữ và định nghĩa',
+          'create_course_import.term_definition_label'.tr(),
           style: AppTextStyles.textContent2.copyWith(
             color: context.brandColors.textPrimary,
             fontWeight: FontWeight.w500,
@@ -229,10 +231,16 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
         const SizedBox(height: 8),
         _buildDelimiterOptions(
           currentValue: _config.termDefinitionDelimiter,
-          options: const [
-            {'value': 'tab', 'label': 'Tab'},
-            {'value': 'comma', 'label': 'Phẩy'},
-            {'value': 'custom', 'label': 'Tùy chỉnh'},
+          options: [
+            {'value': 'tab', 'label': 'create_course_import.option_tab'.tr()},
+            {
+              'value': 'comma',
+              'label': 'create_course_import.option_comma'.tr(),
+            },
+            {
+              'value': 'custom',
+              'label': 'create_course_import.option_custom'.tr(),
+            },
           ],
           onChanged: (value) {
             _updateConfig(_config.copyWith(termDefinitionDelimiter: value));
@@ -254,7 +262,7 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Giữa các thẻ',
+          'create_course_import.card_label'.tr(),
           style: AppTextStyles.textContent2.copyWith(
             color: context.brandColors.textPrimary,
             fontWeight: FontWeight.w500,
@@ -263,10 +271,19 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
         const SizedBox(height: 30),
         _buildDelimiterOptions(
           currentValue: _config.cardDelimiter,
-          options: const [
-            {'value': 'newline', 'label': 'Dòng mới'},
-            {'value': 'semicolon', 'label': 'Chấm phẩy'},
-            {'value': 'custom', 'label': 'Tùy chỉnh'},
+          options: [
+            {
+              'value': 'newline',
+              'label': 'create_course_import.option_newline'.tr(),
+            },
+            {
+              'value': 'semicolon',
+              'label': 'create_course_import.option_semicolon'.tr(),
+            },
+            {
+              'value': 'custom',
+              'label': 'create_course_import.option_custom'.tr(),
+            },
           ],
           onChanged: (value) {
             _updateConfig(_config.copyWith(cardDelimiter: value));
@@ -340,7 +357,7 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
                       color: context.brandColors.searchBarText,
                     ),
                     decoration: InputDecoration(
-                      hintText: 'Nhập ký tự...',
+                      hintText: 'create_course_import.custom_placeholder'.tr(),
                       hintStyle: AppTextStyles.textContent2.copyWith(
                         color: context.brandColors.searchBarText.withOpacity(
                           0.6,
@@ -384,7 +401,7 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'XEM TRƯỚC',
+          'create_course_import.preview_title'.tr(),
           style: AppTextStyles.textContent3.copyWith(
             color: context.brandColors.textPrimary,
             fontWeight: FontWeight.w600,
@@ -413,21 +430,22 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
                   )
                   : _parseResult == null
                   ? Text(
-                    'Chưa có dữ liệu để xem trước',
+                    'create_course_import.preview_empty'.tr(),
                     style: AppTextStyles.textContent2.copyWith(
                       color: context.brandColors.textSecondary,
                     ),
                   )
                   : _parseResult!.hasError
                   ? Text(
-                    'Lỗi: ${_parseResult!.errorMessage}',
+                    _parseResult!.errorMessage ??
+                        'create_course_import.preview_error'.tr(),
                     style: AppTextStyles.textContent2.copyWith(
                       color: context.brandColors.buttonDestructive,
                     ),
                   )
                   : _parseResult!.terms.isEmpty
                   ? Text(
-                    'Không tìm thấy thuật ngữ nào',
+                    'create_course_import.preview_no_terms'.tr(),
                     style: AppTextStyles.textContent2.copyWith(
                       color: context.brandColors.textSecondary,
                     ),
@@ -436,7 +454,9 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Tìm thấy ${_parseResult!.terms.length} thuật ngữ:',
+                        'create_course_import.preview_summary'.tr(
+                          args: [_parseResult!.terms.length.toString()],
+                        ),
                         style: AppTextStyles.textContent2.copyWith(
                           color: context.brandColors.textPrimary,
                           fontWeight: FontWeight.w500,
@@ -499,7 +519,7 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                'THUẬT NGỮ',
+                                                'create_course.term_label'.tr(),
                                                 style: AppTextStyles
                                                     .textContent3
                                                     .copyWith(
@@ -536,7 +556,8 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                'ĐỊNH NGHĨA',
+                                                'create_course.definition_label'
+                                                    .tr(),
                                                 style: AppTextStyles
                                                     .textContent3
                                                     .copyWith(
@@ -604,7 +625,7 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: const Text('Hủy nhập'),
+              child: Text('create_course_import.button_cancel'.tr()),
             ),
           ),
           const SizedBox(width: 16),
@@ -619,7 +640,7 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: const Text('Nhập'),
+              child: Text('create_course_import.button_import'.tr()),
             ),
           ),
         ],

@@ -9,6 +9,7 @@ import 'package:card_mind/providers/auth_provider.dart';
 import 'package:card_mind/core/services/data_sync_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen();
@@ -77,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                'Tìm kiếm',
+                                'home_screen.search'.tr(),
                                 style: AppTextStyles.text.copyWith(
                                   color: context.brandColors.searchBarText,
                                 ),
@@ -93,31 +94,35 @@ class _HomeScreenState extends State<HomeScreen> {
                     builder: (context, authProvider, child) {
                       return GestureDetector(
                         onTap: () => _handleAvatarTap(context, authProvider),
-                        onLongPress: authProvider.isSignedIn
-                            ? () => _showSignOutDialog(context, authProvider)
-                            : null,
+                        onLongPress:
+                            authProvider.isSignedIn
+                                ? () =>
+                                    _showSignOutDialog(context, authProvider)
+                                : null,
                         child: CircleAvatar(
                           radius: 18,
                           backgroundColor: context.brandColors.avatarBackground,
-                          backgroundImage: authProvider.photoURL != null
-                              ? NetworkImage(authProvider.photoURL!)
-                              : null,
-                          child: authProvider.isLoading
-                              ? const SizedBox(
-                                  width: 16,
-                                  height: 16,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.white,
+                          backgroundImage:
+                              authProvider.photoURL != null
+                                  ? NetworkImage(authProvider.photoURL!)
+                                  : null,
+                          child:
+                              authProvider.isLoading
+                                  ? const SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white,
+                                      ),
                                     ),
-                                  ),
-                                )
-                              : authProvider.photoURL == null
+                                  )
+                                  : authProvider.photoURL == null
                                   ? Icon(
-                                      Icons.person,
-                                      color: context.brandColors.searchBarIcon,
-                                    )
+                                    Icons.person,
+                                    color: context.brandColors.searchBarIcon,
+                                  )
                                   : null,
                         ),
                       );
@@ -138,9 +143,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: AppPad.h16v8,
                 sliver: SliverToBoxAdapter(
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                     decoration: BoxDecoration(
-                      color: context.brandColors.cardBackground.withOpacity(0.9),
+                      color: context.brandColors.cardBackground.withOpacity(
+                        0.9,
+                      ),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: context.colors.primary.withOpacity(0.3),
@@ -162,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
-                            'Đang đồng bộ dữ liệu...',
+                            'home_screen.syncing_data'.tr(),
                             style: AppTextStyles.textContent2.copyWith(
                               color: context.brandColors.textPrimary,
                             ),
@@ -201,7 +211,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              'Cần ôn tập hôm nay',
+                              'home_screen.review_today'.tr(),
                               style: AppTextStyles.textHeader3.copyWith(
                                 color: context.brandColors.textPrimary,
                               ),
@@ -261,13 +271,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                               vertical: 4,
                                             ),
                                             decoration: BoxDecoration(
-                                              color: context
-                                                  .brandColors.progressValue,
+                                              color:
+                                                  context
+                                                      .brandColors
+                                                      .progressValue,
                                               borderRadius:
                                                   BorderRadius.circular(12),
                                             ),
                                             child: Text(
-                                              '${course.reviewCardsCount} thẻ',
+                                              '${course.reviewCardsCount} ${'home_screen.cards'.tr()}',
                                               style: AppTextStyles.textContent4
                                                   .copyWith(
                                                     color: Colors.white,
@@ -282,18 +294,22 @@ class _HomeScreenState extends State<HomeScreen> {
                                         style: AppTextStyles.textContent2
                                             .copyWith(
                                               color:
-                                                  context.brandColors.textPrimary,
+                                                  context
+                                                      .brandColors
+                                                      .textPrimary,
                                               fontWeight: FontWeight.w600,
                                             ),
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                       Text(
-                                        '${course.totalTerms} thẻ · ${course.author}',
-                                        style:
-                                            AppTextStyles.textContent4.copyWith(
-                                              color: context
-                                                  .brandColors.searchBarText,
+                                        '${course.totalTerms} ${'home_screen.cards'.tr()} · ${course.author}',
+                                        style: AppTextStyles.textContent4
+                                            .copyWith(
+                                              color:
+                                                  context
+                                                      .brandColors
+                                                      .searchBarText,
                                             ),
                                       ),
                                     ],
@@ -319,7 +335,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    'Lựa chọn của đội ngũ',
+                    'home_screen.team_picks'.tr(),
                     style: AppTextStyles.text.copyWith(
                       color: context.brandColors.searchBarText,
                     ),
@@ -329,7 +345,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       Expanded(
                         child: Text(
-                          'Hãy thử các học phần này',
+                          'home_screen.try_these'.tr(),
                           style: AppTextStyles.textHeader3.copyWith(
                             color: context.brandColors.textPrimary,
                           ),
@@ -338,14 +354,18 @@ class _HomeScreenState extends State<HomeScreen> {
                       GestureDetector(
                         onTap: () {
                           // Switch sang Library tab (index 3) trong Dashboard
-                          final dashboardState = context.findAncestorStateOfType<State<DashboardScreen>>();
+                          final dashboardState =
+                              context
+                                  .findAncestorStateOfType<
+                                    State<DashboardScreen>
+                                  >();
                           if (dashboardState != null) {
                             // Call switchToTab method
                             (dashboardState as dynamic).switchToTab(3);
                           }
                         },
                         child: Text(
-                          'Xem tất cả',
+                          'home_screen.view_all'.tr(),
                           style: AppTextStyles.textContent3.copyWith(
                             color: context.brandColors.textPrimary,
                             fontWeight: FontWeight.w600,
@@ -373,14 +393,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               }
 
-              final topPicks =
-                  notifier.homeData.courses.take(5).toList();
+              final topPicks = notifier.homeData.courses.take(5).toList();
 
               if (topPicks.isEmpty) {
                 return SliverToBoxAdapter(
                   child: Center(
                     child: Text(
-                      'Chưa có khóa học nào',
+                      'home_screen.no_courses'.tr(),
                       style: TextStyle(
                         color: context.brandColors.searchBarText,
                       ),
@@ -451,7 +470,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   children: [
                                     Expanded(
                                       child: Text(
-                                        '${course.totalTerms} thẻ · Tác giả: ${course.author}',
+                                        '${course.totalTerms} ${'home_screen.cards'.tr()} · ${'home_screen.author'.tr()}: ${course.author}',
                                         style: AppTextStyles.textContent4
                                             .copyWith(
                                               color:
@@ -496,7 +515,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Expanded(
                     child: Text(
-                      'Các chủ đề học tập',
+                      'home_screen.study_topics'.tr(),
                       style: AppTextStyles.textHeader3.copyWith(
                         color: context.brandColors.textPrimary,
                       ),
@@ -599,7 +618,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               children: [
                                 Expanded(
                                   child: Text(
-                                    '${classItem.totalStudents} học sinh • ${classItem.instructor}',
+                                    '${classItem.totalStudents} ${'home_screen.students'.tr()} • ${classItem.instructor}',
                                     style: AppTextStyles.textContent4.copyWith(
                                       color: context.brandColors.searchBarText
                                           .withOpacity(0.8),
@@ -622,8 +641,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                   child: Text(
                                     classItem.status == 'active'
-                                        ? 'Hoạt động'
-                                        : 'Tạm dừng',
+                                        ? 'home_screen.active'.tr()
+                                        : 'home_screen.paused'.tr(),
                                     style: AppTextStyles.textContent4.copyWith(
                                       color:
                                           classItem.status == 'active'
@@ -671,20 +690,20 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(width: 8),
               Text(
-                'Xóa học phần',
+                'home_screen.delete_course'.tr(),
                 style: TextStyle(color: context.brandColors.textPrimary),
               ),
             ],
           ),
           content: Text(
-            'Bạn có chắc chắn muốn xóa học phần "$courseTitle"?\n\nHành động này không thể hoàn tác và sẽ xóa tất cả dữ liệu liên quan.',
+            'home_screen.delete_course_confirm'.tr(args: [courseTitle]),
             style: TextStyle(color: context.brandColors.textSecondary),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Text(
-                'Hủy',
+                'common.cancel'.tr(),
                 style: TextStyle(color: context.brandColors.textSecondary),
               ),
             ),
@@ -694,7 +713,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 await _deleteCourse(context, courseId, courseTitle);
               },
               child: Text(
-                'Xóa',
+                'common.delete'.tr(),
                 style: TextStyle(color: context.brandColors.buttonDestructive),
               ),
             ),
@@ -725,7 +744,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(width: 16),
               Text(
-                'Đang xóa học phần...',
+                'home_screen.deleting_course'.tr(),
                 style: TextStyle(color: context.brandColors.textPrimary),
               ),
             ],
@@ -744,7 +763,7 @@ class _HomeScreenState extends State<HomeScreen> {
         // Hiển thị thông báo thành công
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Đã xóa học phần "$courseTitle" thành công'),
+            content: Text('home_screen.course_deleted'.tr(args: [courseTitle])),
             backgroundColor: context.brandColors.progressValue,
           ),
         );
@@ -752,7 +771,9 @@ class _HomeScreenState extends State<HomeScreen> {
         // Hiển thị thông báo lỗi
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Không thể xóa học phần "$courseTitle"'),
+            content: Text(
+              'home_screen.cannot_delete_course'.tr(args: [courseTitle]),
+            ),
             backgroundColor: context.brandColors.buttonDestructive,
           ),
         );
@@ -764,7 +785,7 @@ class _HomeScreenState extends State<HomeScreen> {
       // Hiển thị thông báo lỗi
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Có lỗi xảy ra khi xóa học phần: $e'),
+          content: Text('home_screen.delete_error'.tr(args: [e.toString()])),
           backgroundColor: context.brandColors.buttonDestructive,
         ),
       );
@@ -790,20 +811,20 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(width: 8),
               Text(
-                'Xóa Chủ đề học',
+                'home_screen.delete_topic'.tr(),
                 style: TextStyle(color: context.brandColors.textPrimary),
               ),
             ],
           ),
           content: Text(
-            'Bạn có chắc chắn muốn xóa Chủ đề học "$className"?\n\nHành động này không thể hoàn tác.',
+            'home_screen.delete_topic_confirm'.tr(args: [className]),
             style: TextStyle(color: context.brandColors.textSecondary),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Text(
-                'Hủy',
+                'common.cancel'.tr(),
                 style: TextStyle(color: context.brandColors.textSecondary),
               ),
             ),
@@ -813,7 +834,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 await _deleteClass(context, classId, className);
               },
               child: Text(
-                'Xóa',
+                'common.delete'.tr(),
                 style: TextStyle(color: context.brandColors.buttonDestructive),
               ),
             ),
@@ -844,7 +865,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(width: 16),
               Text(
-                'Đang xóa Chủ đề học...',
+                'home_screen.deleting_topic'.tr(),
                 style: TextStyle(color: context.brandColors.textPrimary),
               ),
             ],
@@ -863,7 +884,7 @@ class _HomeScreenState extends State<HomeScreen> {
         // Hiển thị thông báo thành công
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Đã xóa Chủ đề học "$className" thành công'),
+            content: Text('home_screen.topic_deleted'.tr(args: [className])),
             backgroundColor: context.brandColors.progressValue,
           ),
         );
@@ -871,7 +892,9 @@ class _HomeScreenState extends State<HomeScreen> {
         // Hiển thị thông báo lỗi
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Không thể xóa Chủ đề học "$className"'),
+            content: Text(
+              'home_screen.cannot_delete_topic'.tr(args: [className]),
+            ),
             backgroundColor: context.brandColors.buttonDestructive,
           ),
         );
@@ -883,7 +906,7 @@ class _HomeScreenState extends State<HomeScreen> {
       // Hiển thị thông báo lỗi
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Có lỗi xảy ra khi xóa Chủ đề học: $e'),
+          content: Text('home_screen.delete_error'.tr(args: [e.toString()])),
           backgroundColor: context.brandColors.buttonDestructive,
         ),
       );
@@ -928,20 +951,22 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               CircleAvatar(
                 radius: 20,
-                backgroundImage: authProvider.photoURL != null
-                    ? NetworkImage(authProvider.photoURL!)
-                    : null,
-                child: authProvider.photoURL == null
-                    ? Icon(
-                        Icons.person,
-                        color: context.brandColors.searchBarIcon,
-                      )
-                    : null,
+                backgroundImage:
+                    authProvider.photoURL != null
+                        ? NetworkImage(authProvider.photoURL!)
+                        : null,
+                child:
+                    authProvider.photoURL == null
+                        ? Icon(
+                          Icons.person,
+                          color: context.brandColors.searchBarIcon,
+                        )
+                        : null,
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  authProvider.displayName ?? 'Người dùng',
+                  authProvider.displayName ?? 'common.user'.tr(),
                   style: TextStyle(color: context.brandColors.textPrimary),
                 ),
               ),
@@ -952,7 +977,7 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Email:',
+                'common.email'.tr(),
                 style: TextStyle(
                   color: context.brandColors.textSecondary,
                   fontSize: 12,
@@ -968,7 +993,7 @@ class _HomeScreenState extends State<HomeScreen> {
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Text(
-                'Đóng',
+                'common.close'.tr(),
                 style: TextStyle(color: context.brandColors.textSecondary),
               ),
             ),
@@ -978,7 +1003,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 _showSignOutDialog(context, authProvider);
               },
               child: Text(
-                'Đăng xuất',
+                'home_screen.sign_out'.tr(),
                 style: TextStyle(color: context.brandColors.buttonDestructive),
               ),
             ),
@@ -1004,20 +1029,20 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(width: 8),
               Text(
-                'Đăng xuất',
+                'home_screen.sign_out'.tr(),
                 style: TextStyle(color: context.brandColors.textPrimary),
               ),
             ],
           ),
           content: Text(
-            'Bạn có chắc chắn muốn đăng xuất?',
+            'home_screen.sign_out_confirm'.tr(),
             style: TextStyle(color: context.brandColors.textSecondary),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Text(
-                'Hủy',
+                'common.cancel'.tr(),
                 style: TextStyle(color: context.brandColors.textSecondary),
               ),
             ),
@@ -1035,14 +1060,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: const Text('Đã đăng xuất thành công'),
+                      content: Text('home_screen.signed_out'.tr()),
                       backgroundColor: context.brandColors.progressValue,
                     ),
                   );
                 }
               },
               child: Text(
-                'Đăng xuất',
+                'home_screen.sign_out'.tr(),
                 style: TextStyle(color: context.brandColors.buttonDestructive),
               ),
             ),

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:card_mind/core/theme/app_pad.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../provider/course_result_notifier.dart';
 
 class CourseResultScreen extends StatefulWidget {
@@ -64,7 +65,7 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    notifier.errorMessage ?? 'Có lỗi xảy ra',
+                    notifier.errorMessage ?? 'course_info.error_occurred'.tr(),
                     style: TextStyle(color: context.brandColors.textSecondary),
                     textAlign: TextAlign.center,
                   ),
@@ -75,7 +76,7 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
                       backgroundColor: context.brandColors.buttonPrimary,
                       foregroundColor: Colors.white,
                     ),
-                    child: const Text('Thử lại'),
+                    child: Text('course_info.retry'.tr()),
                   ),
                 ],
               ),
@@ -186,7 +187,7 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Tiến độ của bạn',
+            'course_result.progress_title'.tr(),
             style: TextStyle(
               color: context.brandColors.textPrimary,
               fontSize: 18,
@@ -263,21 +264,21 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
       children: [
         _buildLegendItem(
           context,
-          'Biết',
+          'course_result.legend_known'.tr(),
           context.brandColors.progressValue,
           notifier.knownCount,
         ),
         const SizedBox(height: 8),
         _buildLegendItem(
           context,
-          'Đang học',
+          'course_result.legend_learning'.tr(),
           context.brandColors.warning,
           notifier.learningCount,
         ),
         const SizedBox(height: 8),
         _buildLegendItem(
           context,
-          'Còn lại',
+          'course_result.legend_remaining'.tr(),
           context.brandColors.textMuted,
           notifier.remainingCount,
         ),
@@ -347,7 +348,7 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'Tiếp tục ôn thuật ngữ',
+                    'course_result.action_review_terms'.tr(),
                     style: TextStyle(
                       color: context.brandColors.textPrimary,
                       fontSize: 16,
@@ -372,7 +373,7 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
               ),
               child: Center(
                 child: Text(
-                  'Đặt lại thẻ nhớ',
+                  'course_result.action_reset_cards'.tr(),
                   style: TextStyle(
                     color: context.brandColors.textPrimary,
                     fontSize: 16,
@@ -404,7 +405,7 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'Xem lịch sử học tập',
+                    'course_result.action_view_history'.tr(),
                     style: TextStyle(
                       color: context.brandColors.textPrimary,
                       fontSize: 16,
@@ -444,7 +445,7 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'Về trang chủ',
+                    'course_result.action_back_home'.tr(),
                     style: TextStyle(
                       color: context.brandColors.textPrimary,
                       fontSize: 16,
@@ -463,9 +464,9 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
   void _resetLearningProgress(CourseResultNotifier notifier) {
     LocalStorageHelper.deleteValue('learned_cards_${notifier.courseData?.id}');
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Đã đặt lại tiến độ học tập')));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('course_result.reset_progress_success'.tr())),
+    );
 
     Navigator.pop(context);
   }
@@ -501,7 +502,7 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
           const SizedBox(height: 20),
 
           Text(
-            'Lịch sử học tập',
+            'course_result.history_title'.tr(),
             style: TextStyle(
               color: context.brandColors.textPrimary,
               fontSize: 20,
@@ -510,7 +511,8 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            notifier.course?.title ?? 'Khóa học',
+            notifier.course?.title ??
+                'course_result.history_course_placeholder'.tr(),
             style: TextStyle(
               color: context.brandColors.textSecondary,
               fontSize: 14,
@@ -534,7 +536,7 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
                 ),
               ),
               child: Text(
-                'Đóng',
+                'common.close'.tr(),
                 style: TextStyle(
                   color: context.brandColors.textPrimary,
                   fontSize: 16,
@@ -593,7 +595,7 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
             ),
             const SizedBox(height: 12),
             Text(
-              'Chưa có lịch sử học tập',
+              'course_result.history_empty'.tr(),
               style: TextStyle(
                 color: context.brandColors.textSecondary,
                 fontSize: 16,
@@ -659,7 +661,12 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${learnedCount}/${totalCards} thẻ đã học',
+                        'course_result.history_item_learned'.tr(
+                          args: [
+                            learnedCount.toString(),
+                            totalCards.toString(),
+                          ],
+                        ),
                         style: TextStyle(
                           color: context.brandColors.textPrimary,
                           fontSize: 16,
@@ -701,13 +708,15 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
     final difference = now.difference(dateTime);
 
     if (difference.inDays > 0) {
-      return '${difference.inDays} ngày trước';
+      return 'common.time_ago.days'.tr(args: [difference.inDays.toString()]);
     } else if (difference.inHours > 0) {
-      return '${difference.inHours} giờ trước';
+      return 'common.time_ago.hours'.tr(args: [difference.inHours.toString()]);
     } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes} phút trước';
+      return 'common.time_ago.minutes'.tr(
+        args: [difference.inMinutes.toString()],
+      );
     } else {
-      return 'Vừa xong';
+      return 'common.time_ago.just_now'.tr();
     }
   }
 }

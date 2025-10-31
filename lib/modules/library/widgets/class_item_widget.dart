@@ -2,6 +2,7 @@ import 'package:card_mind/core/theme/theme_extensions.dart';
 import 'package:card_mind/init.dart';
 import 'package:card_mind/modules/library/model/class_data.dart';
 import 'package:card_mind/modules/library/screen/class_detail_screen.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class ClassItemWidget extends StatelessWidget {
@@ -103,13 +104,13 @@ class ClassItemWidget extends StatelessWidget {
                   },
                   itemBuilder:
                       (context) => [
-                        const PopupMenuItem(
+                        PopupMenuItem(
                           value: 'delete',
                           child: Row(
                             children: [
                               Icon(Icons.delete, color: Colors.red, size: 18),
                               SizedBox(width: 8),
-                              Text('Xóa Chủ đề'),
+                              Text('library.class_item.delete'.tr()),
                             ],
                           ),
                         ),
@@ -127,7 +128,9 @@ class ClassItemWidget extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  '${classData.totalStudents} học sinh',
+                  'library.class_item.info_students'.tr(
+                    args: [classData.totalStudents.toString()],
+                  ),
                   style: AppTextStyles.textContent3.copyWith(
                     color: context.colors.onPrimary.withOpacity(0.7),
                   ),
@@ -140,7 +143,9 @@ class ClassItemWidget extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  '${classData.students.length} học phần',
+                  'library.class_item.info_courses'.tr(
+                    args: [classData.students.length.toString()],
+                  ),
                   style: AppTextStyles.textContent3.copyWith(
                     color: context.colors.onPrimary.withOpacity(0.7),
                   ),
@@ -164,7 +169,9 @@ class ClassItemWidget extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
-                          'Học phần ${studentId.substring(0, 6)}...',
+                          'library.class_item.course_chip'.tr(
+                            args: [studentId.substring(0, 6)],
+                          ),
                           style: AppTextStyles.textContent4.copyWith(
                             color: context.colors.onPrimary.withOpacity(0.8),
                           ),
@@ -176,7 +183,9 @@ class ClassItemWidget extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(top: 8),
                   child: Text(
-                    '+${classData.students.length - 3} học phần khác',
+                    'library.class_item.more_courses'.tr(
+                      args: [(classData.students.length - 3).toString()],
+                    ),
                     style: AppTextStyles.textContent4.copyWith(
                       color: context.colors.onPrimary.withOpacity(0.6),
                     ),

@@ -1,4 +1,5 @@
 import 'package:card_mind/init.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class ChatHistoryScreen extends StatefulWidget {
@@ -10,17 +11,18 @@ class ChatHistoryScreen extends StatefulWidget {
 }
 
 class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
-  
   final Map<String, List<String>> _groups = {
-    'Today': ['What is AI chat bot', 'Real Estate brand Names'],
-    'Yesterday, May 27': [
-      'What is AI chat bot',
-      'Improve the readability of the following code',
-      'Suggest a Python library to solve a problem',
+    'message.history.group_today': [
+      'message.history.item_ai_chat_bot',
+      'message.history.item_brand_names',
+    ],
+    'message.history.group_yesterday': [
+      'message.history.item_ai_chat_bot',
+      'message.history.item_code_readability',
+      'message.history.item_python_library',
     ],
   };
 
-  
   String? _selectedGroup;
   int? _selectedIndex;
 
@@ -47,32 +49,38 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     return FunctionScreenTemplate(
-      title: 'History',
+      title: 'message.history.title'.tr(),
       isShowBottomButton: false,
       actionsWidget: [
         InkWell(
           onTap: _onClearAll,
-          child: SvgPicture.asset(IconPath.iconTrash, color: AppColors.crimson, width: 25, height: 25,),
+          child: SvgPicture.asset(
+            IconPath.iconTrash,
+            color: AppColors.crimson,
+            width: 25,
+            height: 25,
+          ),
         ),
       ],
       screen: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 20),
         children:
             _groups.entries.expand((entry) {
-              final groupTitle = entry.key;
+              final groupTitleKey = entry.key;
               final items = entry.value;
               return [
-                _SectionHeader(title: groupTitle),
+                _SectionHeader(titleKey: groupTitleKey),
                 const SizedBox(height: 8),
                 ...List.generate(items.length, (index) {
                   final isSelected =
-                      _selectedGroup == groupTitle && _selectedIndex == index;
+                      _selectedGroup == groupTitleKey &&
+                      _selectedIndex == index;
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 14),
                     child: _HistoryItem(
-                      title: items[index],
+                      titleKey: items[index],
                       isSelected: isSelected,
-                      onTap: () => _toggleSelect(groupTitle, index),
+                      onTap: () => _toggleSelect(groupTitleKey, index),
                       onEdit: () {},
                       onDelete: () {
                         setState(() {
@@ -92,13 +100,13 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
 }
 
 class _SectionHeader extends StatelessWidget {
-  final String title;
-  const _SectionHeader({required this.title});
+  final String titleKey;
+  const _SectionHeader({required this.titleKey});
 
   @override
   Widget build(BuildContext context) {
     return Text(
-      title,
+      titleKey.tr(),
       style: const TextStyle(
         color: Color(0xFF8B97A8),
         fontWeight: FontWeight.w600,
@@ -108,14 +116,14 @@ class _SectionHeader extends StatelessWidget {
 }
 
 class _HistoryItem extends StatelessWidget {
-  final String title;
+  final String titleKey;
   final bool isSelected;
   final VoidCallback onTap;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
   const _HistoryItem({
-    required this.title,
+    required this.titleKey,
     required this.isSelected,
     required this.onTap,
     required this.onEdit,
@@ -164,7 +172,7 @@ class _HistoryItem extends StatelessWidget {
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      title,
+                      titleKey.tr(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(

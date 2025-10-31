@@ -5,6 +5,7 @@ import 'package:card_mind/modules/library/model/content_data.dart';
 import 'package:card_mind/modules/library/provider/class_notifier.dart';
 import 'package:card_mind/modules/library/widgets/edit_class_bottom_sheet.dart';
 import 'package:card_mind/modules/library/widgets/class_content_item_widget.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -46,7 +47,10 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
       }
       _errorMessage = null;
     } catch (e) {
-      _errorMessage = 'Không thể tải dữ liệu: $e';
+      _errorMessage = tr(
+        'library.class_detail.error_loading',
+        args: [e.toString()],
+      );
     } finally {
       setState(() {
         _isLoading = false;
@@ -64,7 +68,7 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
     try {
       final classData = notifier.classes.firstWhere(
         (c) => c.id == classId,
-        orElse: () => throw Exception('Không tìm thấy Chủ đề'),
+        orElse: () => throw Exception('library.class_detail.not_found'.tr()),
       );
 
       _classData = classData;
@@ -123,7 +127,13 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Đã thêm ${contents.length} học phần vào danh sách chờ')),
+      SnackBar(
+        content: Text(
+          'library.class_detail.snackbar_added'.tr(
+            args: [contents.length.toString()],
+          ),
+        ),
+      ),
     );
   }
 
@@ -134,14 +144,16 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
           (context) => AlertDialog(
             backgroundColor: context.colors.primary,
             title: Text(
-              'Xóa Chủ đề',
+              'library.class_detail.delete_title'.tr(),
               style: AppTextStyles.textContent1.copyWith(
                 color: context.colors.onPrimary,
                 fontWeight: FontWeight.w600,
               ),
             ),
             content: Text(
-              'Bạn có chắc chắn muốn xóa Chủ đề "${_classData?.className}"?',
+              'library.class_detail.delete_confirm'.tr(
+                args: [_classData?.className ?? ''],
+              ),
               style: AppTextStyles.textContent2.copyWith(
                 color: context.colors.onPrimary.withOpacity(0.8),
               ),
@@ -150,7 +162,7 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
               TextButton(
                 onPressed: () => Navigator.pop(context),
                 child: Text(
-                  'Hủy',
+                  'common.cancel'.tr(),
                   style: AppTextStyles.textContent2.copyWith(
                     color: context.colors.onPrimary.withOpacity(0.7),
                   ),
@@ -159,20 +171,27 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
               ElevatedButton(
                 onPressed: () {
                   if (_classData != null) {
-                    final notifier = Provider.of<ClassNotifier>(context, listen: false);
+                    final notifier = Provider.of<ClassNotifier>(
+                      context,
+                      listen: false,
+                    );
                     notifier.deleteClass(_classData!.id);
                     Navigator.pop(context);
                     Navigator.pop(context);
-                    ScaffoldMessenger.of(
-                      context,
-                    ).showSnackBar(const SnackBar(content: Text('Đã xóa Chủ đề')));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'library.class_detail.snackbar_deleted'.tr(),
+                        ),
+                      ),
+                    );
                   }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                   foregroundColor: Colors.white,
                 ),
-                child: const Text('Xóa'),
+                child: Text('common.delete'.tr()),
               ),
             ],
           ),
@@ -184,7 +203,9 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
     if (_isLoading) {
       return FunctionScreenTemplate(
         backgroundColor: context.colors.primary,
-        screen: const Center(child: CircularProgressIndicator(color: Colors.white)),
+        screen: const Center(
+          child: CircularProgressIndicator(color: Colors.white),
+        ),
       );
     }
 
@@ -199,11 +220,16 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
               const SizedBox(height: 16),
               Text(
                 _errorMessage!,
-                style: AppTextStyles.textContent2.copyWith(color: context.colors.onPrimary),
+                style: AppTextStyles.textContent2.copyWith(
+                  color: context.colors.onPrimary,
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
-              ElevatedButton(onPressed: () => _initializeData(), child: const Text('Thử lại')),
+              ElevatedButton(
+                onPressed: () => _initializeData(),
+                child: Text('common.retry'.tr()),
+              ),
             ],
           ),
         ),
@@ -213,8 +239,11 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
     if (_classData == null) {
       return FunctionScreenTemplate(
         backgroundColor: context.colors.primary,
-        screen: const Center(
-          child: Text('Không tìm thấy Chủ đề', style: TextStyle(color: Colors.white70)),
+        screen: Center(
+          child: Text(
+            'library.class_detail.not_found'.tr(),
+            style: const TextStyle(color: Colors.white70),
+          ),
         ),
       );
     }
@@ -229,7 +258,10 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
         ),
       ),
       actionsWidget: [
-        IconButton(onPressed: _showEditClassBottomSheet, icon: const Icon(Icons.edit)),
+        IconButton(
+          onPressed: _showEditClassBottomSheet,
+          icon: const Icon(Icons.edit),
+        ),
         PopupMenuButton<String>(
           onSelected: (value) {
             if (value == 'delete') {
@@ -238,17 +270,17 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
           },
           itemBuilder:
               (context) => [
-            const PopupMenuItem(
-              value: 'delete',
-              child: Row(
-                children: [
-                  Icon(Icons.delete, color: Colors.red, size: 18),
-                  SizedBox(width: 8),
-                  Text('Xóa Chủ đề'),
-                ],
-              ),
-            ),
-          ],
+                PopupMenuItem(
+                  value: 'delete',
+                  child: Row(
+                    children: [
+                      const Icon(Icons.delete, color: Colors.red, size: 18),
+                      const SizedBox(width: 8),
+                      Text('library.class_detail.delete_action'.tr()),
+                    ],
+                  ),
+                ),
+              ],
         ),
       ],
       screen: Scaffold(
@@ -275,14 +307,20 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
                       decoration: BoxDecoration(
                         color: context.colors.onPrimary.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: context.colors.onPrimary.withOpacity(0.2)),
+                        border: Border.all(
+                          color: context.colors.onPrimary.withOpacity(0.2),
+                        ),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
                             children: [
-                              Icon(Icons.school, color: context.colors.onPrimary, size: 24),
+                              Icon(
+                                Icons.school,
+                                color: context.colors.onPrimary,
+                                size: 24,
+                              ),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Text(
@@ -300,7 +338,9 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
                             Text(
                               _classData!.description,
                               style: AppTextStyles.textContent2.copyWith(
-                                color: context.colors.onPrimary.withOpacity(0.8),
+                                color: context.colors.onPrimary.withOpacity(
+                                  0.8,
+                                ),
                               ),
                             ),
                           ],
@@ -310,13 +350,19 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
                               _buildInfoChip(
                                 context,
                                 Icons.people,
-                                '${_classData!.totalStudents} học sinh',
+                                'library.class_detail.info_students'.tr(
+                                  args: [_classData!.totalStudents.toString()],
+                                ),
                               ),
                               const SizedBox(width: 16),
                               _buildInfoChip(
                                 context,
                                 Icons.library_books,
-                                '${_classData!.students.length} học phần',
+                                'library.class_detail.info_courses'.tr(
+                                  args: [
+                                    _classData!.students.length.toString(),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
@@ -333,7 +379,7 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Học phần trong Chủ đề',
+                          'library.class_detail.section_title'.tr(),
                           style: AppTextStyles.textContent1.copyWith(
                             color: context.colors.onPrimary,
                             fontWeight: FontWeight.w600,
@@ -341,7 +387,12 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
                         ),
                         if (_hasChanges) ...[
                           Text(
-                            '${_pendingAdditions.length} thêm, ${_pendingRemovals.length} xóa',
+                            'library.class_detail.pending_changes'.tr(
+                              args: [
+                                _pendingAdditions.length.toString(),
+                                _pendingRemovals.length.toString(),
+                              ],
+                            ),
                             style: AppTextStyles.textContent3.copyWith(
                               color: context.colors.onPrimary.withOpacity(0.7),
                             ),
@@ -350,8 +401,10 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
                           TextButton.icon(
                             onPressed: _showEditClassBottomSheet,
                             icon: const Icon(Icons.edit, size: 16),
-                            label: const Text('Chỉnh sửa'),
-                            style: TextButton.styleFrom(foregroundColor: context.colors.onPrimary),
+                            label: Text('library.class_detail.edit'.tr()),
+                            style: TextButton.styleFrom(
+                              foregroundColor: context.colors.onPrimary,
+                            ),
                           ),
                       ],
                     ),
@@ -363,11 +416,16 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
                     child: Padding(
                       padding: AppPad.h16v20,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 40,
+                        ),
                         decoration: BoxDecoration(
                           color: context.colors.onPrimary.withOpacity(0.05),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: context.colors.onPrimary.withOpacity(0.2)),
+                          border: Border.all(
+                            color: context.colors.onPrimary.withOpacity(0.2),
+                          ),
                         ),
                         child: Column(
                           children: [
@@ -378,16 +436,21 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              'Chưa có học phần nào',
+                              'library.class_detail.empty_contents_title'.tr(),
                               style: AppTextStyles.textContent2.copyWith(
-                                color: context.colors.onPrimary.withOpacity(0.7),
+                                color: context.colors.onPrimary.withOpacity(
+                                  0.7,
+                                ),
                               ),
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              'Thêm học phần vào Chủ đề này',
+                              'library.class_detail.empty_contents_subtitle'
+                                  .tr(),
                               style: AppTextStyles.textContent3.copyWith(
-                                color: context.colors.onPrimary.withOpacity(0.5),
+                                color: context.colors.onPrimary.withOpacity(
+                                  0.5,
+                                ),
                               ),
                             ),
                           ],
@@ -399,7 +462,9 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
                   SliverList(
                     delegate: SliverChildBuilderDelegate((context, index) {
                       final content = _classContents[index];
-                      final isPendingRemoval = _pendingRemovals.contains(content);
+                      final isPendingRemoval = _pendingRemovals.contains(
+                        content,
+                      );
                       return Padding(
                         padding: EdgeInsets.only(
                           left: 16,
@@ -463,7 +528,12 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
         children: [
           Icon(icon, color: context.colors.onPrimary, size: 16),
           const SizedBox(width: 6),
-          Text(text, style: AppTextStyles.textContent3.copyWith(color: context.colors.onPrimary)),
+          Text(
+            text,
+            style: AppTextStyles.textContent3.copyWith(
+              color: context.colors.onPrimary,
+            ),
+          ),
         ],
       ),
     );
@@ -484,7 +554,8 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
   }
 
   void _saveChanges() {
-    if (_classData != null && (_pendingRemovals.isNotEmpty || _pendingAdditions.isNotEmpty)) {
+    if (_classData != null &&
+        (_pendingRemovals.isNotEmpty || _pendingAdditions.isNotEmpty)) {
       final updatedStudents = List<String>.from(_classData!.students);
 
       for (final content in _pendingRemovals) {
@@ -509,7 +580,8 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
         _classData = updatedClassData;
 
         _classContents.removeWhere(
-          (content) => _pendingRemovals.any((removed) => removed.id == content.id),
+          (content) =>
+              _pendingRemovals.any((removed) => removed.id == content.id),
         );
         _classContents.addAll(_pendingAdditions);
 
@@ -519,9 +591,15 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
       });
 
       final totalChanges = _pendingRemovals.length + _pendingAdditions.length;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Đã lưu $totalChanges thay đổi')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'library.class_detail.snackbar_saved_changes'.tr(
+              args: [totalChanges.toString()],
+            ),
+          ),
+        ),
+      );
     }
   }
 
@@ -535,7 +613,10 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
 }
 
 class _AddContentBottomSheet extends StatefulWidget {
-  const _AddContentBottomSheet({required this.availableContents, required this.onContentsSelected});
+  const _AddContentBottomSheet({
+    required this.availableContents,
+    required this.onContentsSelected,
+  });
 
   final List<ContentData> availableContents;
   final Function(List<ContentData>) onContentsSelected;
@@ -572,7 +653,7 @@ class _AddContentBottomSheetState extends State<_AddContentBottomSheet> {
           const SizedBox(height: 24),
 
           Text(
-            'Thêm học phần vào Chủ đề',
+            'library.class_detail.add_modal.title'.tr(),
             style: AppTextStyles.textHeader3.copyWith(
               color: context.colors.onPrimary,
               fontWeight: FontWeight.w600,
@@ -597,7 +678,7 @@ class _AddContentBottomSheetState extends State<_AddContentBottomSheet> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'Không có học phần nào để thêm',
+                      'library.class_detail.add_modal.empty'.tr(),
                       style: AppTextStyles.textContent3.copyWith(
                         color: context.colors.onPrimary.withOpacity(0.7),
                       ),
@@ -612,7 +693,9 @@ class _AddContentBottomSheetState extends State<_AddContentBottomSheet> {
               decoration: BoxDecoration(
                 color: context.colors.onPrimary.withOpacity(0.05),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: context.colors.onPrimary.withOpacity(0.2)),
+                border: Border.all(
+                  color: context.colors.onPrimary.withOpacity(0.2),
+                ),
               ),
               child: ListView.builder(
                 padding: AppPad.h12v8,
@@ -651,7 +734,9 @@ class _AddContentBottomSheetState extends State<_AddContentBottomSheet> {
                       child: Row(
                         children: [
                           Icon(
-                            isSelected ? Icons.check_circle : Icons.radio_button_unchecked,
+                            isSelected
+                                ? Icons.check_circle
+                                : Icons.radio_button_unchecked,
                             color:
                                 isSelected
                                     ? context.colors.onPrimary
@@ -673,9 +758,14 @@ class _AddContentBottomSheetState extends State<_AddContentBottomSheet> {
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 Text(
-                                  '${content.totalTerms} thuật ngữ',
+                                  'library.class_detail.add_modal.term_count'
+                                      .tr(
+                                        args: [content.totalTerms.toString()],
+                                      ),
                                   style: AppTextStyles.textContent4.copyWith(
-                                    color: context.colors.onPrimary.withOpacity(0.7),
+                                    color: context.colors.onPrimary.withOpacity(
+                                      0.7,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -698,10 +788,12 @@ class _AddContentBottomSheetState extends State<_AddContentBottomSheet> {
                   onPressed: () => Navigator.pop(context),
                   style: TextButton.styleFrom(
                     padding: AppPad.h16v12,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   child: Text(
-                    'Hủy',
+                    'common.cancel'.tr(),
                     style: AppTextStyles.textContent2.copyWith(
                       color: context.colors.onPrimary.withOpacity(0.7),
                     ),
@@ -718,7 +810,11 @@ class _AddContentBottomSheetState extends State<_AddContentBottomSheet> {
                           : () {
                             final selectedContents =
                                 widget.availableContents
-                                    .where((content) => _selectedContentIds.contains(content.id))
+                                    .where(
+                                      (content) => _selectedContentIds.contains(
+                                        content.id,
+                                      ),
+                                    )
                                     .toList();
                             widget.onContentsSelected(selectedContents);
                             Navigator.pop(context);
@@ -727,10 +823,14 @@ class _AddContentBottomSheetState extends State<_AddContentBottomSheet> {
                     backgroundColor: context.colors.onPrimary,
                     foregroundColor: context.colors.primary,
                     padding: AppPad.h16v12,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   child: Text(
-                    'Thêm ${_selectedContentIds.length} học phần',
+                    'library.class_detail.add_modal.confirm'.tr(
+                      args: [_selectedContentIds.length.toString()],
+                    ),
                     style: AppTextStyles.textContent2.copyWith(
                       color: context.colors.primary,
                       fontWeight: FontWeight.w600,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flip_card/flip_card.dart';
 import '../../../data/models/flashcard.dart';
 import '../../../core/theme/theme_extensions.dart';
@@ -180,7 +181,7 @@ class _FlashcardCarouselWidgetState extends State<FlashcardCarouselWidget> {
             ),
             const SizedBox(height: 16),
             Text(
-              'Chưa có thẻ học nào',
+              'course_info.no_cards'.tr(),
               style: TextStyle(
                 color: context.brandColors.textSecondary,
                 fontSize: 16,

@@ -1,6 +1,7 @@
 import 'package:card_mind/init.dart';
 import 'package:card_mind/core/theme/theme_extensions.dart';
 import 'package:card_mind/modules/message/provider/chat_notifier.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -39,7 +40,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
   @override
   Widget build(BuildContext context) {
     return FunctionScreenTemplate(
-      title: "Chat Bot",
+      title: 'message.chat_bot.title'.tr(),
       isShowDrawer: true,
       isShowBottomButton: false,
       backgroundColor: context.colors.primary,
@@ -57,7 +58,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                     notifier.messages.isEmpty && !notifier.isLoading
                         ? Center(
                           child: Text(
-                            'Gửi tin nhắn để bắt đầu trò chuyện',
+                            'message.chat_bot.empty_state'.tr(),
                             style: AppTextStyles.textContent2.copyWith(
                               color: context.brandColors.textSecondary,
                             ),
@@ -244,7 +245,7 @@ class _MessageCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'AI Chat Bot',
+                      'message.chat_bot.ai_name'.tr(),
                       style: AppTextStyles.textContent3.copyWith(
                         fontWeight: FontWeight.w700,
                         color: context.brandColors.textPrimary,
@@ -288,7 +289,7 @@ class _MessageCard extends StatelessWidget {
                       children: [
                         _ActionIcon(
                           icon: Icons.copy_outlined,
-                          label: 'Copy Text',
+                          label: 'message.chat_bot.copy_text'.tr(),
                           color: context.brandColors.textPrimary,
                           onTap: () {
                             Clipboard.setData(
@@ -296,7 +297,9 @@ class _MessageCard extends StatelessWidget {
                             );
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: const Text('Đã copy vào clipboard'),
+                                content: Text(
+                                  'message.chat_bot.copy_success'.tr(),
+                                ),
                                 duration: const Duration(seconds: 2),
                                 backgroundColor:
                                     context.brandColors.buttonPrimary,
@@ -434,7 +437,7 @@ class _ChatInput extends StatelessWidget {
                       controller: controller,
                       enabled: !isLoading,
                       decoration: InputDecoration(
-                        hintText: 'Ask ai chat anything',
+                        hintText: 'message.chat_bot.input_hint'.tr(),
                         hintStyle: AppTextStyles.textContent3.copyWith(
                           color: context.brandColors.searchBarText.withOpacity(
                             0.6,

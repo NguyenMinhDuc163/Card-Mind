@@ -2,6 +2,7 @@ import 'package:card_mind/core/theme/theme_extensions.dart';
 import 'package:card_mind/init.dart';
 import 'package:card_mind/modules/library/model/class_data.dart';
 import 'package:card_mind/modules/library/provider/class_notifier.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -22,8 +23,12 @@ class _EditClassBottomSheetState extends State<EditClassBottomSheet> {
   @override
   void initState() {
     super.initState();
-    _classNameController = TextEditingController(text: widget.classData.className);
-    _descriptionController = TextEditingController(text: widget.classData.description);
+    _classNameController = TextEditingController(
+      text: widget.classData.className,
+    );
+    _descriptionController = TextEditingController(
+      text: widget.classData.description,
+    );
     _selectedContentIds = Set<String>.from(widget.classData.students);
   }
 
@@ -36,9 +41,9 @@ class _EditClassBottomSheetState extends State<EditClassBottomSheet> {
 
   void _updateClass() {
     if (_classNameController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Vui lòng nhập tên Chủ đề')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('library.class_edit.error_name_required'.tr())),
+      );
       return;
     }
 
@@ -54,9 +59,9 @@ class _EditClassBottomSheetState extends State<EditClassBottomSheet> {
     notifier.saveClass(updatedClassData);
 
     Navigator.pop(context);
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Đã cập nhật Chủ đề!')));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('library.class_edit.snackbar_updated'.tr())),
+    );
   }
 
   @override
@@ -86,7 +91,7 @@ class _EditClassBottomSheetState extends State<EditClassBottomSheet> {
               const SizedBox(height: 24),
 
               Text(
-                'Chỉnh sửa Chủ đề',
+                'library.class_edit.title'.tr(),
                 style: AppTextStyles.textHeader3.copyWith(
                   color: context.colors.onPrimary,
                   fontWeight: FontWeight.w600,
@@ -95,7 +100,7 @@ class _EditClassBottomSheetState extends State<EditClassBottomSheet> {
               const SizedBox(height: 24),
 
               Text(
-                'Tên Chủ đề',
+                'library.class_edit.field_name'.tr(),
                 style: AppTextStyles.textContent2.copyWith(
                   color: context.colors.onPrimary,
                   fontWeight: FontWeight.w500,
@@ -104,9 +109,11 @@ class _EditClassBottomSheetState extends State<EditClassBottomSheet> {
               const SizedBox(height: 8),
               TextField(
                 controller: _classNameController,
-                style: AppTextStyles.textContent2.copyWith(color: context.colors.onPrimary),
+                style: AppTextStyles.textContent2.copyWith(
+                  color: context.colors.onPrimary,
+                ),
                 decoration: InputDecoration(
-                  hintText: 'Nhập tên Chủ đề...',
+                  hintText: 'library.class_edit.hint_name'.tr(),
                   hintStyle: AppTextStyles.textContent2.copyWith(
                     color: context.colors.onPrimary.withOpacity(0.6),
                   ),
@@ -122,7 +129,7 @@ class _EditClassBottomSheetState extends State<EditClassBottomSheet> {
               const SizedBox(height: 16),
 
               Text(
-                'Mô tả (tùy chọn)',
+                'library.class_edit.field_description'.tr(),
                 style: AppTextStyles.textContent2.copyWith(
                   color: context.colors.onPrimary,
                   fontWeight: FontWeight.w500,
@@ -131,10 +138,12 @@ class _EditClassBottomSheetState extends State<EditClassBottomSheet> {
               const SizedBox(height: 8),
               TextField(
                 controller: _descriptionController,
-                style: AppTextStyles.textContent2.copyWith(color: context.colors.onPrimary),
+                style: AppTextStyles.textContent2.copyWith(
+                  color: context.colors.onPrimary,
+                ),
                 maxLines: 3,
                 decoration: InputDecoration(
-                  hintText: 'Nhập mô tả cho Chủ đề...',
+                  hintText: 'library.class_edit.hint_description'.tr(),
                   hintStyle: AppTextStyles.textContent2.copyWith(
                     color: context.colors.onPrimary.withOpacity(0.6),
                   ),
@@ -150,7 +159,7 @@ class _EditClassBottomSheetState extends State<EditClassBottomSheet> {
               const SizedBox(height: 24),
 
               Text(
-                'Học phần trong Chủ đề',
+                'library.class_edit.section_courses'.tr(),
                 style: AppTextStyles.textContent2.copyWith(
                   color: context.colors.onPrimary,
                   fontWeight: FontWeight.w500,
@@ -175,7 +184,7 @@ class _EditClassBottomSheetState extends State<EditClassBottomSheet> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          'Chưa có học phần nào. Hãy tạo học phần trước.',
+                          'library.class_edit.empty_courses'.tr(),
                           style: AppTextStyles.textContent3.copyWith(
                             color: context.colors.onPrimary.withOpacity(0.7),
                           ),
@@ -190,14 +199,18 @@ class _EditClassBottomSheetState extends State<EditClassBottomSheet> {
                   decoration: BoxDecoration(
                     color: context.colors.onPrimary.withOpacity(0.05),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: context.colors.onPrimary.withOpacity(0.2)),
+                    border: Border.all(
+                      color: context.colors.onPrimary.withOpacity(0.2),
+                    ),
                   ),
                   child: ListView.builder(
                     padding: AppPad.h12v8,
                     itemCount: notifier.availableContents.length,
                     itemBuilder: (context, index) {
                       final content = notifier.availableContents[index];
-                      final isSelected = _selectedContentIds.contains(content.id);
+                      final isSelected = _selectedContentIds.contains(
+                        content.id,
+                      );
 
                       return GestureDetector(
                         onTap: () {
@@ -222,18 +235,24 @@ class _EditClassBottomSheetState extends State<EditClassBottomSheet> {
                               color:
                                   isSelected
                                       ? context.colors.onPrimary
-                                      : context.colors.onPrimary.withOpacity(0.3),
+                                      : context.colors.onPrimary.withOpacity(
+                                        0.3,
+                                      ),
                               width: isSelected ? 2 : 1,
                             ),
                           ),
                           child: Row(
                             children: [
                               Icon(
-                                isSelected ? Icons.check_circle : Icons.radio_button_unchecked,
+                                isSelected
+                                    ? Icons.check_circle
+                                    : Icons.radio_button_unchecked,
                                 color:
                                     isSelected
                                         ? context.colors.onPrimary
-                                        : context.colors.onPrimary.withOpacity(0.5),
+                                        : context.colors.onPrimary.withOpacity(
+                                          0.5,
+                                        ),
                                 size: 20,
                               ),
                               const SizedBox(width: 12),
@@ -243,18 +262,23 @@ class _EditClassBottomSheetState extends State<EditClassBottomSheet> {
                                   children: [
                                     Text(
                                       content.title,
-                                      style: AppTextStyles.textContent3.copyWith(
-                                        color: context.colors.onPrimary,
-                                        fontWeight: FontWeight.w500,
-                                      ),
+                                      style: AppTextStyles.textContent3
+                                          .copyWith(
+                                            color: context.colors.onPrimary,
+                                            fontWeight: FontWeight.w500,
+                                          ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                     Text(
-                                      '${content.totalTerms} thuật ngữ',
-                                      style: AppTextStyles.textContent4.copyWith(
-                                        color: context.colors.onPrimary.withOpacity(0.7),
+                                      'library.class_edit.term_count'.tr(
+                                        args: [content.totalTerms.toString()],
                                       ),
+                                      style: AppTextStyles.textContent4
+                                          .copyWith(
+                                            color: context.colors.onPrimary
+                                                .withOpacity(0.7),
+                                          ),
                                     ),
                                   ],
                                 ),
@@ -276,10 +300,12 @@ class _EditClassBottomSheetState extends State<EditClassBottomSheet> {
                       onPressed: () => Navigator.pop(context),
                       style: TextButton.styleFrom(
                         padding: AppPad.h16v12,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                       child: Text(
-                        'Hủy',
+                        'common.cancel'.tr(),
                         style: AppTextStyles.textContent2.copyWith(
                           color: context.colors.onPrimary.withOpacity(0.7),
                         ),
@@ -295,10 +321,12 @@ class _EditClassBottomSheetState extends State<EditClassBottomSheet> {
                         backgroundColor: context.colors.onPrimary,
                         foregroundColor: context.colors.primary,
                         padding: AppPad.h16v12,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                       child: Text(
-                        'Cập nhật',
+                        'library.class_edit.update'.tr(),
                         style: AppTextStyles.textContent2.copyWith(
                           color: context.colors.primary,
                           fontWeight: FontWeight.w600,

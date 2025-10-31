@@ -6,17 +6,452 @@
     "change_password": "Change Password",
     "settings": "Settings",
     "logout": "Logout",
-    "verified_profile": "Verified Profile"
+    "verified_profile": "Verified Profile",
+    "loading": "Loading...",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "retry": "Retry",
+    "close": "Close",
+    "email": "Email",
+    "user": "User",
+    "time_ago": {
+      "days": "{} day(s) ago",
+      "hours": "{} hour(s) ago",
+      "minutes": "{} minute(s) ago",
+      "just_now": "Just now"
+    }
   },
   "language": {
     "english": "English",
     "vietnamese": "Vietnamese",
+    "japanese": "Japanese",
+    "korean": "Korean",
+    "chinese": "Chinese",
     "current": "Current language"
+  },
+  "splash_screen": {
+    "initializing": "Initializing...",
+    "syncing_data": "Syncing data...",
+    "loading_data": "Loading data..."
+  },
+  "dashboard": {
+    "home": "Home",
+    "create": "Create",
+    "chat": "Chat",
+    "library": "Library"
   },
   "home_screen": {
     "title": "Home Screen",
-    "home": "Home",
-    "create": "Create",
-    "library": "Library"
+    "search": "Search",
+    "syncing_data": "Syncing data...",
+    "review_today": "Need to review today",
+    "cards": "cards",
+    "card": "card",
+    "author": "Author",
+    "team_picks": "Team Picks",
+    "try_these": "Try these study sets",
+    "view_all": "View all",
+    "no_courses": "No courses yet",
+    "study_topics": "Study Topics",
+    "students": "students",
+    "active": "Active",
+    "paused": "Paused",
+    "delete_course": "Delete Course",
+    "delete_course_confirm": "Are you sure you want to delete the course \"{}\"?\n\nThis action cannot be undone and will delete all related data.",
+    "deleting_course": "Deleting course...",
+    "course_deleted": "Successfully deleted course \"{}\"",
+    "cannot_delete_course": "Cannot delete course \"{}\"",
+    "delete_error": "An error occurred while deleting: {}",
+    "delete_topic": "Delete Topic",
+    "delete_topic_confirm": "Are you sure you want to delete the topic \"{}\"?\n\nThis action cannot be undone.",
+    "deleting_topic": "Deleting topic...",
+    "topic_deleted": "Successfully deleted topic \"{}\"",
+    "cannot_delete_topic": "Cannot delete topic \"{}\"",
+    "sign_out": "Sign Out",
+    "sign_out_confirm": "Are you sure you want to sign out?",
+    "signed_out": "Successfully signed out"
+  },
+  "global_search": {
+    "title": "Search",
+    "hint": "Search courses, topics, cards...",
+    "error_occurred": "An error occurred",
+    "search_all": "Search all content",
+    "search_in": "Search in courses, topics and cards",
+    "no_results": "No results found",
+    "try_different": "Try searching with different keywords",
+    "type_course": "Course",
+    "type_classroom": "Topic",
+    "type_bookmark": "Card"
+  },
+  "course_info": {
+    "error_occurred": "An error occurred",
+    "retry": "Retry",
+    "course_not_found": "Course not found",
+    "error_loading": "Unable to load data: {}",
+    "error_loading_course": "Unable to load course: {}",
+    "delete_course": "Delete Course",
+    "delete_confirm": "Are you sure you want to delete this course? This action cannot be undone.",
+    "deleting": "Deleting course...",
+    "deleted_success": "Course deleted successfully",
+    "cannot_delete": "Cannot delete course",
+    "error": "Error: {}",
+    "basic_info": "Basic information about {}",
+    "terms": "{} terms",
+    "term": "term",
+    "author_label": "Author: {}",
+    "review_cards": "{} cards need review",
+    "learning_modes": "Learning Modes",
+    "mode_review": "Review ({} cards)",
+    "mode_review_desc": "Review cards that need practice today",
+    "mode_flashcards": "Flashcards",
+    "mode_flashcards_desc": "Learn vocabulary with flashcards",
+    "mode_edit": "Edit",
+    "mode_edit_desc": "Learn vocabulary with adaptive method",
+    "mode_test": "Test",
+    "mode_test_desc": "Test your knowledge with questions",
+    "mode_delete": "Delete Course",
+    "mode_delete_desc": "Remove this course from library",
+    "front_side": "Front side",
+    "back_side": "Back side",
+    "tap_to_flip": "Tap to flip",
+    "tap_to_flip_back": "Tap to flip back",
+    "no_cards": "No cards yet"
+  },
+  "course_detail": {
+    "navigating_to_result": "Redirecting to results...",
+    "loading_data": "Loading data...",
+    "welcome_title": "Welcome to your new course!",
+    "welcome_subtitle": "Start learning now to see your progress",
+    "start_learning": "Start learning",
+    "bookmarks_cleared": "Removed all bookmarked cards",
+    "no_cards_to_undo": "No cards to undo",
+    "reset_title": "Reset course",
+    "reset_message": "Are you sure you want to reset this course? All learning progress will be cleared and you will start over.",
+    "reset_action": "Reset",
+    "reset_success": "Course reset! Start again from the beginning.",
+    "error_loading": "Unable to load data: {}",
+    "error_loading_course": "Unable to load course: {}"
+  },
+  "course_result": {
+    "progress_title": "Your progress",
+    "legend_known": "Known",
+    "legend_learning": "Learning",
+    "legend_remaining": "Remaining",
+    "action_review_terms": "Continue reviewing terms",
+    "action_reset_cards": "Reset flashcards",
+    "action_view_history": "View learning history",
+    "action_back_home": "Back to home",
+    "reset_progress_success": "Learning progress reset",
+    "history_title": "Learning history",
+    "history_course_placeholder": "Course",
+    "history_empty": "No learning history yet",
+    "history_item_learned": "{}/{} cards learned",
+    "error_loading": "Unable to load data: {}",
+    "error_loading_course": "Unable to load course: {}",
+    "congrats": {
+      "excellent": "Amazing! You completed everything!",
+      "great": "You're doing great!",
+      "good": "Good progress! Keep it up!",
+      "keep_going": "Keep trying!"
+    },
+    "description": {
+      "excellent": "You have mastered every term in this course.",
+      "great": "Keep focusing on the challenging terms.",
+      "good": "You're making good progress, keep practicing.",
+      "keep_going": "Spend more time reviewing the remaining terms."
+    }
+  },
+  "course_test": {
+    "creating_test": "Generating test...",
+    "no_questions": "No questions available for testing",
+    "title_with_progress": "Test - Question {}/{}",
+    "choose_answer": "Choose the correct answer:",
+    "completed_title": "Test completed!",
+    "score_summary": "Score: {}/{} ({}%)",
+    "view_details": "View detailed results",
+    "error_create": "Unable to create test: {}",
+    "error_no_cards": "No flashcards available to create a test"
+  },
+  "course_test_result": {
+    "empty_state": "No results to display",
+    "title": "Test Results",
+    "score_title": "Your score",
+    "score_value": "{}/{}",
+    "score_percent": "{}%",
+    "answers_title": "Answer details",
+    "snackbar_no_data": "No data available to create the test",
+    "snackbar_no_course": "Course information not found",
+    "retake": "Retake",
+    "complete": "Finish",
+    "question_title": "Question {}",
+    "your_answer": "Your answer: {}",
+    "correct_answer": "Correct answer: {}",
+    "score_message": {
+      "excellent": "Excellent! You have mastered the material.",
+      "good": "Good job! Keep it up.",
+      "fair": "Not bad! Review a bit more.",
+      "retry": "Keep trying! Review the material again."
+    }
+  },
+  "create_course": {
+    "error_occurred": "An error occurred",
+    "retry": "Retry",
+    "import_button": "Import",
+    "add_description": "+ Description",
+    "snackbar_saved": "Course saved!",
+    "validation_topic": "Please enter the course topic",
+    "validation_title": "Please enter the course title",
+    "validation_no_terms": "Please add at least one term",
+    "validation_missing_definition": "Term {}: Please enter a definition",
+    "validation_missing_term": "Term {}: Please enter a term",
+    "validation_dialog_title": "Notice",
+    "clear_data_title": "Clear data",
+    "clear_data_message": "Are you sure you want to clear all entered data?",
+    "field_topic_hint": "Topic, chapter, unit",
+    "field_title_label": "TITLE",
+    "field_description_label": "DESCRIPTION",
+    "field_description_hint": "Enter a description for the course...",
+    "term_label": "TERM",
+    "definition_label": "DEFINITION",
+    "language_label": "SELECT LANGUAGE",
+    "author_default": "Me",
+    "error_initialize": "Unable to initialize: {}",
+    "error_save": "Unable to save data: {}",
+    "error_complete": "Unable to save course: {}"
+  },
+  "create_course_import": {
+    "title": "Import data",
+    "data_input_label": "Copy and paste your data here (from Word, Excel, Google Docs, etc.)",
+    "data_input_hint": "Paste data...",
+    "format_section_title": "DATA FORMAT",
+    "term_definition_label": "Between term and definition",
+    "card_label": "Between cards",
+    "option_tab": "Tab",
+    "option_comma": "Comma",
+    "option_custom": "Custom",
+    "option_newline": "New line",
+    "option_semicolon": "Semicolon",
+    "custom_placeholder": "Enter character...",
+    "preview_title": "PREVIEW",
+    "preview_empty": "No data to preview",
+    "preview_error": "Error parsing data",
+    "preview_no_terms": "No terms found",
+    "preview_summary": "Found {} terms:",
+    "button_cancel": "Cancel import",
+    "button_import": "Import",
+    "snackbar_empty": "Please enter data before importing",
+    "snackbar_parse_error": "Unable to parse data",
+    "snackbar_success": "Imported {} terms successfully!",
+    "errors": {
+      "empty_data": "Data cannot be empty",
+      "empty_card_delimiter": "Card delimiter cannot be empty",
+      "empty_term_delimiter": "Term-definition delimiter cannot be empty",
+      "no_valid_data": "No valid data found",
+      "no_valid_terms": "No valid terms found",
+      "parse_exception": "Error parsing data: {}",
+      "config_term_required": "Enter a custom delimiter for term and definition",
+      "config_card_required": "Enter a custom delimiter for cards"
+    }
+  },
+  "create_course_service": {
+    "error_save_data": "Unable to save course data: {}",
+    "error_load_data": "Unable to load course data: {}",
+    "error_delete_data": "Unable to delete course data: {}",
+    "error_load_list": "Unable to load course list: {}",
+    "error_save_completed": "Unable to save completed course: {}"
+  },
+  "message": {
+    "chat_bot": {
+      "title": "Chat Bot",
+      "empty_state": "Send a message to start chatting",
+      "ai_name": "AI Chat Bot",
+      "copy_text": "Copy Text",
+      "copy_success": "Copied to clipboard",
+      "input_hint": "Ask AI chat anything",
+      "error": {
+        "no_response": "No response from AI. Please try again.",
+        "network": "Unable to connect to the server. Please check your network connection.",
+        "timeout": "The request timed out. Please try again.",
+        "generic": "An error occurred. Please try again later."
+      }
+    },
+    "history": {
+      "title": "History",
+      "group_today": "Today",
+      "group_yesterday": "Yesterday, May 27",
+      "item_ai_chat_bot": "What is AI chat bot",
+      "item_brand_names": "Real Estate brand Names",
+      "item_code_readability": "Improve the readability of the following code",
+      "item_python_library": "Suggest a Python library to solve a problem"
+    }
+  },
+  "library": {
+    "title": "Library",
+    "tabs": {
+      "courses": "Courses",
+      "classes": "Topics",
+      "bookmarks": "Review"
+    },
+    "search_hint": {
+      "courses": "Search courses...",
+      "classes": "Search topics...",
+      "bookmarks": "Search review cards...",
+      "general": "Search..."
+    },
+    "common": {
+      "error_generic": "Something went wrong",
+      "error_loading": "Unable to load data: {}"
+    },
+    "content": {
+      "empty_title": "No content available yet",
+      "group_all": "All content",
+      "item_details": "{} terms • Author: {}",
+      "error_load_contents": "Unable to load contents: {}"
+    },
+    "class_detail": {
+      "error_loading": "Unable to load data: {}",
+      "not_found": "Topic not found",
+      "snackbar_added": "Added {} course(s) to pending list",
+      "delete_title": "Delete Topic",
+      "delete_confirm": "Are you sure you want to delete the topic \"{}\"?",
+      "snackbar_deleted": "Topic deleted",
+      "section_title": "Courses in this topic",
+      "pending_changes": "{} added, {} removed",
+      "edit": "Edit",
+      "empty_contents_title": "No courses yet",
+      "empty_contents_subtitle": "Add courses to this topic",
+      "info_students": "{} students",
+      "info_courses": "{} courses",
+      "snackbar_saved_changes": "Saved {} change(s)",
+      "delete_action": "Delete Topic",
+      "add_modal": {
+        "title": "Add courses to topic",
+        "empty": "No courses available to add",
+        "term_count": "{} terms",
+        "confirm": "Add {} course(s)"
+      }
+    },
+    "class_content": {
+      "details": "{} terms • {}",
+      "tooltip_cancel": "Undo remove",
+      "tooltip_mark": "Mark for removal"
+    },
+    "class_screen": {
+      "empty_title": "No topics yet",
+      "empty_subtitle": "Create your first topic",
+      "group_mine": "My topics",
+      "delete_title": "Delete Topic",
+      "delete_confirm": "Are you sure you want to delete this topic?",
+      "snackbar_deleted": "Topic deleted",
+      "error_load_classes": "Unable to load topics: {}",
+      "error_load_contents": "Unable to load contents: {}",
+      "error_save_class": "Unable to save topic: {}",
+      "error_delete_class": "Unable to delete topic: {}"
+    },
+    "class_item": {
+      "delete": "Delete Topic",
+      "info_students": "{} students",
+      "info_courses": "{} courses",
+      "course_chip": "Course {}...",
+      "more_courses": "+{} more courses"
+    },
+    "class_edit": {
+      "error_name_required": "Please enter a topic name",
+      "snackbar_updated": "Topic updated",
+      "title": "Edit topic",
+      "field_name": "Topic name",
+      "hint_name": "Enter topic name...",
+      "field_description": "Description (optional)",
+      "hint_description": "Enter topic description...",
+      "section_courses": "Courses in this topic",
+      "empty_courses": "No courses available. Please create a course first.",
+      "term_count": "{} terms",
+      "update": "Update"
+    },
+    "class_create": {
+      "error_name_required": "Please enter a topic name",
+      "snackbar_created": "Topic created successfully",
+      "title": "Create new topic",
+      "field_name": "Topic name",
+      "hint_name": "Enter topic name...",
+      "field_description": "Description (optional)",
+      "hint_description": "Enter topic description...",
+      "section_select_courses": "Select courses",
+      "empty_courses": "No courses available. Please create a course first.",
+      "term_count": "{} terms",
+      "submit": "Create topic"
+    },
+    "class_service": {
+      "error_save": "Unable to save topic: {}",
+      "error_not_found": "Topic not found",
+      "error_delete": "Unable to delete topic: {}",
+      "error_load_list": "Unable to load topics: {}",
+      "error_search": "Unable to search topics: {}"
+    },
+    "topic_service": {
+      "error_save": "Unable to save topic: {}",
+      "error_not_found": "Topic not found",
+      "error_delete": "Unable to delete topic: {}",
+      "error_load_list": "Unable to load topics: {}",
+      "error_search": "Unable to search topics: {}"
+    },
+    "content_service": {
+      "error_save": "Unable to save content: {}",
+      "error_not_found": "Content not found",
+      "error_delete": "Unable to delete content: {}",
+      "error_load_list": "Unable to load contents: {}",
+      "error_search": "Unable to search contents: {}"
+    },
+    "bookmark": {
+      "section": {
+        "review_today": "Needs review today",
+        "bookmarked": "Bookmarked courses",
+        "unlearned_by_course": "Unlearned cards by course"
+      },
+      "header": {
+        "title": "Study summary"
+      },
+      "stats": {
+        "review": "Need review",
+        "unlearned": "Unlearned"
+      },
+      "empty_title": "Great! You've mastered all cards",
+      "empty_subtitle": "Keep studying new courses",
+      "no_title": "Untitled",
+      "review_badge": "{} cards to review",
+      "bookmarked_badge": "{} bookmarked cards",
+      "unlearned_badge": "{} cards",
+      "no_category": "No category",
+      "time_unknown": "Unknown",
+      "error_load_unlearned": "Unable to load unlearned cards: {}"
+    }
+  },
+  "course_edit": {
+    "error_loading_course": "Unable to load course data",
+    "title": "Edit course",
+    "topic_hint": "Topic, chapter, unit",
+    "title_label": "TITLE",
+    "description_label": "DESCRIPTION",
+    "description_hint": "Enter a description for the course...",
+    "scan_document": "Scan document",
+    "add_description": "+ Description",
+    "term_label": "TERM",
+    "definition_label": "DEFINITION",
+    "language_label": "SELECT LANGUAGE",
+    "update_success": "Course updated successfully!",
+    "update_not_found": "Could not find the course to update",
+    "error_generic": "Error: {}"
+  },
+  "drawer": {
+    "greeting_guest": "Welcome to Card mind!",
+    "greeting_user": "Hello, {}!",
+    "review_reminder": "Review Reminder",
+    "settings": "Settings",
+    "notification_enabled": "✅ Notifications enabled",
+    "notification_body": "You will receive reminders when it's time to review!",
+    "confirm_logout": "Confirm Logout",
+    "logout_confirm": "Are you sure you want to logout?",
+    "error_title": "Error",
+    "logout_error": "Logout error: {}"
   }
 }

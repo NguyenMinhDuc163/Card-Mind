@@ -6,6 +6,7 @@ import '../provider/test_notifier.dart';
 import '../provider/course_info_notifier.dart';
 import '../model/test_question.dart';
 import 'test_result_screen.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class TestScreen extends StatefulWidget {
   const TestScreen({super.key});
@@ -75,7 +76,7 @@ class _TestScreenState extends State<TestScreen> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'Đang tạo bài kiểm tra...',
+                      'course_test.creating_test'.tr(),
                       style: TextStyle(
                         color: context.brandColors.textSecondary,
                       ),
@@ -102,7 +103,8 @@ class _TestScreenState extends State<TestScreen> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      notifier.errorMessage ?? 'Có lỗi xảy ra',
+                      notifier.errorMessage ??
+                          'course_info.error_occurred'.tr(),
                       style: TextStyle(
                         color: context.brandColors.textSecondary,
                       ),
@@ -115,7 +117,7 @@ class _TestScreenState extends State<TestScreen> {
                         backgroundColor: context.brandColors.buttonPrimary,
                         foregroundColor: Colors.white,
                       ),
-                      child: const Text('Thử lại'),
+                      child: Text('course_info.retry'.tr()),
                     ),
                   ],
                 ),
@@ -130,7 +132,7 @@ class _TestScreenState extends State<TestScreen> {
               backgroundColor: context.colors.primary,
               body: Center(
                 child: Text(
-                  'Không có câu hỏi để kiểm tra',
+                  'course_test.no_questions'.tr(),
                   style: TextStyle(color: context.brandColors.textSecondary),
                 ),
               ),
@@ -153,8 +155,12 @@ class _TestScreenState extends State<TestScreen> {
         (notifier.currentQuestionIndex + 1) / notifier.totalQuestions;
 
     return FunctionScreenTemplate(
-      title:
-          'Kiểm tra - Câu ${notifier.currentQuestionIndex + 1}/${notifier.totalQuestions}',
+      title: 'course_test.title_with_progress'.tr(
+        args: [
+          (notifier.currentQuestionIndex + 1).toString(),
+          notifier.totalQuestions.toString(),
+        ],
+      ),
       backgroundColor: context.colors.primary,
       screen: Column(
         children: [
@@ -207,7 +213,7 @@ class _TestScreenState extends State<TestScreen> {
                   const SizedBox(height: 24),
 
                   Text(
-                    'Chọn đáp án đúng:',
+                    'course_test.choose_answer'.tr(),
                     style: TextStyle(
                       color: context.brandColors.textSecondary,
                       fontSize: 16,
@@ -295,7 +301,7 @@ class _TestScreenState extends State<TestScreen> {
               ),
               const SizedBox(height: 16),
               Text(
-                'Hoàn thành bài kiểm tra!',
+                'course_test.completed_title'.tr(),
                 style: TextStyle(
                   color: context.brandColors.textPrimary,
                   fontSize: 24,
@@ -306,7 +312,13 @@ class _TestScreenState extends State<TestScreen> {
               Consumer<TestNotifier>(
                 builder: (context, notifier, child) {
                   return Text(
-                    'Điểm: ${notifier.correctAnswers}/${notifier.totalQuestions} (${notifier.score.toStringAsFixed(1)}%)',
+                    'course_test.score_summary'.tr(
+                      args: [
+                        notifier.correctAnswers.toString(),
+                        notifier.totalQuestions.toString(),
+                        notifier.score.toStringAsFixed(1),
+                      ],
+                    ),
                     style: TextStyle(
                       color: context.brandColors.textSecondary,
                       fontSize: 18,
@@ -324,9 +336,9 @@ class _TestScreenState extends State<TestScreen> {
                     vertical: 12,
                   ),
                 ),
-                child: const Text(
-                  'Xem kết quả chi tiết',
-                  style: TextStyle(color: Colors.white, fontSize: 16),
+                child: Text(
+                  'course_test.view_details'.tr(),
+                  style: const TextStyle(color: Colors.white, fontSize: 16),
                 ),
               ),
             ],

@@ -1,6 +1,7 @@
 import 'package:card_mind/modules/library/services/content_interface.dart';
 import 'package:card_mind/modules/library/model/content_data.dart';
 import 'package:card_mind/core/helpers/local_storage_helper.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ContentService implements IContentInterface {
   static const String _contentsKey = 'library_contents';
@@ -22,7 +23,9 @@ class ContentService implements IContentInterface {
         allContents.map((content) => content.toJson()).toList(),
       );
     } catch (e) {
-      throw Exception('Không thể lưu nội dung: $e');
+      throw Exception(
+        tr('library.content_service.error_save', args: [e.toString()]),
+      );
     }
   }
 
@@ -32,7 +35,9 @@ class ContentService implements IContentInterface {
       final allContents = await getAllContents();
       return allContents.firstWhere(
         (content) => content.id == contentId,
-        orElse: () => throw Exception('Không tìm thấy nội dung'),
+        orElse:
+            () =>
+                throw Exception(tr('library.content_service.error_not_found')),
       );
     } catch (e) {
       return null;
@@ -50,7 +55,9 @@ class ContentService implements IContentInterface {
         allContents.map((content) => content.toJson()).toList(),
       );
     } catch (e) {
-      throw Exception('Không thể xóa nội dung: $e');
+      throw Exception(
+        tr('library.content_service.error_delete', args: [e.toString()]),
+      );
     }
   }
 
@@ -65,7 +72,9 @@ class ContentService implements IContentInterface {
       }
       return [];
     } catch (e) {
-      throw Exception('Không thể tải danh sách nội dung: $e');
+      throw Exception(
+        tr('library.content_service.error_load_list', args: [e.toString()]),
+      );
     }
   }
 
@@ -84,7 +93,9 @@ class ContentService implements IContentInterface {
           )
           .toList();
     } catch (e) {
-      throw Exception('Không thể tìm kiếm nội dung: $e');
+      throw Exception(
+        tr('library.content_service.error_search', args: [e.toString()]),
+      );
     }
   }
 }

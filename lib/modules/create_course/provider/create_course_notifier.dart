@@ -3,6 +3,7 @@ import 'package:card_mind/core/helpers/local_storage_helper.dart';
 import 'package:card_mind/core/event_service.dart';
 import 'package:card_mind/core/services/data_sync_service.dart';
 import 'package:card_mind/modules/create_course/model/create_course_data.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class CreateCourseNotifier extends ChangeNotifier {
   CreateCourseData _courseData = CreateCourseData.createNew();
@@ -23,7 +24,10 @@ class CreateCourseNotifier extends ChangeNotifier {
       _courseData = CreateCourseData.createNew();
       _errorMessage = null;
     } catch (e) {
-      _errorMessage = 'Không thể khởi tạo: $e';
+      _errorMessage = tr(
+        'create_course.error_initialize',
+        args: [e.toString()],
+      );
     } finally {
       _isLoading = false;
     }
@@ -35,7 +39,7 @@ class CreateCourseNotifier extends ChangeNotifier {
       LocalStorageHelper.setValue('create_course_data', _courseData.toJson());
       _clearError();
     } catch (e) {
-      _setError('Không thể lưu dữ liệu: $e');
+      _setError(tr('create_course.error_save', args: [e.toString()]));
     }
   }
 
@@ -59,7 +63,10 @@ class CreateCourseNotifier extends ChangeNotifier {
       final now = DateTime.now();
       final newCourseData = _courseData.copyWith(
         id: now.millisecondsSinceEpoch.toString(),
-        author: author ?? _courseData.author, // Sử dụng author được truyền vào hoặc giữ nguyên
+        author:
+            author ??
+            _courseData
+                .author, // Sử dụng author được truyền vào hoặc giữ nguyên
         terms: validTerms,
         createdAt: now,
         updatedAt: now,
@@ -97,7 +104,7 @@ class CreateCourseNotifier extends ChangeNotifier {
       print('==================');
     } catch (e) {
       print('ERROR: $e');
-      _setError('Không thể lưu khóa học: $e');
+      _setError(tr('create_course.error_complete', args: [e.toString()]));
     }
   }
 

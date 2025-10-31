@@ -7,6 +7,7 @@ import 'package:card_mind/modules/create_course/model/create_course_data.dart';
 import 'package:card_mind/modules/create_course/model/import_data_config.dart';
 import 'package:card_mind/modules/create_course/screen/import_data_screen.dart';
 import 'package:card_mind/providers/auth_provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -94,7 +95,8 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    notifier.errorMessage ?? 'Có lỗi xảy ra',
+                    notifier.errorMessage ??
+                        'create_course.error_occurred'.tr(),
                     style: AppTextStyles.textContent2.copyWith(
                       color: context.brandColors.textSecondary,
                     ),
@@ -103,7 +105,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () => _initializeData(),
-                    child: const Text('Thử lại'),
+                    child: Text('create_course.retry'.tr()),
                   ),
                 ],
               ),
@@ -178,7 +180,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                                   ),
                                   const SizedBox(width: 6),
                                   Text(
-                                    'Nhập',
+                                    'create_course.import_button'.tr(),
                                     style: AppTextStyles.textContent2.copyWith(
                                       color: context.brandColors.searchBarText,
                                       fontWeight: FontWeight.w500,
@@ -208,7 +210,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                                   ),
                                 ),
                                 child: Text(
-                                  '+ Mô tả',
+                                  'create_course.add_description'.tr(),
                                   style: AppTextStyles.textContent2.copyWith(
                                     color: context.brandColors.searchBarText,
                                     fontWeight: FontWeight.w500,
@@ -274,9 +276,12 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
 
     // Lấy tên người dùng nếu đã đăng nhập
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final author = authProvider.isSignedIn
-        ? (authProvider.displayName ?? authProvider.email ?? 'Me')
-        : 'Me';
+    final author =
+        authProvider.isSignedIn
+            ? (authProvider.displayName ??
+                authProvider.email ??
+                'create_course.author_default'.tr())
+            : 'create_course.author_default'.tr();
 
     print('📝 [CreateCourseScreen] Completing course...');
     await notifier.completeCourse(author: author);
@@ -291,7 +296,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('Đã lưu khóa học!'),
+        content: Text('create_course.snackbar_saved'.tr()),
         backgroundColor: context.brandColors.progressValue,
       ),
     );
@@ -299,12 +304,12 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
 
   bool _validateCourseData(CreateCourseNotifier notifier) {
     if (notifier.courseData.topic.trim().isEmpty) {
-      _showValidationError('Vui lòng nhập chủ đề khóa học');
+      _showValidationError('create_course.validation_topic'.tr());
       return false;
     }
 
     if (notifier.courseData.title.trim().isEmpty) {
-      _showValidationError('Vui lòng nhập tiêu đề khóa học');
+      _showValidationError('create_course.validation_title'.tr());
       return false;
     }
 
@@ -318,7 +323,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
             .toList();
 
     if (validTerms.isEmpty) {
-      _showValidationError('Vui lòng thêm ít nhất một thuật ngữ');
+      _showValidationError('create_course.validation_no_terms'.tr());
       return false;
     }
 
@@ -332,12 +337,20 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
       }
 
       if (hasTerm && !hasDefinition) {
-        _showValidationError('Thuật ngữ ${i + 1}: Vui lòng nhập định nghĩa');
+        _showValidationError(
+          'create_course.validation_missing_definition'.tr(
+            args: [(i + 1).toString()],
+          ),
+        );
         return false;
       }
 
       if (!hasTerm && hasDefinition) {
-        _showValidationError('Thuật ngữ ${i + 1}: Vui lòng nhập thuật ngữ');
+        _showValidationError(
+          'create_course.validation_missing_term'.tr(
+            args: [(i + 1).toString()],
+          ),
+        );
         return false;
       }
     }
@@ -351,30 +364,46 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: context.brandColors.cardBackground,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           title: Row(
             children: [
               Icon(
-                Icons.error,
+                Icons.error_outline,
                 color: context.brandColors.buttonDestructive,
-                size: 24,
+                size: 28,
               ),
-              const SizedBox(width: 8),
-              Text(
-                'Thông báo',
-                style: TextStyle(color: context.brandColors.textPrimary),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'create_course.validation_dialog_title'.tr(),
+                  style: AppTextStyles.textContent1.copyWith(
+                    color: context.brandColors.textPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
             ],
           ),
           content: Text(
             message,
-            style: TextStyle(color: context.brandColors.textSecondary),
+            style: AppTextStyles.textContent2.copyWith(
+              color: context.brandColors.textSecondary,
+            ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              ),
               child: Text(
-                'Đóng',
-                style: TextStyle(color: context.brandColors.buttonPrimary),
+                'common.close'.tr(),
+                style: AppTextStyles.textContent2.copyWith(
+                  color: context.brandColors.buttonPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ],
@@ -389,20 +418,34 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: context.brandColors.cardBackground,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           title: Text(
-            'Xóa dữ liệu',
-            style: TextStyle(color: context.brandColors.textPrimary),
+            'create_course.clear_data_title'.tr(),
+            style: AppTextStyles.textContent1.copyWith(
+              color: context.brandColors.textPrimary,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           content: Text(
-            'Bạn có chắc chắn muốn xóa tất cả dữ liệu đã nhập?',
-            style: TextStyle(color: context.brandColors.textSecondary),
+            'create_course.clear_data_message'.tr(),
+            style: AppTextStyles.textContent2.copyWith(
+              color: context.brandColors.textSecondary,
+            ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              ),
               child: Text(
-                'Hủy',
-                style: TextStyle(color: context.brandColors.buttonPrimary),
+                'common.cancel'.tr(),
+                style: AppTextStyles.textContent2.copyWith(
+                  color: context.brandColors.textSecondary,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
             TextButton(
@@ -410,9 +453,15 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                 Navigator.of(context).pop();
                 _clearAllData(notifier);
               },
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              ),
               child: Text(
-                'Xóa',
-                style: TextStyle(color: context.brandColors.buttonDestructive),
+                'common.delete'.tr(),
+                style: AppTextStyles.textContent2.copyWith(
+                  color: context.brandColors.buttonDestructive,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ],
@@ -444,7 +493,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
             color: context.brandColors.searchBarText,
           ),
           decoration: InputDecoration(
-            hintText: 'Chủ đề, chương, đơn vị',
+            hintText: 'create_course.field_topic_hint'.tr(),
             hintStyle: AppTextStyles.textContent2.copyWith(
               color: context.brandColors.searchBarText.withOpacity(0.6),
             ),
@@ -471,7 +520,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
         const SizedBox(height: 24),
 
         Text(
-          'TIÊU ĐỀ',
+          'create_course.field_title_label'.tr(),
           style: AppTextStyles.textContent3.copyWith(
             color: context.brandColors.textPrimary,
             fontWeight: FontWeight.w600,
@@ -510,7 +559,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
         if (_showDescription) ...[
           const SizedBox(height: 24),
           Text(
-            'MÔ TẢ',
+            'create_course.field_description_label'.tr(),
             style: AppTextStyles.textContent3.copyWith(
               color: context.brandColors.textPrimary,
               fontWeight: FontWeight.w600,
@@ -525,7 +574,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
               color: context.brandColors.searchBarText,
             ),
             decoration: InputDecoration(
-              hintText: 'Nhập mô tả cho khóa học...',
+              hintText: 'create_course.field_description_hint'.tr(),
               hintStyle: AppTextStyles.textContent2.copyWith(
                 color: context.brandColors.searchBarText.withOpacity(0.6),
               ),
@@ -621,7 +670,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'THUẬT NGỮ',
+              'create_course.term_label'.tr(),
               style: AppTextStyles.textContent3.copyWith(
                 color: context.brandColors.textPrimary,
                 fontWeight: FontWeight.w600,
@@ -663,7 +712,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
             const SizedBox(height: 16),
 
             Text(
-              'ĐỊNH NGHĨA',
+              'create_course.definition_label'.tr(),
               style: AppTextStyles.textContent3.copyWith(
                 color: context.brandColors.textPrimary,
                 fontWeight: FontWeight.w600,
@@ -704,13 +753,23 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
             ),
             const SizedBox(height: 16),
 
-            Text(
-              'CHỌN NGÔN NGỮ',
-              style: AppTextStyles.textContent3.copyWith(
-                color: context.brandColors.textPrimary,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 1.2,
-              ),
+            Row(
+              children: [
+                Text(
+                  'create_course.language_label'.tr(),
+                  style: AppTextStyles.textContent3.copyWith(
+                    color: context.brandColors.textPrimary,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Icon(
+                  Icons.arrow_drop_down,
+                  color: context.brandColors.textPrimary,
+                  size: 16,
+                ),
+              ],
             ),
             const SizedBox(height: 8),
             GestureDetector(
@@ -722,7 +781,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                 decoration: BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
-                      color: context.brandColors.buttonPrimary,
+                      color: context.brandColors.borderColor,
                       width: 1,
                     ),
                   ),
@@ -733,12 +792,13 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                     Text(
                       term.language,
                       style: AppTextStyles.textContent2.copyWith(
-                        color: context.brandColors.buttonPrimary,
+                        color: context.brandColors.textPrimary,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                     Icon(
-                      Icons.arrow_drop_down,
-                      color: context.brandColors.buttonPrimary,
+                      Icons.keyboard_arrow_down,
+                      color: context.brandColors.textPrimary,
                       size: 20,
                     ),
                   ],
@@ -756,31 +816,67 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
     int index,
     CreateCourseNotifier notifier,
   ) {
-    final languages = ['Tiếng Việt', 'English', '日本語', '한국어', '中文'];
+    final languages = [
+      'language.vietnamese'.tr(),
+      'language.english'.tr(),
+    ];
 
     showModalBottomSheet(
       context: context,
+      backgroundColor: context.brandColors.cardBackground,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
       builder:
           (context) => Container(
             padding: const EdgeInsets.all(16),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              children:
-                  languages.map((language) {
-                    return ListTile(
-                      title: Text(language),
-                      onTap: () {
-                        final updatedTerm = term.copyWith(language: language);
-                        notifier.updateTerm(index, updatedTerm);
-                        notifier.saveData();
-                        Navigator.pop(context);
-                      },
-                      trailing:
-                          term.language == language
-                              ? const Icon(Icons.check)
-                              : null,
-                    );
-                  }).toList(),
+              children: [
+                Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: context.brandColors.borderColor,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                Text(
+                  'create_course.language_label'.tr(),
+                  style: AppTextStyles.textContent1.copyWith(
+                    color: context.brandColors.textPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ...languages.map((language) {
+                  final isSelected = term.language == language;
+                  return ListTile(
+                    title: Text(
+                      language,
+                      style: AppTextStyles.textContent2.copyWith(
+                        color: context.brandColors.textPrimary,
+                        fontWeight:
+                            isSelected ? FontWeight.w600 : FontWeight.w400,
+                      ),
+                    ),
+                    onTap: () {
+                      final updatedTerm = term.copyWith(language: language);
+                      notifier.updateTerm(index, updatedTerm);
+                      notifier.saveData();
+                      Navigator.pop(context);
+                    },
+                    trailing: isSelected
+                        ? Icon(
+                            Icons.check,
+                            color: context.brandColors.buttonPrimary,
+                          )
+                        : null,
+                  );
+                }),
+                const SizedBox(height: 16),
+              ],
             ),
           ),
     );
@@ -807,7 +903,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
     if (parsedTerms.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Không có dữ liệu để import'),
+          content: Text('create_course_import.snackbar_empty'.tr()),
           backgroundColor: context.brandColors.warning,
         ),
       );
@@ -830,7 +926,11 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Đã import ${parsedTerms.length} thuật ngữ thành công!'),
+        content: Text(
+          'create_course_import.snackbar_success'.tr(
+            args: [parsedTerms.length.toString()],
+          ),
+        ),
         backgroundColor: context.brandColors.progressValue,
       ),
     );

@@ -4,6 +4,7 @@ import 'package:card_mind/core/helpers/local_storage_helper.dart';
 import 'package:card_mind/core/event_service.dart';
 import 'package:card_mind/modules/library/model/class_data.dart';
 import 'package:card_mind/modules/library/model/content_data.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ClassNotifier extends ChangeNotifier {
   List<ClassData> _classes = [];
@@ -35,7 +36,7 @@ class ClassNotifier extends ChangeNotifier {
 
       _setupCourseEventSubscription();
     } catch (e) {
-      _errorMessage = 'Không thể tải dữ liệu: $e';
+      _errorMessage = tr('library.common.error_loading', args: [e.toString()]);
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -89,7 +90,9 @@ class ClassNotifier extends ChangeNotifier {
       print('DEBUG: _classes length: ${_classes.length}');
     } catch (e) {
       print('DEBUG: Error in _loadClasses: $e');
-      throw Exception('Không thể load Chủ đề: $e');
+      throw Exception(
+        tr('library.class_screen.error_load_classes', args: [e.toString()]),
+      );
     }
   }
 
@@ -130,7 +133,9 @@ class ClassNotifier extends ChangeNotifier {
 
       _availableContents = contentsList;
     } catch (e) {
-      throw Exception('Không thể load nội dung: $e');
+      throw Exception(
+        tr('library.class_screen.error_load_contents', args: [e.toString()]),
+      );
     }
   }
 
@@ -148,7 +153,6 @@ class ClassNotifier extends ChangeNotifier {
       await _saveClassesToStorage();
       notifyListeners();
 
-      
       EventService().emitClassEvent(
         ClassEvent(
           type:
@@ -159,7 +163,9 @@ class ClassNotifier extends ChangeNotifier {
         ),
       );
     } catch (e) {
-      _setError('Không thể lưu Chủ đề: $e');
+      _setError(
+        tr('library.class_screen.error_save_class', args: [e.toString()]),
+      );
     }
   }
 
@@ -175,12 +181,13 @@ class ClassNotifier extends ChangeNotifier {
       await _saveClassesToStorage();
       notifyListeners();
 
-      
       EventService().emitClassEvent(
         ClassEvent(type: ClassEventType.classDeleted, classId: classId),
       );
     } catch (e) {
-      _setError('Không thể xóa Chủ đề: $e');
+      _setError(
+        tr('library.class_screen.error_delete_class', args: [e.toString()]),
+      );
     }
   }
 

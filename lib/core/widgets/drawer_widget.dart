@@ -51,8 +51,8 @@ class _DrawerWidgetState extends State<DrawerWidget> {
       // Nếu BẬT, gửi notification test để user biết
       if (value) {
         await NotificationService().showImmediateNotification(
-          title: '✅ Thông báo đã bật',
-          body: 'Bạn sẽ nhận được nhắc nhở khi đến giờ ôn tập!',
+          title: 'drawer.notification_enabled'.tr(),
+          body: 'drawer.notification_body'.tr(),
         );
       }
     } catch (e) {
@@ -61,7 +61,10 @@ class _DrawerWidgetState extends State<DrawerWidget> {
   }
 
   /// Xử lý đăng xuất - Sign out và reset về dữ liệu mặc định
-  Future<void> _handleLogout(BuildContext context, AuthProvider authProvider) async {
+  Future<void> _handleLogout(
+    BuildContext context,
+    AuthProvider authProvider,
+  ) async {
     // Hiển thị dialog xác nhận
     final confirmed = await showDialog<bool>(
       context: context,
@@ -70,34 +73,32 @@ class _DrawerWidgetState extends State<DrawerWidget> {
           backgroundColor: context.colors.surface,
           title: Row(
             children: [
-              Icon(
-                Icons.logout,
-                color: Colors.red,
-                size: 24,
-              ),
+              Icon(Icons.logout, color: Colors.red, size: 24),
               const SizedBox(width: 8),
               Text(
-                'Xác nhận đăng xuất',
+                'drawer.confirm_logout'.tr(),
                 style: TextStyle(color: context.colors.onSurface),
               ),
             ],
           ),
           content: Text(
-            'Bạn có chắc chắn muốn đăng xuất?',
+            'drawer.logout_confirm'.tr(),
             style: TextStyle(color: context.colors.onSurface),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(false),
               child: Text(
-                'Hủy',
-                style: TextStyle(color: context.colors.onSurface.withOpacity(0.7)),
+                'common.cancel'.tr(),
+                style: TextStyle(
+                  color: context.colors.onSurface.withOpacity(0.7),
+                ),
               ),
             ),
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(true),
               child: Text(
-                'Đăng xuất',
+                'common.logout'.tr(),
                 style: TextStyle(color: Colors.red),
               ),
             ),
@@ -117,7 +118,10 @@ class _DrawerWidgetState extends State<DrawerWidget> {
   }
 
   /// Thực hiện logout (tách riêng để tránh BuildContext issues)
-  Future<void> _performLogout(BuildContext context, AuthProvider authProvider) async {
+  Future<void> _performLogout(
+    BuildContext context,
+    AuthProvider authProvider,
+  ) async {
     try {
       // Đồng bộ dữ liệu lên Firestore TRƯỚC KHI đăng xuất (chạy im lặng)
       print('🔄 [Drawer] Syncing data before logout...');
@@ -128,7 +132,9 @@ class _DrawerWidgetState extends State<DrawerWidget> {
       await authProvider.signOut();
       print('✅ [Drawer] Signed out successfully');
 
-      print('✅ [Drawer] Logout completed - UI will auto-refresh via auth listeners');
+      print(
+        '✅ [Drawer] Logout completed - UI will auto-refresh via auth listeners',
+      );
     } catch (e) {
       print('❌ [Drawer] Logout error: $e');
 
@@ -144,19 +150,19 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   Icon(Icons.error, color: Colors.red),
                   const SizedBox(width: 8),
                   Text(
-                    'Lỗi',
+                    'drawer.error_title'.tr(),
                     style: TextStyle(color: context.colors.onSurface),
                   ),
                 ],
               ),
               content: Text(
-                'Lỗi khi đăng xuất: $e',
+                'drawer.logout_error'.tr(args: [e.toString()]),
                 style: TextStyle(color: context.colors.onSurface),
               ),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(errorContext).pop(),
-                  child: Text('Đóng'),
+                  child: Text('common.close'.tr()),
                 ),
               ],
             );
@@ -206,8 +212,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     context,
                     icon: Icon(
                       Icons.nightlight,
-                      color: context
-                          .colors.onPrimary,
+                      color: context.colors.onPrimary,
                     ),
                     title: 'common.dark_mode'.tr(),
                     onTap: () => Navigator.pop(context),
@@ -226,10 +231,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                 Expanded(
                   child: _buildDrawerItem(
                     context,
-                    icon: Icon(
-                      Icons.language,
-                      color: context.colors.onPrimary,
-                    ),
+                    icon: Icon(Icons.language, color: context.colors.onPrimary),
                     title: 'common.language'.tr(),
                     onTap: () {
                       // Toggle ngôn ngữ khi tap vào item
@@ -250,7 +252,9 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                         },
                         isEnglish: isEnglish,
                         colorText: context.colors.onPrimary,
-                        colorBackground: context.colors.onPrimary.withOpacity(0.1),
+                        colorBackground: context.colors.onPrimary.withOpacity(
+                          0.1,
+                        ),
                       );
                     },
                   ),
@@ -266,7 +270,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       Icons.notifications_active,
                       color: context.colors.onPrimary,
                     ),
-                    title: 'Nhắc nhở ôn tập',
+                    title: 'drawer.review_reminder'.tr(),
                     onTap: () => Navigator.pop(context),
                   ),
                 ),
@@ -285,11 +289,8 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             ),
             _buildDrawerItem(
               context,
-              icon: Icon(
-                Icons.schedule,
-                color: context.colors.onPrimary,
-              ),
-              title: 'Cài đặt',
+              icon: Icon(Icons.schedule, color: context.colors.onPrimary),
+              title: 'drawer.settings'.tr(),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pushNamed(
@@ -320,7 +321,9 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   icon: Icon(Icons.logout, color: Colors.red),
                   title: 'common.logout'.tr(),
                   iconColor: Colors.red,
-                  textStyle: AppTextStyles.textContent2.copyWith(color: Colors.red),
+                  textStyle: AppTextStyles.textContent2.copyWith(
+                    color: Colors.red,
+                  ),
                   onTap: () => _handleLogout(context, authProvider),
                 );
               },
@@ -345,12 +348,14 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             CircleAvatar(
               radius: 25,
               backgroundColor: context.colors.onPrimary.withOpacity(0.1),
-              backgroundImage: isSignedIn && photoURL != null
-                  ? NetworkImage(photoURL)
-                  : null,
-              child: !isSignedIn || photoURL == null
-                  ? Icon(Icons.person, color: context.colors.onPrimary)
-                  : null,
+              backgroundImage:
+                  isSignedIn && photoURL != null
+                      ? NetworkImage(photoURL)
+                      : null,
+              child:
+                  !isSignedIn || photoURL == null
+                      ? Icon(Icons.person, color: context.colors.onPrimary)
+                      : null,
             ),
             Expanded(
               child: Column(
@@ -358,8 +363,10 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                 children: [
                   Text(
                     isSignedIn
-                        ? "Xin chào, ${displayName ?? 'Người dùng'}!"
-                        : "Card mind xin chào!",
+                        ? 'drawer.greeting_user'.tr(
+                          args: [displayName ?? 'common.user'.tr()],
+                        )
+                        : 'drawer.greeting_guest'.tr(),
                     style: AppTextStyles.textHeader3.copyWith(
                       color: context.colors.onPrimary,
                     ),

@@ -1,6 +1,7 @@
 import 'package:card_mind/init.dart';
 import 'package:card_mind/modules/message/services/chat_bot_service.dart';
 import 'package:card_mind/modules/message/model/chat_response.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ChatMessage {
   final bool isUser;
@@ -44,18 +45,17 @@ class ChatNotifier extends ChangeNotifier {
         _messages.add(ChatMessage(isUser: false, text: answer));
         _errorMessage = null;
       } else {
-        _errorMessage = 'Không nhận được phản hồi từ AI. Vui lòng thử lại.';
+        _errorMessage = tr('message.chat_bot.error.no_response');
       }
     } catch (e) {
       // Hiển thị thông báo lỗi thân thiện
       if (e.toString().contains('connection error') ||
           e.toString().contains('Failed host lookup')) {
-        _errorMessage =
-            'Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng.';
+        _errorMessage = tr('message.chat_bot.error.network');
       } else if (e.toString().contains('timeout')) {
-        _errorMessage = 'Yêu cầu quá thời gian chờ. Vui lòng thử lại.';
+        _errorMessage = tr('message.chat_bot.error.timeout');
       } else {
-        _errorMessage = 'Đã xảy ra lỗi. Vui lòng thử lại sau.';
+        _errorMessage = tr('message.chat_bot.error.generic');
       }
     } finally {
       _isLoading = false;

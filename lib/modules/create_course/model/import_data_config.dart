@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ImportDataConfig extends Equatable {
   final String termDefinitionDelimiter;
@@ -106,11 +107,8 @@ class ParsedTerm extends Equatable {
   final String definition;
   final String language;
 
-  const ParsedTerm({
-    required this.term,
-    required this.definition,
-    this.language = 'Tiếng Việt',
-  });
+  ParsedTerm({required this.term, required this.definition, String? language})
+    : language = language ?? tr('language.vietnamese');
 
   @override
   List<Object?> get props => [term, definition, language];

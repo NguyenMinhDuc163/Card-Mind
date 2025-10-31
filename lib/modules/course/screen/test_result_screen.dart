@@ -2,6 +2,7 @@ import 'package:card_mind/core/theme/theme_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:card_mind/init.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../model/test_question.dart';
 import '../provider/test_notifier.dart';
 import '../provider/course_info_notifier.dart';
@@ -23,7 +24,7 @@ class TestResultScreen extends StatelessWidget {
               backgroundColor: context.colors.primary,
               body: Center(
                 child: Text(
-                  'Không có kết quả để hiển thị',
+                  'course_test_result.empty_state'.tr(),
                   style: TextStyle(color: context.brandColors.textSecondary),
                 ),
               ),
@@ -38,7 +39,7 @@ class TestResultScreen extends StatelessWidget {
             totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0.0;
 
         return FunctionScreenTemplate(
-          title: "Kết quả kiểm tra",
+          title: "course_test_result.title".tr(),
           backgroundColor: context.colors.primary,
           screen: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
@@ -64,7 +65,7 @@ class TestResultScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'Điểm số của bạn',
+                        'course_test_result.score_title'.tr(),
                         style: TextStyle(
                           color: context.brandColors.textSecondary,
                           fontSize: 16,
@@ -72,7 +73,12 @@ class TestResultScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        '${correctAnswers}/${totalQuestions}',
+                        'course_test_result.score_value'.tr(
+                          args: [
+                            correctAnswers.toString(),
+                            totalQuestions.toString(),
+                          ],
+                        ),
                         style: TextStyle(
                           color: context.brandColors.textPrimary,
                           fontSize: 32,
@@ -81,7 +87,9 @@ class TestResultScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        '${score.toStringAsFixed(1)}%',
+                        'course_test_result.score_percent'.tr(
+                          args: [score.toStringAsFixed(1)],
+                        ),
                         style: TextStyle(
                           color: _getScoreColor(context, score),
                           fontSize: 20,
@@ -97,7 +105,7 @@ class TestResultScreen extends StatelessWidget {
                 const SizedBox(height: 24),
 
                 Text(
-                  'Chi tiết câu trả lời',
+                  'course_test_result.answers_title'.tr(),
                   style: TextStyle(
                     color: context.brandColors.textPrimary,
                     fontSize: 18,
@@ -148,8 +156,8 @@ class TestResultScreen extends StatelessWidget {
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: const Text(
-                                    'Không có dữ liệu để tạo bài kiểm tra',
+                                  content: Text(
+                                    'course_test_result.snackbar_no_data'.tr(),
                                   ),
                                   backgroundColor:
                                       context.brandColors.buttonDestructive,
@@ -160,8 +168,8 @@ class TestResultScreen extends StatelessWidget {
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: const Text(
-                                  'Không tìm thấy thông tin khóa học',
+                                content: Text(
+                                  'course_test_result.snackbar_no_course'.tr(),
                                 ),
                                 backgroundColor:
                                     context.brandColors.buttonDestructive,
@@ -176,9 +184,9 @@ class TestResultScreen extends StatelessWidget {
                           backgroundColor: context.brandColors.buttonPrimary,
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
-                        child: const Text(
-                          'Làm lại',
-                          style: TextStyle(color: Colors.white),
+                        child: Text(
+                          'course_test_result.retake'.tr(),
+                          style: const TextStyle(color: Colors.white),
                         ),
                       ),
                     ),
@@ -193,9 +201,9 @@ class TestResultScreen extends StatelessWidget {
                           backgroundColor: context.brandColors.progressValue,
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
-                        child: const Text(
-                          'Hoàn thành',
-                          style: TextStyle(color: Colors.white),
+                        child: Text(
+                          'course_test_result.complete'.tr(),
+                          style: const TextStyle(color: Colors.white),
                         ),
                       ),
                     ),
@@ -257,7 +265,9 @@ class TestResultScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Câu $questionNumber',
+                  'course_test_result.question_title'.tr(
+                    args: [questionNumber.toString()],
+                  ),
                   style: TextStyle(
                     color: context.brandColors.textPrimary,
                     fontSize: 16,
@@ -266,7 +276,9 @@ class TestResultScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Đáp án của bạn: ${answer.selectedAnswer}',
+                  'course_test_result.your_answer'.tr(
+                    args: [answer.selectedAnswer],
+                  ),
                   style: TextStyle(
                     color: context.brandColors.textSecondary,
                     fontSize: 14,
@@ -275,7 +287,9 @@ class TestResultScreen extends StatelessWidget {
                 if (!answer.isCorrect && question != null) ...[
                   const SizedBox(height: 4),
                   Text(
-                    'Đáp án đúng: ${question.correctAnswer}',
+                    'course_test_result.correct_answer'.tr(
+                      args: [question.correctAnswer],
+                    ),
                     style: TextStyle(
                       color: context.brandColors.progressValue,
                       fontSize: 14,
@@ -296,16 +310,16 @@ class TestResultScreen extends StatelessWidget {
     Color color;
 
     if (score >= 90) {
-      message = 'Xuất sắc! Bạn đã nắm vững kiến thức.';
+      message = 'course_test_result.score_message.excellent'.tr();
       color = context.brandColors.progressValue;
     } else if (score >= 70) {
-      message = 'Tốt! Hãy tiếp tục cố gắng.';
+      message = 'course_test_result.score_message.good'.tr();
       color = context.brandColors.buttonPrimary;
     } else if (score >= 50) {
-      message = 'Khá tốt! Cần ôn tập thêm.';
+      message = 'course_test_result.score_message.fair'.tr();
       color = context.brandColors.warning;
     } else {
-      message = 'Cần cố gắng hơn! Hãy ôn tập lại.';
+      message = 'course_test_result.score_message.retry'.tr();
       color = context.brandColors.buttonDestructive;
     }
 

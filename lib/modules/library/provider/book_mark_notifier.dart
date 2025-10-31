@@ -3,6 +3,7 @@ import 'package:card_mind/init.dart';
 import 'package:card_mind/core/helpers/local_storage_helper.dart';
 import 'package:card_mind/core/services/spaced_repetition_service.dart';
 import 'package:card_mind/modules/course/provider/detail_flash_card_notifier.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 
 class BookMarkNotifier extends ChangeNotifier {
@@ -46,7 +47,7 @@ class BookMarkNotifier extends ChangeNotifier {
       _errorMessage = null;
       _setupAutoRefreshTimer();
     } catch (e) {
-      _errorMessage = 'Không thể tải dữ liệu: $e';
+      _errorMessage = tr('library.common.error_loading', args: [e.toString()]);
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -62,7 +63,9 @@ class BookMarkNotifier extends ChangeNotifier {
     final refreshIntervalSeconds = service.autoRefreshInterval;
     final refreshInterval = Duration(seconds: refreshIntervalSeconds);
 
-    print('🔄 BookMark Auto-refresh enabled: every $refreshIntervalSeconds seconds');
+    print(
+      '🔄 BookMark Auto-refresh enabled: every $refreshIntervalSeconds seconds',
+    );
 
     _autoRefreshTimer = Timer.periodic(refreshInterval, (timer) {
       print('⏰ Auto-refreshing bookmark data...');
@@ -97,7 +100,8 @@ class BookMarkNotifier extends ChangeNotifier {
         if (courseData != null) {
           reviewCoursesList.add({
             'courseId': courseId,
-            'courseTitle': courseData['title'] ?? 'Không có tiêu đề',
+            'courseTitle':
+                courseData['title'] ?? tr('library.bookmark.no_title'),
             'courseDescription': courseData['description'] ?? '',
             'courseCategory': courseData['topic'] ?? '',
             'reviewCount': reviewCount,
@@ -136,7 +140,8 @@ class BookMarkNotifier extends ChangeNotifier {
           if (courseData != null) {
             unlearnedCardsList.add({
               'courseId': courseId,
-              'courseTitle': courseData['title'] ?? 'Không có tiêu đề',
+              'courseTitle':
+                  courseData['title'] ?? tr('library.bookmark.no_title'),
               'courseDescription': courseData['description'] ?? '',
               'courseCategory': courseData['topic'] ?? '',
               'unlearnedCount': unlearnedCards.length,
@@ -155,7 +160,9 @@ class BookMarkNotifier extends ChangeNotifier {
 
       _unlearnedCardsByCourse = unlearnedCardsList;
     } catch (e) {
-      throw Exception('Không thể load thẻ chưa học: $e');
+      throw Exception(
+        tr('library.bookmark.error_load_unlearned', args: [e.toString()]),
+      );
     }
   }
 
@@ -167,12 +174,16 @@ class BookMarkNotifier extends ChangeNotifier {
 
       _bookmarkedCoursesByCourse = allBookmarkedCourses;
 
-      print('📚 Loaded ${_bookmarkedCoursesByCourse.length} courses with bookmarks');
+      print(
+        '📚 Loaded ${_bookmarkedCoursesByCourse.length} courses with bookmarks',
+      );
       print('📚 Bookmarked courses data: $_bookmarkedCoursesByCourse');
 
       // Debug: Print chi tiết từng course
       for (var course in _bookmarkedCoursesByCourse) {
-        print('  - Course ${course['courseId']}: ${course['courseTitle']} (${course['bookmarkedCount']} cards)');
+        print(
+          '  - Course ${course['courseId']}: ${course['courseTitle']} (${course['bookmarkedCount']} cards)',
+        );
       }
     } catch (e) {
       print('Error loading bookmarked courses: $e');

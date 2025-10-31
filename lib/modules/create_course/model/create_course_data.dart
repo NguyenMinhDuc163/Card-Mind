@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class CreateCourseData extends Equatable {
   final String id;
@@ -84,7 +85,6 @@ class CreateCourseData extends Equatable {
     );
   }
 
-
   factory CreateCourseData.createNew() {
     final now = DateTime.now();
     return CreateCourseData(
@@ -92,7 +92,7 @@ class CreateCourseData extends Equatable {
       topic: '',
       title: '',
       description: null,
-      author: 'Me', // Default value, will be updated when saving
+      author: tr('create_course.author_default'),
       terms: [TermData.createNew()],
       createdAt: now,
       updatedAt: now,
@@ -153,7 +153,7 @@ class TermData extends Equatable {
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       term: '',
       definition: '',
-      language: 'Tiếng Việt',
+      language: tr('language.vietnamese'),
     );
   }
 }

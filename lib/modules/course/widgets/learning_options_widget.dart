@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:card_mind/core/theme/theme_extensions.dart';
 
-enum LearningMode { flashcards, review, learn, test, match, blast, gravity, delete }
+enum LearningMode {
+  flashcards,
+  review,
+  learn,
+  test,
+  match,
+  blast,
+  gravity,
+  delete,
+}
 
 class LearningOptionsWidget extends StatelessWidget {
   final Function(LearningMode)? onOptionTap;
@@ -19,34 +29,36 @@ class LearningOptionsWidget extends StatelessWidget {
       if (reviewCardsCount > 0)
         LearningOption(
           mode: LearningMode.review,
-          title: 'Ôn tập ($reviewCardsCount thẻ)',
+          title: 'course_info.mode_review'.tr(
+            args: [reviewCardsCount.toString()],
+          ),
           icon: Icons.schedule,
-          description: 'Ôn lại những thẻ cần ôn tập hôm nay',
+          description: 'course_info.mode_review_desc'.tr(),
           isHighlighted: true,
         ),
       LearningOption(
         mode: LearningMode.flashcards,
-        title: 'Thẻ ghi nhớ',
+        title: 'course_info.mode_flashcards'.tr(),
         icon: Icons.style,
-        description: 'Học từ vựng với thẻ flashcard',
+        description: 'course_info.mode_flashcards_desc'.tr(),
       ),
       LearningOption(
         mode: LearningMode.learn,
-        title: 'Sửa',
+        title: 'course_info.mode_edit'.tr(),
         icon: Icons.autorenew,
-        description: 'Học từ vựng theo phương pháp thích ứng',
+        description: 'course_info.mode_edit_desc'.tr(),
       ),
       LearningOption(
         mode: LearningMode.test,
-        title: 'Kiểm tra',
+        title: 'course_info.mode_test'.tr(),
         icon: Icons.quiz,
-        description: 'Kiểm tra kiến thức với các câu hỏi',
+        description: 'course_info.mode_test_desc'.tr(),
       ),
       LearningOption(
         mode: LearningMode.delete,
-        title: 'Xóa học phần',
+        title: 'course_info.mode_delete'.tr(),
         icon: Icons.delete_outline,
-        description: 'Xóa học phần này khỏi thư viện',
+        description: 'course_info.mode_delete_desc'.tr(),
         isDestructive: true,
       ),
     ];
@@ -57,7 +69,7 @@ class LearningOptionsWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Chế độ học tập',
+            'course_info.learning_modes'.tr(),
             style: TextStyle(
               color: context.brandColors.textPrimary,
               fontSize: 18,
@@ -81,8 +93,8 @@ class LearningOptionsWidget extends StatelessWidget {
             option.isDestructive
                 ? context.brandColors.buttonDestructive.withOpacity(0.2)
                 : option.isHighlighted
-                    ? context.brandColors.progressValue.withOpacity(0.1)
-                    : context.brandColors.cardBackground,
+                ? context.brandColors.progressValue.withOpacity(0.1)
+                : context.brandColors.cardBackground,
         borderRadius: BorderRadius.circular(12),
         border:
             option.isDestructive
@@ -91,11 +103,11 @@ class LearningOptionsWidget extends StatelessWidget {
                   width: 1,
                 )
                 : option.isHighlighted
-                    ? Border.all(
-                      color: context.brandColors.progressValue.withOpacity(0.5),
-                      width: 2,
-                    )
-                    : null,
+                ? Border.all(
+                  color: context.brandColors.progressValue.withOpacity(0.5),
+                  width: 2,
+                )
+                : null,
       ),
       child: Material(
         color: Colors.transparent,
@@ -116,8 +128,8 @@ class LearningOptionsWidget extends StatelessWidget {
                               0.2,
                             )
                             : option.isHighlighted
-                                ? context.brandColors.progressValue
-                                : context.brandColors.avatarBackground,
+                            ? context.brandColors.progressValue
+                            : context.brandColors.avatarBackground,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
@@ -126,8 +138,8 @@ class LearningOptionsWidget extends StatelessWidget {
                         option.isDestructive
                             ? context.brandColors.buttonDestructive
                             : option.isHighlighted
-                                ? Colors.white
-                                : context.brandColors.textPrimary,
+                            ? Colors.white
+                            : context.brandColors.textPrimary,
                     size: 24,
                   ),
                 ),
@@ -143,8 +155,8 @@ class LearningOptionsWidget extends StatelessWidget {
                               option.isDestructive
                                   ? context.brandColors.buttonDestructive
                                   : option.isHighlighted
-                                      ? context.brandColors.progressValue
-                                      : context.brandColors.textPrimary,
+                                  ? context.brandColors.progressValue
+                                  : context.brandColors.textPrimary,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),

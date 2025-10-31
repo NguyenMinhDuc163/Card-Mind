@@ -2,6 +2,7 @@ import 'package:card_mind/modules/create_course/services/create_course_interface
 import 'package:card_mind/modules/create_course/model/create_course_data.dart';
 import 'package:card_mind/core/helpers/local_storage_helper.dart';
 import 'package:card_mind/core/services/data_sync_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class CourseService implements ICreateCourseInterface {
   static const String _courseDataKey = 'create_course_data';
@@ -13,7 +14,9 @@ class CourseService implements ICreateCourseInterface {
       LocalStorageHelper.setValue(_courseDataKey, courseData.toJson());
 
       final allCourses = await getAllCourses();
-      final existingIndex = allCourses.indexWhere((course) => course.id == courseData.id);
+      final existingIndex = allCourses.indexWhere(
+        (course) => course.id == courseData.id,
+      );
 
       if (existingIndex >= 0) {
         allCourses[existingIndex] = courseData;
@@ -26,7 +29,9 @@ class CourseService implements ICreateCourseInterface {
         allCourses.map((course) => course.toJson()).toList(),
       );
     } catch (e) {
-      throw Exception('Không thể lưu dữ liệu khóa học: $e');
+      throw Exception(
+        tr('create_course_service.error_save_data', args: [e.toString()]),
+      );
     }
   }
 
@@ -39,7 +44,9 @@ class CourseService implements ICreateCourseInterface {
       }
       return null;
     } catch (e) {
-      throw Exception('Không thể tải dữ liệu khóa học: $e');
+      throw Exception(
+        tr('create_course_service.error_load_data', args: [e.toString()]),
+      );
     }
   }
 
@@ -48,7 +55,9 @@ class CourseService implements ICreateCourseInterface {
     try {
       LocalStorageHelper.deleteValue(_courseDataKey);
     } catch (e) {
-      throw Exception('Không thể xóa dữ liệu khóa học: $e');
+      throw Exception(
+        tr('create_course_service.error_delete_data', args: [e.toString()]),
+      );
     }
   }
 
@@ -57,18 +66,24 @@ class CourseService implements ICreateCourseInterface {
     try {
       final data = LocalStorageHelper.getValue(_coursesListKey);
       if (data != null && data is List) {
-        return data.map((courseJson) => CreateCourseData.fromJson(courseJson)).toList();
+        return data
+            .map((courseJson) => CreateCourseData.fromJson(courseJson))
+            .toList();
       }
       return [];
     } catch (e) {
-      throw Exception('Không thể tải danh sách khóa học: $e');
+      throw Exception(
+        tr('create_course_service.error_load_list', args: [e.toString()]),
+      );
     }
   }
 
   Future<void> saveCompletedCourse(CreateCourseData courseData) async {
     try {
       final allCourses = await getAllCourses();
-      final existingIndex = allCourses.indexWhere((course) => course.id == courseData.id);
+      final existingIndex = allCourses.indexWhere(
+        (course) => course.id == courseData.id,
+      );
 
       if (existingIndex >= 0) {
         allCourses[existingIndex] = courseData;
@@ -89,7 +104,9 @@ class CourseService implements ICreateCourseInterface {
         // Không throw error, data đã lưu local thành công
       });
     } catch (e) {
-      throw Exception('Không thể lưu khóa học đã hoàn thành: $e');
+      throw Exception(
+        tr('create_course_service.error_save_completed', args: [e.toString()]),
+      );
     }
   }
 }

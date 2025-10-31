@@ -2,6 +2,7 @@ import 'package:card_mind/core/theme/theme_extensions.dart';
 import 'package:card_mind/init.dart';
 import 'package:card_mind/modules/library/model/class_data.dart';
 import 'package:card_mind/modules/library/provider/class_notifier.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -26,9 +27,11 @@ class _CreateClassBottomSheetState extends State<CreateClassBottomSheet> {
 
   void _createClass() {
     if (_classNameController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Vui lòng nhập tên Chủ đề')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('library.class_create.error_name_required'.tr()),
+        ),
+      );
       return;
     }
 
@@ -36,7 +39,7 @@ class _CreateClassBottomSheetState extends State<CreateClassBottomSheet> {
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       className: _classNameController.text.trim(),
       description: _descriptionController.text.trim(),
-      instructor: 'User',
+      instructor: tr('common.user'),
       totalStudents: _selectedContentIds.length,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
@@ -48,9 +51,9 @@ class _CreateClassBottomSheetState extends State<CreateClassBottomSheet> {
     notifier.saveClass(classData);
 
     Navigator.pop(context);
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Đã tạo Chủ đề thành công!')));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('library.class_create.snackbar_created'.tr())),
+    );
   }
 
   @override
@@ -80,7 +83,7 @@ class _CreateClassBottomSheetState extends State<CreateClassBottomSheet> {
               const SizedBox(height: 24),
 
               Text(
-                'Tạo Chủ đề mới',
+                'library.class_create.title'.tr(),
                 style: AppTextStyles.textHeader3.copyWith(
                   color: context.colors.onPrimary,
                   fontWeight: FontWeight.w600,
@@ -89,7 +92,7 @@ class _CreateClassBottomSheetState extends State<CreateClassBottomSheet> {
               const SizedBox(height: 24),
 
               Text(
-                'Tên Chủ đề',
+                'library.class_create.field_name'.tr(),
                 style: AppTextStyles.textContent2.copyWith(
                   color: context.colors.onPrimary,
                   fontWeight: FontWeight.w500,
@@ -98,9 +101,11 @@ class _CreateClassBottomSheetState extends State<CreateClassBottomSheet> {
               const SizedBox(height: 8),
               TextField(
                 controller: _classNameController,
-                style: AppTextStyles.textContent2.copyWith(color: context.colors.onPrimary),
+                style: AppTextStyles.textContent2.copyWith(
+                  color: context.colors.onPrimary,
+                ),
                 decoration: InputDecoration(
-                  hintText: 'Nhập tên Chủ đề...',
+                  hintText: 'library.class_create.hint_name'.tr(),
                   hintStyle: AppTextStyles.textContent2.copyWith(
                     color: context.colors.onPrimary.withOpacity(0.6),
                   ),
@@ -116,7 +121,7 @@ class _CreateClassBottomSheetState extends State<CreateClassBottomSheet> {
               const SizedBox(height: 16),
 
               Text(
-                'Mô tả (tùy chọn)',
+                'library.class_create.field_description'.tr(),
                 style: AppTextStyles.textContent2.copyWith(
                   color: context.colors.onPrimary,
                   fontWeight: FontWeight.w500,
@@ -125,10 +130,12 @@ class _CreateClassBottomSheetState extends State<CreateClassBottomSheet> {
               const SizedBox(height: 8),
               TextField(
                 controller: _descriptionController,
-                style: AppTextStyles.textContent2.copyWith(color: context.colors.onPrimary),
+                style: AppTextStyles.textContent2.copyWith(
+                  color: context.colors.onPrimary,
+                ),
                 maxLines: 3,
                 decoration: InputDecoration(
-                  hintText: 'Nhập mô tả cho Chủ đề...',
+                  hintText: 'library.class_create.hint_description'.tr(),
                   hintStyle: AppTextStyles.textContent2.copyWith(
                     color: context.colors.onPrimary.withOpacity(0.6),
                   ),
@@ -144,7 +151,7 @@ class _CreateClassBottomSheetState extends State<CreateClassBottomSheet> {
               const SizedBox(height: 24),
 
               Text(
-                'Chọn học phần',
+                'library.class_create.section_select_courses'.tr(),
                 style: AppTextStyles.textContent2.copyWith(
                   color: context.colors.onPrimary,
                   fontWeight: FontWeight.w500,
@@ -169,7 +176,7 @@ class _CreateClassBottomSheetState extends State<CreateClassBottomSheet> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          'Chưa có học phần nào. Hãy tạo học phần trước.',
+                          'library.class_create.empty_courses'.tr(),
                           style: AppTextStyles.textContent3.copyWith(
                             color: context.colors.onPrimary.withOpacity(0.7),
                           ),
@@ -184,14 +191,18 @@ class _CreateClassBottomSheetState extends State<CreateClassBottomSheet> {
                   decoration: BoxDecoration(
                     color: context.colors.onPrimary.withOpacity(0.05),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: context.colors.onPrimary.withOpacity(0.2)),
+                    border: Border.all(
+                      color: context.colors.onPrimary.withOpacity(0.2),
+                    ),
                   ),
                   child: ListView.builder(
                     padding: AppPad.h12v8,
                     itemCount: notifier.availableContents.length,
                     itemBuilder: (context, index) {
                       final content = notifier.availableContents[index];
-                      final isSelected = _selectedContentIds.contains(content.id);
+                      final isSelected = _selectedContentIds.contains(
+                        content.id,
+                      );
 
                       return GestureDetector(
                         onTap: () {
@@ -216,18 +227,24 @@ class _CreateClassBottomSheetState extends State<CreateClassBottomSheet> {
                               color:
                                   isSelected
                                       ? context.colors.onPrimary
-                                      : context.colors.onPrimary.withOpacity(0.3),
+                                      : context.colors.onPrimary.withOpacity(
+                                        0.3,
+                                      ),
                               width: isSelected ? 2 : 1,
                             ),
                           ),
                           child: Row(
                             children: [
                               Icon(
-                                isSelected ? Icons.check_circle : Icons.radio_button_unchecked,
+                                isSelected
+                                    ? Icons.check_circle
+                                    : Icons.radio_button_unchecked,
                                 color:
                                     isSelected
                                         ? context.colors.onPrimary
-                                        : context.colors.onPrimary.withOpacity(0.5),
+                                        : context.colors.onPrimary.withOpacity(
+                                          0.5,
+                                        ),
                                 size: 20,
                               ),
                               const SizedBox(width: 12),
@@ -237,18 +254,23 @@ class _CreateClassBottomSheetState extends State<CreateClassBottomSheet> {
                                   children: [
                                     Text(
                                       content.title,
-                                      style: AppTextStyles.textContent3.copyWith(
-                                        color: context.colors.onPrimary,
-                                        fontWeight: FontWeight.w500,
-                                      ),
+                                      style: AppTextStyles.textContent3
+                                          .copyWith(
+                                            color: context.colors.onPrimary,
+                                            fontWeight: FontWeight.w500,
+                                          ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                     Text(
-                                      '${content.totalTerms} thuật ngữ',
-                                      style: AppTextStyles.textContent4.copyWith(
-                                        color: context.colors.onPrimary.withOpacity(0.7),
+                                      'library.class_create.term_count'.tr(
+                                        args: [content.totalTerms.toString()],
                                       ),
+                                      style: AppTextStyles.textContent4
+                                          .copyWith(
+                                            color: context.colors.onPrimary
+                                                .withOpacity(0.7),
+                                          ),
                                     ),
                                   ],
                                 ),
@@ -270,10 +292,12 @@ class _CreateClassBottomSheetState extends State<CreateClassBottomSheet> {
                       onPressed: () => Navigator.pop(context),
                       style: TextButton.styleFrom(
                         padding: AppPad.h16v12,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                       child: Text(
-                        'Hủy',
+                        'common.cancel'.tr(),
                         style: AppTextStyles.textContent2.copyWith(
                           color: context.colors.onPrimary.withOpacity(0.7),
                         ),
@@ -289,10 +313,12 @@ class _CreateClassBottomSheetState extends State<CreateClassBottomSheet> {
                         backgroundColor: context.colors.onPrimary,
                         foregroundColor: context.colors.primary,
                         padding: AppPad.h16v12,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                       child: Text(
-                        'Tạo Chủ đề',
+                        'library.class_create.submit'.tr(),
                         style: AppTextStyles.textContent2.copyWith(
                           color: context.colors.primary,
                           fontWeight: FontWeight.w600,

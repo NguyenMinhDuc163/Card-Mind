@@ -3,6 +3,7 @@ import 'package:card_mind/core/helpers/local_storage_helper.dart';
 import 'package:card_mind/modules/course/model/test_question.dart';
 import 'package:card_mind/data/models/flashcard.dart';
 import 'package:flutter/foundation.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'dart:math';
 
 class TestNotifier extends ChangeNotifier {
@@ -29,7 +30,9 @@ class TestNotifier extends ChangeNotifier {
   String? get courseId => _courseId;
 
   TestQuestion? get currentQuestion =>
-      _currentQuestionIndex < _questions.length ? _questions[_currentQuestionIndex] : null;
+      _currentQuestionIndex < _questions.length
+          ? _questions[_currentQuestionIndex]
+          : null;
 
   bool get isTestCompleted => _currentQuestionIndex >= _questions.length;
 
@@ -37,9 +40,13 @@ class TestNotifier extends ChangeNotifier {
 
   int get correctAnswers => _answers.where((answer) => answer.isCorrect).length;
 
-  double get score => totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0.0;
+  double get score =>
+      totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0.0;
 
-  Future<void> initializeTest({String? courseId, List<Flashcard>? flashcards}) async {
+  Future<void> initializeTest({
+    String? courseId,
+    List<Flashcard>? flashcards,
+  }) async {
     _isLoading = true;
     _errorMessage = null;
     _courseId = courseId;
@@ -51,16 +58,19 @@ class TestNotifier extends ChangeNotifier {
         await _generateTestQuestions(courseId, flashcards);
       }
     } catch (e) {
-      _errorMessage = 'Không thể tạo bài kiểm tra: $e';
+      _errorMessage = tr('course_test.error_create', args: [e.toString()]);
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
-  Future<void> _generateTestQuestions(String courseId, List<Flashcard> flashcards) async {
+  Future<void> _generateTestQuestions(
+    String courseId,
+    List<Flashcard> flashcards,
+  ) async {
     if (flashcards.isEmpty) {
-      throw Exception('Không có thẻ học để tạo bài kiểm tra');
+      throw Exception(tr('course_test.error_no_cards'));
     }
 
     _questions.clear();
@@ -72,7 +82,11 @@ class TestNotifier extends ChangeNotifier {
 
     for (int i = 0; i < questionCount; i++) {
       final flashcard = shuffledCards[i];
-      final question = _createQuestionFromFlashcard(flashcard, shuffledCards, i);
+      final question = _createQuestionFromFlashcard(
+        flashcard,
+        shuffledCards,
+        i,
+      );
       _questions.add(question);
     }
 
@@ -142,7 +156,8 @@ class TestNotifier extends ChangeNotifier {
       final resultKey = 'test_result_${result.testId}';
       await LocalStorageHelper.setValue(resultKey, result.toJson());
 
-      final existingResults = LocalStorageHelper.getValue('test_results') as List<dynamic>? ?? [];
+      final existingResults =
+          LocalStorageHelper.getValue('test_results') as List<dynamic>? ?? [];
       final List<String> updatedResults = existingResults.cast<String>();
       updatedResults.add(resultKey);
       await LocalStorageHelper.setValue('test_results', updatedResults);

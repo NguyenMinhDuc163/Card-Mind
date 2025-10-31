@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../data/models/course.dart';
 import '../../../core/theme/theme_extensions.dart';
 
@@ -25,7 +26,7 @@ class CourseInfoWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Thông tin cơ bản về ${course.title}',
+            'course_info.basic_info'.tr(args: [course.title]),
             style: TextStyle(
               color: context.brandColors.textPrimary,
               fontSize: 18,
@@ -88,7 +89,7 @@ class CourseInfoWidget extends StatelessWidget {
               ),
               const SizedBox(width: 16),
               Text(
-                '${course.totalTerms} thuật ngữ',
+                'course_info.terms'.tr(args: [course.totalTerms.toString()]),
                 style: TextStyle(
                   color: context.brandColors.textPrimary,
                   fontSize: 14,
@@ -116,7 +117,7 @@ class CourseInfoWidget extends StatelessWidget {
               ),
               const SizedBox(width: 6),
               Text(
-                'Tác giả: ${course.author}',
+                'course_info.author_label'.tr(args: [course.author]),
                 style: TextStyle(
                   color: context.brandColors.textMuted,
                   fontSize: 12,
@@ -159,7 +160,9 @@ class CourseInfoWidget extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'Có $reviewCardsCount thẻ cần ôn tập',
+                    'course_info.review_cards'.tr(
+                      args: [reviewCardsCount.toString()],
+                    ),
                     style: TextStyle(
                       color: context.brandColors.textPrimary,
                       fontSize: 14,

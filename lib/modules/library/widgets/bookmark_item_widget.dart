@@ -1,5 +1,6 @@
 import 'package:card_mind/core/theme/theme_extensions.dart';
 import 'package:card_mind/init.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class BookmarkItemWidget extends StatelessWidget {
@@ -17,7 +18,8 @@ class BookmarkItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final courseTitle =
-        courseData['courseTitle'] as String? ?? 'Không có tiêu đề';
+        courseData['courseTitle'] as String? ??
+        'library.bookmark.no_title'.tr();
     final courseDescription = courseData['courseDescription'] as String? ?? '';
     final courseCategory = courseData['courseCategory'] as String?;
     final courseTopic = courseData['courseTopic'] as String?;
@@ -28,7 +30,6 @@ class BookmarkItemWidget extends StatelessWidget {
 
     // Xác định loại card: review, bookmark, hoặc unlearned
     final isReview = reviewCount != null && reviewCount > 0;
-    final hasBookmark = bookmarkedCount != null && bookmarkedCount > 0;
 
     return GestureDetector(
       onTap: onTap,
@@ -118,10 +119,16 @@ class BookmarkItemWidget extends StatelessWidget {
                       ],
                       Text(
                         isReview
-                            ? '$reviewCount thẻ cần ôn'
+                            ? 'library.bookmark.review_badge'.tr(
+                              args: [reviewCount.toString()],
+                            )
                             : (isBookmarked
-                                ? '$bookmarkedCount thẻ đã đánh dấu'
-                                : '$unlearnedCount thẻ'),
+                                ? 'library.bookmark.bookmarked_badge'.tr(
+                                  args: [bookmarkedCount.toString()],
+                                )
+                                : 'library.bookmark.unlearned_badge'.tr(
+                                  args: [unlearnedCount.toString()],
+                                )),
                         style: AppTextStyles.textContent3.copyWith(
                           color:
                               isReview
@@ -147,7 +154,9 @@ class BookmarkItemWidget extends StatelessWidget {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  courseCategory ?? courseTopic ?? 'Không có',
+                  courseCategory ??
+                      courseTopic ??
+                      'library.bookmark.no_category'.tr(),
                   style: AppTextStyles.textContent3.copyWith(
                     color: Colors.white.withOpacity(0.7),
                   ),
@@ -180,16 +189,20 @@ class BookmarkItemWidget extends StatelessWidget {
       final difference = now.difference(date);
 
       if (difference.inDays > 0) {
-        return '${difference.inDays} ngày trước';
+        return 'common.time_ago.days'.tr(args: [difference.inDays.toString()]);
       } else if (difference.inHours > 0) {
-        return '${difference.inHours} giờ trước';
+        return 'common.time_ago.hours'.tr(
+          args: [difference.inHours.toString()],
+        );
       } else if (difference.inMinutes > 0) {
-        return '${difference.inMinutes} phút trước';
+        return 'common.time_ago.minutes'.tr(
+          args: [difference.inMinutes.toString()],
+        );
       } else {
-        return 'Vừa xong';
+        return 'common.time_ago.just_now'.tr();
       }
     } catch (e) {
-      return 'Không xác định';
+      return 'library.bookmark.time_unknown'.tr();
     }
   }
 }

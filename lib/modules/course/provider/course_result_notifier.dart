@@ -3,6 +3,7 @@ import 'package:card_mind/core/helpers/local_storage_helper.dart';
 import 'package:card_mind/modules/course/model/course_data.dart';
 import 'package:card_mind/data/models/course.dart';
 import 'package:flutter/foundation.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'detail_flash_card_notifier.dart';
 
 class CourseResultNotifier extends ChangeNotifier {
@@ -32,7 +33,8 @@ class CourseResultNotifier extends ChangeNotifier {
 
   int get unlearnedCount => _unlearnedCards.length;
 
-  double get progressPercentage => totalCards > 0 ? learnedCount / totalCards : 0.0;
+  double get progressPercentage =>
+      totalCards > 0 ? learnedCount / totalCards : 0.0;
 
   int get knownCount => learnedCount;
 
@@ -54,7 +56,7 @@ class CourseResultNotifier extends ChangeNotifier {
       }
       _errorMessage = null;
     } catch (e) {
-      _errorMessage = 'Không thể tải dữ liệu: $e';
+      _errorMessage = tr('course_result.error_loading', args: [e.toString()]);
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -63,13 +65,15 @@ class CourseResultNotifier extends ChangeNotifier {
 
   Future<void> _loadCourseFromHive(String courseId) async {
     try {
-      final courseKeys = LocalStorageHelper.getValue('course_keys') as List<dynamic>? ?? [];
+      final courseKeys =
+          LocalStorageHelper.getValue('course_keys') as List<dynamic>? ?? [];
 
       for (final key in courseKeys) {
         final courseData = LocalStorageHelper.getValue(key as String);
         if (courseData != null) {
           final Map<String, dynamic> jsonData = {};
-          final Map<dynamic, dynamic> rawData = courseData as Map<dynamic, dynamic>;
+          final Map<dynamic, dynamic> rawData =
+              courseData as Map<dynamic, dynamic>;
 
           rawData.forEach((key, value) {
             jsonData[key.toString()] = _convertValue(value);
@@ -83,7 +87,9 @@ class CourseResultNotifier extends ChangeNotifier {
         }
       }
     } catch (e) {
-      throw Exception('Không thể load khóa học: $e');
+      throw Exception(
+        tr('course_result.error_loading_course', args: [e.toString()]),
+      );
     }
   }
 
@@ -91,9 +97,12 @@ class CourseResultNotifier extends ChangeNotifier {
     try {
       _learnedCards = await DetailFlashCardNotifier.getLearnedCards(courseId);
 
-      _unlearnedCards = await DetailFlashCardNotifier.getUnlearnedCards(courseId);
+      _unlearnedCards = await DetailFlashCardNotifier.getUnlearnedCards(
+        courseId,
+      );
 
-      _learnedCardIds = _learnedCards.map((card) => card['id'] as String).toSet();
+      _learnedCardIds =
+          _learnedCards.map((card) => card['id'] as String).toSet();
     } catch (e) {
       _learnedCards = [];
       _unlearnedCards = [];
@@ -120,25 +129,25 @@ class CourseResultNotifier extends ChangeNotifier {
 
   String get congratulationMessage {
     if (progressPercentage >= 1.0) {
-      return 'Tuyệt vời! Bạn đã hoàn thành tất cả!';
+      return tr('course_result.congrats.excellent');
     } else if (progressPercentage >= 0.8) {
-      return 'Bạn đang làm rất tuyệt!';
+      return tr('course_result.congrats.great');
     } else if (progressPercentage >= 0.5) {
-      return 'Tiến bộ tốt! Hãy tiếp tục!';
+      return tr('course_result.congrats.good');
     } else {
-      return 'Hãy tiếp tục cố gắng!';
+      return tr('course_result.congrats.keep_going');
     }
   }
 
   String get descriptionMessage {
     if (progressPercentage >= 1.0) {
-      return 'Bạn đã thành thạo tất cả thuật ngữ trong khóa học này.';
+      return tr('course_result.description.excellent');
     } else if (progressPercentage >= 0.8) {
-      return 'Hãy tiếp tục tập trung vào các thuật ngữ khó.';
+      return tr('course_result.description.great');
     } else if (progressPercentage >= 0.5) {
-      return 'Bạn đang tiến bộ tốt, hãy tiếp tục luyện tập.';
+      return tr('course_result.description.good');
     } else {
-      return 'Hãy dành thêm thời gian để học các thuật ngữ còn lại.';
+      return tr('course_result.description.keep_going');
     }
   }
 

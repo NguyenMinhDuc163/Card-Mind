@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class CourseData extends Equatable {
   final String id;
@@ -131,7 +132,7 @@ class TermData extends Equatable {
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       term: '',
       definition: '',
-      language: 'Tiếng Việt',
+      language: tr('language.vietnamese'),
     );
   }
 }

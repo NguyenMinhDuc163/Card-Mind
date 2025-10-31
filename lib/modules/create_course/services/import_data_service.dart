@@ -1,10 +1,13 @@
 import 'package:card_mind/modules/create_course/model/import_data_config.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ImportDataService {
   static ParsedDataResult parseData(String rawData, ImportDataConfig config) {
     try {
       if (rawData.trim().isEmpty) {
-        return ParsedDataResult.error('Dữ liệu không được để trống');
+        return ParsedDataResult.error(
+          'create_course_import.errors.empty_data'.tr(),
+        );
       }
 
       final cardDelimiter = config.effectiveCardDelimiter;
@@ -12,20 +15,22 @@ class ImportDataService {
 
       if (cardDelimiter.isEmpty) {
         return ParsedDataResult.error(
-          'Delimiter giữa các thẻ không được để trống',
+          'create_course_import.errors.empty_card_delimiter'.tr(),
         );
       }
 
       if (termDefinitionDelimiter.isEmpty) {
         return ParsedDataResult.error(
-          'Delimiter giữa thuật ngữ và định nghĩa không được để trống',
+          'create_course_import.errors.empty_term_delimiter'.tr(),
         );
       }
 
       final cards = _splitCards(rawData, cardDelimiter);
 
       if (cards.isEmpty) {
-        return ParsedDataResult.error('Không tìm thấy dữ liệu hợp lệ');
+        return ParsedDataResult.error(
+          'create_course_import.errors.no_valid_data'.tr(),
+        );
       }
 
       final List<ParsedTerm> terms = [];
@@ -41,12 +46,16 @@ class ImportDataService {
       }
 
       if (terms.isEmpty) {
-        return ParsedDataResult.error('Không tìm thấy thuật ngữ hợp lệ nào');
+        return ParsedDataResult.error(
+          'create_course_import.errors.no_valid_terms'.tr(),
+        );
       }
 
       return ParsedDataResult.success(terms);
     } catch (e) {
-      return ParsedDataResult.error('Lỗi khi parse dữ liệu: ${e.toString()}');
+      return ParsedDataResult.error(
+        'create_course_import.errors.parse_exception'.tr(args: [e.toString()]),
+      );
     }
   }
 
@@ -86,19 +95,19 @@ class ImportDataService {
     return ParsedTerm(
       term: term,
       definition: definition,
-      language: 'Tiếng Việt',
+      language: tr('language.vietnamese'),
     );
   }
 
   static String? validateConfig(ImportDataConfig config) {
     if (config.termDefinitionDelimiter == 'custom' &&
         config.customTermDefinitionDelimiter.trim().isEmpty) {
-      return 'Vui lòng nhập delimiter tùy chỉnh cho thuật ngữ và định nghĩa';
+      return 'create_course_import.errors.config_term_required'.tr();
     }
 
     if (config.cardDelimiter == 'custom' &&
         config.customCardDelimiter.trim().isEmpty) {
-      return 'Vui lòng nhập delimiter tùy chỉnh cho các thẻ';
+      return 'create_course_import.errors.config_card_required'.tr();
     }
 
     return null;

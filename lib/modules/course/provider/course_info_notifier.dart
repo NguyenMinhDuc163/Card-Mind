@@ -7,6 +7,7 @@ import 'package:card_mind/data/models/course.dart';
 import 'package:card_mind/data/models/flashcard.dart';
 import 'package:card_mind/core/event_service.dart';
 import 'package:flutter/foundation.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class CourseInfoNotifier extends ChangeNotifier {
   CourseData? _courseData;
@@ -46,7 +47,7 @@ class CourseInfoNotifier extends ChangeNotifier {
       }
       _errorMessage = null;
     } catch (e) {
-      _errorMessage = 'Không thể tải dữ liệu: $e';
+      _errorMessage = tr('course_info.error_loading', args: [e.toString()]);
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -56,7 +57,8 @@ class CourseInfoNotifier extends ChangeNotifier {
   void _setupEventListeners() {
     _eventSubscription?.cancel();
     _eventSubscription = EventService().courseEvents.listen((event) {
-      if (event.type == CourseEventType.courseUpdated && event.courseId == _currentCourseId) {
+      if (event.type == CourseEventType.courseUpdated &&
+          event.courseId == _currentCourseId) {
         _loadCourseFromHive(_currentCourseId!);
         notifyListeners();
       }
@@ -73,7 +75,8 @@ class CourseInfoNotifier extends ChangeNotifier {
 
   Future<void> _loadReviewCardsCount(String courseId) async {
     try {
-      final cardsNeedingReview = await SpacedRepetitionService().getCardsNeedingReview(courseId);
+      final cardsNeedingReview = await SpacedRepetitionService()
+          .getCardsNeedingReview(courseId);
       _reviewCardsCount = cardsNeedingReview.length;
 
       // Log thông tin repetitions của từng card trong course
@@ -103,14 +106,15 @@ class CourseInfoNotifier extends ChangeNotifier {
       for (var reviewData in allReviewData) {
         final card = _flashcards.firstWhere(
           (c) => c.id == reviewData.cardId,
-          orElse: () => Flashcard(
-            id: reviewData.cardId,
-            frontText: 'Unknown',
-            backText: '',
-            category: '',
-            createdAt: DateTime.now(),
-            updatedAt: DateTime.now(),
-          ),
+          orElse:
+              () => Flashcard(
+                id: reviewData.cardId,
+                frontText: 'Unknown',
+                backText: '',
+                category: '',
+                createdAt: DateTime.now(),
+                updatedAt: DateTime.now(),
+              ),
         );
 
         final needsReview = reviewData.needsReview();
@@ -118,15 +122,23 @@ class CourseInfoNotifier extends ChangeNotifier {
 
         print('📝 Card: "${card.frontText}"');
         print('   - Số lần ôn tập: ${reviewData.repetitions} lần');
-        print('   - Interval hiện tại: ${reviewData.intervalDays} ${service.timeUnitVi}');
-        print('   - Lần ôn cuối: ${_formatDateTime(reviewData.lastReviewDate)}');
-        print('   - Lần ôn tiếp theo: ${_formatDateTime(reviewData.nextReviewDate)}');
+        print(
+          '   - Interval hiện tại: ${reviewData.intervalDays} ${service.timeUnitVi}',
+        );
+        print(
+          '   - Lần ôn cuối: ${_formatDateTime(reviewData.lastReviewDate)}',
+        );
+        print(
+          '   - Lần ôn tiếp theo: ${_formatDateTime(reviewData.nextReviewDate)}',
+        );
         print('   - Trạng thái: $status');
         print('   - Ease factor: ${reviewData.easeFactor.toStringAsFixed(2)}');
         print('');
       }
 
-      print('📚 Tổng số thẻ đã học: ${allReviewData.length}/${_flashcards.length}');
+      print(
+        '📚 Tổng số thẻ đã học: ${allReviewData.length}/${_flashcards.length}',
+      );
       print('📚 Số thẻ cần ôn tập: $_reviewCardsCount');
       print('📚 ============================================\n');
     } catch (e) {
@@ -147,13 +159,15 @@ class CourseInfoNotifier extends ChangeNotifier {
 
   Future<void> _loadCourseFromHive(String courseId) async {
     try {
-      final courseKeys = LocalStorageHelper.getValue('course_keys') as List<dynamic>? ?? [];
+      final courseKeys =
+          LocalStorageHelper.getValue('course_keys') as List<dynamic>? ?? [];
 
       for (final key in courseKeys) {
         final courseData = LocalStorageHelper.getValue(key as String);
         if (courseData != null) {
           final Map<String, dynamic> jsonData = {};
-          final Map<dynamic, dynamic> rawData = courseData as Map<dynamic, dynamic>;
+          final Map<dynamic, dynamic> rawData =
+              courseData as Map<dynamic, dynamic>;
 
           rawData.forEach((key, value) {
             jsonData[key.toString()] = _convertValue(value);
@@ -167,7 +181,9 @@ class CourseInfoNotifier extends ChangeNotifier {
         }
       }
     } catch (e) {
-      throw Exception('Không thể load khóa học: $e');
+      throw Exception(
+        tr('course_info.error_loading_course', args: [e.toString()]),
+      );
     }
   }
 
@@ -202,13 +218,16 @@ class CourseInfoNotifier extends ChangeNotifier {
 
   Future<bool> deleteCourse(String courseId) async {
     try {
-      final courseKeys = LocalStorageHelper.getValue('course_keys') as List<dynamic>? ?? [];
+      final courseKeys =
+          LocalStorageHelper.getValue('course_keys') as List<dynamic>? ?? [];
       String? actualCourseKey;
 
       for (final key in courseKeys) {
         final courseData = LocalStorageHelper.getValue(key as String);
         if (courseData != null) {
-          final Map<String, dynamic> jsonData = Map<String, dynamic>.from(courseData);
+          final Map<String, dynamic> jsonData = Map<String, dynamic>.from(
+            courseData,
+          );
           if (jsonData['id'] == courseId) {
             actualCourseKey = key.toString();
             break;
@@ -230,15 +249,21 @@ class CourseInfoNotifier extends ChangeNotifier {
       await LocalStorageHelper.removeValue('unlearned_cards_$courseId');
 
       final coursesWithResults =
-          LocalStorageHelper.getValue('courses_with_results') as List<dynamic>? ?? [];
+          LocalStorageHelper.getValue('courses_with_results')
+              as List<dynamic>? ??
+          [];
       final List<String> updatedResults = coursesWithResults.cast<String>();
       updatedResults.remove(courseId);
       LocalStorageHelper.setValue('courses_with_results', updatedResults);
 
       final allResults =
-          LocalStorageHelper.getValue('all_learning_results') as List<dynamic>? ?? [];
+          LocalStorageHelper.getValue('all_learning_results')
+              as List<dynamic>? ??
+          [];
       final List<String> updatedAllResults = allResults.cast<String>();
-      updatedAllResults.removeWhere((key) => key.contains('learning_result_${courseId}_'));
+      updatedAllResults.removeWhere(
+        (key) => key.contains('learning_result_${courseId}_'),
+      );
       LocalStorageHelper.setValue('all_learning_results', updatedAllResults);
 
       EventService().emitCourseEvent(

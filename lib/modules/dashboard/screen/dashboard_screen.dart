@@ -143,24 +143,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
             },
             items: [
               SalomonBottomBarItem(
-                icon: Icon(Icons.home),
-                title: Text("Trang chủ".tr()),
-                // activeIcon: SizedBox.shrink(),
+                icon: const Icon(Icons.home),
+                title: Text("dashboard.home".tr()),
               ),
               SalomonBottomBarItem(
-                icon: Icon(Icons.add),
-                title: Text("Tạo".tr()),
-                // activeIcon: SizedBox.shrink(),
+                icon: const Icon(Icons.add),
+                title: Text("dashboard.create".tr()),
               ),
               SalomonBottomBarItem(
-                icon: Icon(Icons.chat),
-                title: Text("Chat".tr()),
-                // activeIcon: SizedBox.shrink(),
+                icon: const Icon(Icons.chat),
+                title: Text("dashboard.chat".tr()),
               ),
               SalomonBottomBarItem(
-                icon: Icon(Icons.folder_copy_rounded),
-                title: Text("Thư viện".tr()),
-                // activeIcon: SizedBox.shrink(),
+                icon: const Icon(Icons.folder_copy_rounded),
+                title: Text("dashboard.library".tr()),
               ),
             ],
           ),

@@ -6,6 +6,7 @@ import 'package:card_mind/modules/course/model/course_data.dart';
 import 'package:card_mind/data/models/course.dart';
 import 'package:card_mind/data/models/flashcard.dart';
 import 'package:flutter/foundation.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 enum LearningMode {
   fullCourse, // Học tất cả thẻ trong khóa học
@@ -110,7 +111,7 @@ class DetailFlashCardNotifier extends ChangeNotifier {
       }
       _errorMessage = null;
     } catch (e) {
-      _errorMessage = 'Không thể tải dữ liệu: $e';
+      _errorMessage = tr('course_detail.error_loading', args: [e.toString()]);
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -142,20 +143,24 @@ class DetailFlashCardNotifier extends ChangeNotifier {
       final courseId = _courseData!.id;
       final bookmarkedCards = await getBookmarkedCardsByCourse(courseId);
 
-      _bookmarkedCardIds = bookmarkedCards.map((card) => card['id'] as String).toSet();
-      _bookmarkedCards = bookmarkedCards.map((cardData) {
-        return Flashcard(
-          id: cardData['id'] as String,
-          frontText: cardData['frontText'] as String,
-          backText: cardData['backText'] as String,
-          frontImage: cardData['frontImage'] as String?,
-          backImage: cardData['backImage'] as String?,
-          category: cardData['category'] as String? ?? '',
-          createdAt: DateTime.parse(cardData['createdAt'] as String),
-          updatedAt: DateTime.parse(cardData['updatedAt'] as String),
-        );
-      }).toList();
-      print('📚 Loaded ${_bookmarkedCardIds.length} bookmarked card IDs for course $courseId');
+      _bookmarkedCardIds =
+          bookmarkedCards.map((card) => card['id'] as String).toSet();
+      _bookmarkedCards =
+          bookmarkedCards.map((cardData) {
+            return Flashcard(
+              id: cardData['id'] as String,
+              frontText: cardData['frontText'] as String,
+              backText: cardData['backText'] as String,
+              frontImage: cardData['frontImage'] as String?,
+              backImage: cardData['backImage'] as String?,
+              category: cardData['category'] as String? ?? '',
+              createdAt: DateTime.parse(cardData['createdAt'] as String),
+              updatedAt: DateTime.parse(cardData['updatedAt'] as String),
+            );
+          }).toList();
+      print(
+        '📚 Loaded ${_bookmarkedCardIds.length} bookmarked card IDs for course $courseId',
+      );
     } catch (e) {
       print('Error loading bookmarked card IDs: $e');
       _bookmarkedCardIds = {};
@@ -204,7 +209,9 @@ class DetailFlashCardNotifier extends ChangeNotifier {
       // Cập nhật danh sách courses có bookmark
       await _updateBookmarkedCoursesList(courseId);
 
-      print('💾 Saved ${_bookmarkedCards.length} bookmarked cards for course $courseId');
+      print(
+        '💾 Saved ${_bookmarkedCards.length} bookmarked cards for course $courseId',
+      );
     } catch (e) {
       print('Error saving bookmarked cards: $e');
     }
@@ -219,13 +226,19 @@ class DetailFlashCardNotifier extends ChangeNotifier {
 
       if (!bookmarkedCourses.contains(courseId)) {
         bookmarkedCourses.add(courseId);
-        LocalStorageHelper.setValue('bookmarked_courses_list', bookmarkedCourses);
+        LocalStorageHelper.setValue(
+          'bookmarked_courses_list',
+          bookmarkedCourses,
+        );
       }
 
       // Nếu không còn bookmark nào, xóa khỏi list
       if (_bookmarkedCards.isEmpty) {
         bookmarkedCourses.remove(courseId);
-        LocalStorageHelper.setValue('bookmarked_courses_list', bookmarkedCourses);
+        LocalStorageHelper.setValue(
+          'bookmarked_courses_list',
+          bookmarkedCourses,
+        );
         LocalStorageHelper.deleteValue('bookmarked_cards_$courseId');
       }
     } catch (e) {
@@ -257,7 +270,9 @@ class DetailFlashCardNotifier extends ChangeNotifier {
         }
       }
     } catch (e) {
-      throw Exception('Không thể load khóa học: $e');
+      throw Exception(
+        tr('course_detail.error_loading_course', args: [e.toString()]),
+      );
     }
   }
 
@@ -305,9 +320,9 @@ class DetailFlashCardNotifier extends ChangeNotifier {
 
         case LearningMode.review:
           // Chỉ giữ thẻ cần ôn tập
-          final reviewCards = await SpacedRepetitionService().getCardsNeedingReview(courseId);
-          final reviewCardIds =
-              reviewCards.map((data) => data.cardId).toSet();
+          final reviewCards = await SpacedRepetitionService()
+              .getCardsNeedingReview(courseId);
+          final reviewCardIds = reviewCards.map((data) => data.cardId).toSet();
           _originalCards =
               _originalCards
                   .where((card) => reviewCardIds.contains(card.id))
@@ -710,7 +725,9 @@ class DetailFlashCardNotifier extends ChangeNotifier {
               as List<dynamic>? ??
           [];
 
-      print('🔍 getAllBookmarkedCourses: Found ${bookmarkedCourses.length} courses in list');
+      print(
+        '🔍 getAllBookmarkedCourses: Found ${bookmarkedCourses.length} courses in list',
+      );
       print('🔍 Courses list: $bookmarkedCourses');
 
       final List<Map<String, dynamic>> allBookmarkedCourses = [];
@@ -745,17 +762,26 @@ class DetailFlashCardNotifier extends ChangeNotifier {
               }
             }
 
-            print('🔍   Found ${cards.length} bookmarked cards for course $courseId');
+            print(
+              '🔍   Found ${cards.length} bookmarked cards for course $courseId',
+            );
 
             if (cards.isNotEmpty) {
               final courseData = {
-                'courseId': bookmarkedData['courseId']?.toString() ?? courseId.toString(),
-                'courseTitle': bookmarkedData['courseTitle']?.toString() ?? 'Không có tiêu đề',
+                'courseId':
+                    bookmarkedData['courseId']?.toString() ??
+                    courseId.toString(),
+                'courseTitle':
+                    bookmarkedData['courseTitle']?.toString() ??
+                    'Không có tiêu đề',
                 'courseTopic': bookmarkedData['courseTopic']?.toString() ?? '',
-                'courseDescription': bookmarkedData['courseDescription']?.toString() ?? '',
+                'courseDescription':
+                    bookmarkedData['courseDescription']?.toString() ?? '',
                 'bookmarkedCount': cards.length,
                 'bookmarkedCards': cards,
-                'lastUpdated': bookmarkedData['lastUpdated']?.toString() ?? DateTime.now().toIso8601String(),
+                'lastUpdated':
+                    bookmarkedData['lastUpdated']?.toString() ??
+                    DateTime.now().toIso8601String(),
               };
               allBookmarkedCourses.add(courseData);
               print('🔍   Added to result: ${courseData['courseTitle']}');
@@ -768,7 +794,9 @@ class DetailFlashCardNotifier extends ChangeNotifier {
         }
       }
 
-      print('🔍 Total bookmarked courses to return: ${allBookmarkedCourses.length}');
+      print(
+        '🔍 Total bookmarked courses to return: ${allBookmarkedCourses.length}',
+      );
       return allBookmarkedCourses;
     } catch (e) {
       print('❌ Error getting all bookmarked courses: $e');
@@ -854,7 +882,8 @@ class DetailFlashCardNotifier extends ChangeNotifier {
           _originalCards.removeAt(removedIndex);
 
           // Điều chỉnh currentCardIndex nếu cần
-          if (_currentCardIndex >= _originalCards.length && _originalCards.isNotEmpty) {
+          if (_currentCardIndex >= _originalCards.length &&
+              _originalCards.isNotEmpty) {
             _currentCardIndex = _originalCards.length - 1;
           }
 

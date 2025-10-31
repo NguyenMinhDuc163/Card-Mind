@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:card_mind/init.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:card_mind/core/theme/theme_extensions.dart';
 import '../provider/course_info_notifier.dart';
 import '../widgets/flashcard_carousel_widget.dart';
@@ -67,7 +68,8 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      notifier.errorMessage ?? 'Có lỗi xảy ra',
+                      notifier.errorMessage ??
+                          'course_info.error_occurred'.tr(),
                       style: TextStyle(
                         color: context.brandColors.textSecondary,
                       ),
@@ -76,7 +78,7 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () => _initializeData(),
-                      child: const Text('Thử lại'),
+                      child: Text('course_info.retry'.tr()),
                     ),
                   ],
                 ),
@@ -91,7 +93,7 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
               backgroundColor: context.colors.primary,
               body: Center(
                 child: Text(
-                  'Không tìm thấy khóa học',
+                  'course_info.course_not_found'.tr(),
                   style: TextStyle(color: context.brandColors.textSecondary),
                 ),
               ),
@@ -190,18 +192,18 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
         return AlertDialog(
           backgroundColor: context.brandColors.cardBackground,
           title: Text(
-            'Xóa học phần',
+            'course_info.delete_course'.tr(),
             style: TextStyle(color: context.brandColors.textPrimary),
           ),
           content: Text(
-            'Bạn có chắc chắn muốn xóa học phần này không? Hành động này không thể hoàn tác.',
+            'course_info.delete_confirm'.tr(),
             style: TextStyle(color: context.brandColors.textSecondary),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Text(
-                'Hủy',
+                'common.cancel'.tr(),
                 style: TextStyle(color: context.brandColors.textSecondary),
               ),
             ),
@@ -211,7 +213,7 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
                 await _deleteCourse(courseId);
               },
               child: Text(
-                'Xóa',
+                'common.delete'.tr(),
                 style: TextStyle(color: context.brandColors.buttonDestructive),
               ),
             ),
@@ -236,7 +238,7 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
               CircularProgressIndicator(color: context.brandColors.textPrimary),
               const SizedBox(width: 16),
               Text(
-                'Đang xóa học phần...',
+                'course_info.deleting'.tr(),
                 style: TextStyle(color: context.brandColors.textPrimary),
               ),
             ],
@@ -253,7 +255,7 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Đã xóa học phần thành công'),
+            content: Text('course_info.deleted_success'.tr()),
             backgroundColor: context.brandColors.progressValue,
           ),
         );
@@ -266,7 +268,7 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Không thể xóa học phần'),
+            content: Text('course_info.cannot_delete'.tr()),
             backgroundColor: context.brandColors.buttonDestructive,
           ),
         );
@@ -276,7 +278,7 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Lỗi: $e'),
+          content: Text('course_info.error'.tr(args: [e.toString()])),
           backgroundColor: context.brandColors.buttonDestructive,
         ),
       );

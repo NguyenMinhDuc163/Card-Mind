@@ -5,8 +5,10 @@ import 'package:card_mind/modules/library/widgets/bookmark_item_widget.dart';
 import 'package:card_mind/modules/library/widgets/data_group_widget.dart';
 import 'package:card_mind/modules/course/screen/detail_flash_card_screen.dart';
 import 'package:card_mind/modules/course/provider/detail_flash_card_notifier.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 class BookmarkScreen extends StatefulWidget {
   const BookmarkScreen({super.key, this.searchQuery = ''});
 
@@ -16,7 +18,8 @@ class BookmarkScreen extends StatefulWidget {
   State<BookmarkScreen> createState() => _BookmarkScreenState();
 }
 
-class _BookmarkScreenState extends State<BookmarkScreen> with AutomaticKeepAliveClientMixin {
+class _BookmarkScreenState extends State<BookmarkScreen>
+    with AutomaticKeepAliveClientMixin {
   bool _isInitialized = false;
 
   @override
@@ -77,7 +80,10 @@ class _BookmarkScreenState extends State<BookmarkScreen> with AutomaticKeepAlive
     notifier.searchBookmarks(widget.searchQuery);
   }
 
-  Future<void> _navigateToCourse(String courseId, {LearningMode? learningMode}) async {
+  Future<void> _navigateToCourse(
+    String courseId, {
+    LearningMode? learningMode,
+  }) async {
     if (learningMode != null) {
       // Convert enum to string
       String learningModeStr;
@@ -140,7 +146,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> with AutomaticKeepAlive
                   Icon(Icons.error, color: context.colors.onPrimary, size: 48),
                   const SizedBox(height: 16),
                   Text(
-                    notifier.errorMessage ?? 'Có lỗi xảy ra',
+                    notifier.errorMessage ??
+                        'library.common.error_generic'.tr(),
                     style: AppTextStyles.textContent2.copyWith(
                       color: context.colors.onPrimary,
                     ),
@@ -149,7 +156,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> with AutomaticKeepAlive
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () => _initializeData(),
-                    child: const Text('Thử lại'),
+                    child: Text('common.retry'.tr()),
                   ),
                 ],
               ),
@@ -169,7 +176,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> with AutomaticKeepAlive
 
                 if (notifier.coursesNeedingReview.isNotEmpty) ...[
                   DataGroupWidget(
-                    date: 'Cần ôn tập hôm nay',
+                    date: 'library.bookmark.section.review_today'.tr(),
                     items:
                         notifier.coursesNeedingReview.map((courseData) {
                           return BookmarkItemWidget(
@@ -187,7 +194,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> with AutomaticKeepAlive
 
                 if (notifier.bookmarkedCoursesByCourse.isNotEmpty) ...[
                   DataGroupWidget(
-                    date: 'Học phần đã đánh dấu',
+                    date: 'library.bookmark.section.bookmarked'.tr(),
                     items:
                         notifier.bookmarkedCoursesByCourse.map((courseData) {
                           return BookmarkItemWidget(
@@ -210,7 +217,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> with AutomaticKeepAlive
                   _buildEmptyState(context)
                 else if (notifier.unlearnedCardsByCourse.isNotEmpty)
                   DataGroupWidget(
-                    date: 'Thẻ chưa thuộc theo học phần',
+                    date: 'library.bookmark.section.unlearned_by_course'.tr(),
                     items:
                         notifier.unlearnedCardsByCourse.map((courseData) {
                           return BookmarkItemWidget(
@@ -255,7 +262,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> with AutomaticKeepAlive
               ),
               const SizedBox(width: 8),
               Text(
-                'Tổng hợp học tập',
+                'library.bookmark.header.title'.tr(),
                 style: AppTextStyles.textContent1.copyWith(
                   color: context.colors.onPrimary,
                   fontWeight: FontWeight.w600,
@@ -268,8 +275,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> with AutomaticKeepAlive
             children: [
               Expanded(
                 child: _buildStatCard(
-                  'Cần ôn tập',
-                  '${notifier.totalReviewCards}',
+                  'library.bookmark.stats.review'.tr(),
+                  notifier.totalReviewCards.toString(),
                   Icons.schedule,
                   context.brandColors.progressValue,
                 ),
@@ -277,8 +284,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> with AutomaticKeepAlive
               const SizedBox(width: 12),
               Expanded(
                 child: _buildStatCard(
-                  'Chưa thuộc',
-                  '${notifier.totalUnlearnedCards}',
+                  'library.bookmark.stats.unlearned'.tr(),
+                  notifier.totalUnlearnedCards.toString(),
                   Icons.credit_card,
                   context.colors.error,
                 ),
@@ -337,7 +344,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> with AutomaticKeepAlive
           ),
           const SizedBox(height: 16),
           Text(
-            'Tuyệt vời! Bạn đã thuộc hết tất cả thẻ',
+            'library.bookmark.empty_title'.tr(),
             style: AppTextStyles.textContent2.copyWith(
               color: context.colors.onPrimary.withOpacity(0.7),
             ),
@@ -345,7 +352,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> with AutomaticKeepAlive
           ),
           const SizedBox(height: 8),
           Text(
-            'Hãy tiếp tục học thêm các khóa học mới',
+            'library.bookmark.empty_subtitle'.tr(),
             style: AppTextStyles.textContent3.copyWith(
               color: context.colors.onPrimary.withOpacity(0.5),
             ),

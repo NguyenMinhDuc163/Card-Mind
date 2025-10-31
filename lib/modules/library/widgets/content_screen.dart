@@ -3,6 +3,7 @@ import 'package:card_mind/init.dart';
 import 'package:card_mind/modules/library/provider/content_notifier.dart';
 import 'package:card_mind/modules/library/widgets/content_item_widget.dart';
 import 'package:card_mind/modules/library/widgets/data_group_widget.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
@@ -81,7 +82,8 @@ class _ContentScreenState extends State<ContentScreen> {
                   Icon(Icons.error, color: context.colors.onPrimary, size: 48),
                   const SizedBox(height: 16),
                   Text(
-                    notifier.errorMessage ?? 'Có lỗi xảy ra',
+                    notifier.errorMessage ??
+                        'library.common.error_generic'.tr(),
                     style: AppTextStyles.textContent2.copyWith(
                       color: context.colors.onPrimary,
                     ),
@@ -90,7 +92,7 @@ class _ContentScreenState extends State<ContentScreen> {
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () => _initializeData(),
-                    child: const Text('Thử lại'),
+                    child: Text('common.retry'.tr()),
                   ),
                 ],
               ),
@@ -117,7 +119,7 @@ class _ContentScreenState extends State<ContentScreen> {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          'Chưa có nội dung nào',
+                          'library.content.empty_title'.tr(),
                           style: AppTextStyles.textContent2.copyWith(
                             color: context.colors.onPrimary.withOpacity(0.7),
                           ),
@@ -127,13 +129,17 @@ class _ContentScreenState extends State<ContentScreen> {
                   )
                 else
                   DataGroupWidget(
-                    date: 'Tất cả nội dung',
+                    date: 'library.content.group_all'.tr(),
                     items:
                         notifier.contents.map((content) {
                           return ContentItemWidget(
                             title: content.title,
-                            details:
-                                '${content.totalTerms} thuật ngữ • Tác giả: ${content.author}',
+                            details: 'library.content.item_details'.tr(
+                              args: [
+                                content.totalTerms.toString(),
+                                content.author,
+                              ],
+                            ),
                             tabType: widget.tabType,
                             contentData: content,
                           );

@@ -8,6 +8,7 @@ import 'package:card_mind/core/helpers/local_storage_helper.dart';
 import 'package:card_mind/core/event_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class EditCourseScreen extends StatefulWidget {
   const EditCourseScreen({super.key});
@@ -60,7 +61,8 @@ class _EditCourseScreenState extends State<EditCourseScreen> {
     _topicController.text = courseData.topic;
     _titleController.text = courseData.title;
     _descriptionController.text = courseData.description ?? '';
-    _showDescription = courseData.description != null && courseData.description!.isNotEmpty;
+    _showDescription =
+        courseData.description != null && courseData.description!.isNotEmpty;
   }
 
   @override
@@ -79,7 +81,9 @@ class _EditCourseScreenState extends State<EditCourseScreen> {
           return FunctionScreenTemplate(
             isShowAppBar: false,
             backgroundColor: context.colors.primary,
-            screen: const Center(child: CircularProgressIndicator(color: Colors.white)),
+            screen: const Center(
+              child: CircularProgressIndicator(color: Colors.white),
+            ),
           );
         }
 
@@ -94,12 +98,18 @@ class _EditCourseScreenState extends State<EditCourseScreen> {
                   Icon(Icons.error, color: context.colors.onPrimary, size: 48),
                   const SizedBox(height: 16),
                   Text(
-                    notifier.errorMessage ?? 'Không thể tải dữ liệu khóa học',
-                    style: AppTextStyles.textContent2.copyWith(color: context.colors.onPrimary),
+                    notifier.errorMessage ??
+                        'course_edit.error_loading_course'.tr(),
+                    style: AppTextStyles.textContent2.copyWith(
+                      color: context.colors.onPrimary,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
-                  ElevatedButton(onPressed: () => _initializeData(), child: const Text('Thử lại')),
+                  ElevatedButton(
+                    onPressed: () => _initializeData(),
+                    child: Text('course_info.retry'.tr()),
+                  ),
                 ],
               ),
             ),
@@ -138,7 +148,11 @@ class _EditCourseScreenState extends State<EditCourseScreen> {
                     onPressed: () => _addNewTerm(),
                     backgroundColor: Colors.blue,
                     shape: const CircleBorder(),
-                    child: Icon(Icons.add, color: context.colors.onPrimary, size: 28),
+                    child: Icon(
+                      Icons.add,
+                      color: context.colors.onPrimary,
+                      size: 28,
+                    ),
                   ),
                 ),
               ),
@@ -162,7 +176,10 @@ class _EditCourseScreenState extends State<EditCourseScreen> {
       _originalCourseData = _originalCourseData!.copyWith(
         topic: _topicController.text,
         title: _titleController.text,
-        description: _descriptionController.text.isNotEmpty ? _descriptionController.text : null,
+        description:
+            _descriptionController.text.isNotEmpty
+                ? _descriptionController.text
+                : null,
         updatedAt: DateTime.now(),
       );
     });
@@ -172,13 +189,16 @@ class _EditCourseScreenState extends State<EditCourseScreen> {
     if (_originalCourseData == null) return;
 
     try {
-      final courseKeys = LocalStorageHelper.getValue('course_keys') as List<dynamic>? ?? [];
+      final courseKeys =
+          LocalStorageHelper.getValue('course_keys') as List<dynamic>? ?? [];
       String? actualCourseKey;
 
       for (final key in courseKeys) {
         final courseData = LocalStorageHelper.getValue(key as String);
         if (courseData != null) {
-          final Map<String, dynamic> jsonData = Map<String, dynamic>.from(courseData);
+          final Map<String, dynamic> jsonData = Map<String, dynamic>.from(
+            courseData,
+          );
           if (jsonData['id'] == _courseId) {
             actualCourseKey = key.toString();
             break;
@@ -187,27 +207,36 @@ class _EditCourseScreenState extends State<EditCourseScreen> {
       }
 
       if (actualCourseKey != null) {
-        await LocalStorageHelper.setValue(actualCourseKey, _originalCourseData!.toJson());
+        await LocalStorageHelper.setValue(
+          actualCourseKey,
+          _originalCourseData!.toJson(),
+        );
 
         EventService().emitCourseEvent(
-          CourseEvent(type: CourseEventType.courseUpdated, courseId: _courseId!),
+          CourseEvent(
+            type: CourseEventType.courseUpdated,
+            courseId: _courseId!,
+          ),
         );
 
         if (mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text('Đã cập nhật khóa học!')));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('course_edit.update_success'.tr())),
+          );
 
           Navigator.of(context).pop();
         }
       } else {
-        throw Exception('Không tìm thấy khóa học để cập nhật');
+        throw Exception(tr('course_edit.update_not_found'));
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Lỗi: $e'), backgroundColor: Colors.red));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('course_edit.error_generic'.tr(args: [e.toString()])),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     }
   }
@@ -218,10 +247,14 @@ class _EditCourseScreenState extends State<EditCourseScreen> {
       children: [
         GestureDetector(
           onTap: () => Navigator.pop(context),
-          child: Icon(Icons.arrow_back, color: context.colors.onPrimary, size: 24),
+          child: Icon(
+            Icons.arrow_back,
+            color: context.colors.onPrimary,
+            size: 24,
+          ),
         ),
         Text(
-          'Sửa khóa học',
+          'course_edit.title'.tr(),
           style: AppTextStyles.textContent1.copyWith(
             color: context.colors.onPrimary,
             fontWeight: FontWeight.w600,
@@ -231,7 +264,11 @@ class _EditCourseScreenState extends State<EditCourseScreen> {
           children: [
             GestureDetector(
               onTap: () {},
-              child: Icon(Icons.settings, color: context.colors.onPrimary, size: 24),
+              child: Icon(
+                Icons.settings,
+                color: context.colors.onPrimary,
+                size: 24,
+              ),
             ),
             const SizedBox(width: 16),
             GestureDetector(
@@ -258,9 +295,11 @@ class _EditCourseScreenState extends State<EditCourseScreen> {
         TextField(
           controller: _topicController,
           onChanged: (value) => _updateCourseInfo(),
-          style: AppTextStyles.textContent2.copyWith(color: context.colors.onPrimary),
+          style: AppTextStyles.textContent2.copyWith(
+            color: context.colors.onPrimary,
+          ),
           decoration: InputDecoration(
-            hintText: 'Chủ đề, chương, đơn vị',
+            hintText: 'course_edit.topic_hint'.tr(),
             hintStyle: AppTextStyles.textContent2.copyWith(
               color: context.colors.onPrimary.withOpacity(0.6),
             ),
@@ -278,7 +317,7 @@ class _EditCourseScreenState extends State<EditCourseScreen> {
         const SizedBox(height: 24),
 
         Text(
-          'TIÊU ĐỀ',
+          'course_edit.title_label'.tr(),
           style: AppTextStyles.textContent3.copyWith(
             color: context.colors.onPrimary,
             fontWeight: FontWeight.w600,
@@ -308,7 +347,7 @@ class _EditCourseScreenState extends State<EditCourseScreen> {
         if (_showDescription) ...[
           const SizedBox(height: 24),
           Text(
-            'MÔ TẢ',
+            'course_edit.description_label'.tr(),
             style: AppTextStyles.textContent3.copyWith(
               color: context.colors.onPrimary,
               fontWeight: FontWeight.w600,
@@ -319,20 +358,31 @@ class _EditCourseScreenState extends State<EditCourseScreen> {
           TextField(
             controller: _descriptionController,
             onChanged: (value) => _updateCourseInfo(),
-            style: AppTextStyles.textContent2.copyWith(color: context.colors.onPrimary),
+            style: AppTextStyles.textContent2.copyWith(
+              color: context.colors.onPrimary,
+            ),
             decoration: InputDecoration(
-              hintText: 'Nhập mô tả cho khóa học...',
+              hintText: 'course_edit.description_hint'.tr(),
               hintStyle: AppTextStyles.textContent2.copyWith(
                 color: context.colors.onPrimary.withOpacity(0.6),
               ),
               border: UnderlineInputBorder(
-                borderSide: BorderSide(color: context.colors.onPrimary, width: 1),
+                borderSide: BorderSide(
+                  color: context.colors.onPrimary,
+                  width: 1,
+                ),
               ),
               enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: context.colors.onPrimary, width: 1),
+                borderSide: BorderSide(
+                  color: context.colors.onPrimary,
+                  width: 1,
+                ),
               ),
               focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: context.colors.onPrimary, width: 2),
+                borderSide: BorderSide(
+                  color: context.colors.onPrimary,
+                  width: 2,
+                ),
               ),
             ),
             maxLines: 3,
@@ -350,11 +400,17 @@ class _EditCourseScreenState extends State<EditCourseScreen> {
             onTap: () {},
             child: Row(
               children: [
-                Icon(Icons.document_scanner, color: context.colors.onPrimary, size: 20),
+                Icon(
+                  Icons.document_scanner,
+                  color: context.colors.onPrimary,
+                  size: 20,
+                ),
                 const SizedBox(width: 8),
                 Text(
-                  'Quét tài liệu',
-                  style: AppTextStyles.textContent2.copyWith(color: context.colors.onPrimary),
+                  'course_edit.scan_document'.tr(),
+                  style: AppTextStyles.textContent2.copyWith(
+                    color: context.colors.onPrimary,
+                  ),
                 ),
               ],
             ),
@@ -362,7 +418,10 @@ class _EditCourseScreenState extends State<EditCourseScreen> {
         ),
         Container(
           padding: AppPad.h12v8,
-          decoration: BoxDecoration(color: Colors.amber, borderRadius: BorderRadius.circular(6)),
+          decoration: BoxDecoration(
+            color: Colors.amber,
+            borderRadius: BorderRadius.circular(6),
+          ),
           child: Icon(Icons.lock, color: context.colors.onPrimary, size: 16),
         ),
         const SizedBox(width: 16),
@@ -374,7 +433,7 @@ class _EditCourseScreenState extends State<EditCourseScreen> {
               });
             },
             child: Text(
-              '+ Mô tả',
+              'course_edit.add_description'.tr(),
               style: AppTextStyles.textContent2.copyWith(
                 color: context.colors.onPrimary,
                 fontWeight: FontWeight.w500,
@@ -408,20 +467,28 @@ class _EditCourseScreenState extends State<EditCourseScreen> {
       background: Container(
         alignment: Alignment.centerLeft,
         padding: AppPad.h16,
-        decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(12)),
+        decoration: BoxDecoration(
+          color: Colors.red,
+          borderRadius: BorderRadius.circular(12),
+        ),
         child: Icon(Icons.delete, color: context.colors.onPrimary, size: 24),
       ),
       secondaryBackground: Container(
         alignment: Alignment.centerRight,
         padding: AppPad.h16,
-        decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(12)),
+        decoration: BoxDecoration(
+          color: Colors.red,
+          borderRadius: BorderRadius.circular(12),
+        ),
         child: Icon(Icons.delete, color: context.colors.onPrimary, size: 24),
       ),
       onDismissed: (direction) {
         setState(() {
           final updatedTerms = List<TermData>.from(_originalCourseData!.terms);
           updatedTerms.removeAt(index);
-          _originalCourseData = _originalCourseData!.copyWith(terms: updatedTerms);
+          _originalCourseData = _originalCourseData!.copyWith(
+            terms: updatedTerms,
+          );
         });
       },
       child: Container(
@@ -430,13 +497,16 @@ class _EditCourseScreenState extends State<EditCourseScreen> {
         decoration: BoxDecoration(
           color: context.colors.primary.withOpacity(0.8),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: context.colors.onPrimary.withOpacity(0.2), width: 1),
+          border: Border.all(
+            color: context.colors.onPrimary.withOpacity(0.2),
+            width: 1,
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'THUẬT NGỮ',
+              'course_edit.term_label'.tr(),
               style: AppTextStyles.textContent3.copyWith(
                 color: context.colors.onPrimary,
                 fontWeight: FontWeight.w600,
@@ -449,28 +519,43 @@ class _EditCourseScreenState extends State<EditCourseScreen> {
               onChanged: (value) {
                 final updatedTerm = term.copyWith(term: value);
                 setState(() {
-                  final updatedTerms = List<TermData>.from(_originalCourseData!.terms);
+                  final updatedTerms = List<TermData>.from(
+                    _originalCourseData!.terms,
+                  );
                   updatedTerms[index] = updatedTerm;
-                  _originalCourseData = _originalCourseData!.copyWith(terms: updatedTerms);
+                  _originalCourseData = _originalCourseData!.copyWith(
+                    terms: updatedTerms,
+                  );
                 });
               },
-              style: AppTextStyles.textContent2.copyWith(color: context.colors.onPrimary),
+              style: AppTextStyles.textContent2.copyWith(
+                color: context.colors.onPrimary,
+              ),
               decoration: InputDecoration(
                 border: UnderlineInputBorder(
-                  borderSide: BorderSide(color: context.colors.onPrimary, width: 1),
+                  borderSide: BorderSide(
+                    color: context.colors.onPrimary,
+                    width: 1,
+                  ),
                 ),
                 enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: context.colors.onPrimary, width: 1),
+                  borderSide: BorderSide(
+                    color: context.colors.onPrimary,
+                    width: 1,
+                  ),
                 ),
                 focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: context.colors.onPrimary, width: 2),
+                  borderSide: BorderSide(
+                    color: context.colors.onPrimary,
+                    width: 2,
+                  ),
                 ),
               ),
             ),
             const SizedBox(height: 16),
 
             Text(
-              'ĐỊNH NGHĨA',
+              'course_edit.definition_label'.tr(),
               style: AppTextStyles.textContent3.copyWith(
                 color: context.colors.onPrimary,
                 fontWeight: FontWeight.w600,
@@ -483,28 +568,43 @@ class _EditCourseScreenState extends State<EditCourseScreen> {
               onChanged: (value) {
                 final updatedTerm = term.copyWith(definition: value);
                 setState(() {
-                  final updatedTerms = List<TermData>.from(_originalCourseData!.terms);
+                  final updatedTerms = List<TermData>.from(
+                    _originalCourseData!.terms,
+                  );
                   updatedTerms[index] = updatedTerm;
-                  _originalCourseData = _originalCourseData!.copyWith(terms: updatedTerms);
+                  _originalCourseData = _originalCourseData!.copyWith(
+                    terms: updatedTerms,
+                  );
                 });
               },
-              style: AppTextStyles.textContent2.copyWith(color: context.colors.onPrimary),
+              style: AppTextStyles.textContent2.copyWith(
+                color: context.colors.onPrimary,
+              ),
               decoration: InputDecoration(
                 border: UnderlineInputBorder(
-                  borderSide: BorderSide(color: context.colors.onPrimary, width: 1),
+                  borderSide: BorderSide(
+                    color: context.colors.onPrimary,
+                    width: 1,
+                  ),
                 ),
                 enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: context.colors.onPrimary, width: 1),
+                  borderSide: BorderSide(
+                    color: context.colors.onPrimary,
+                    width: 1,
+                  ),
                 ),
                 focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: context.colors.onPrimary, width: 2),
+                  borderSide: BorderSide(
+                    color: context.colors.onPrimary,
+                    width: 2,
+                  ),
                 ),
               ),
             ),
             const SizedBox(height: 16),
 
             Text(
-              'CHỌN NGÔN NGỮ',
+              'course_edit.language_label'.tr(),
               style: AppTextStyles.textContent3.copyWith(
                 color: context.colors.onPrimary,
                 fontWeight: FontWeight.w600,
@@ -519,14 +619,18 @@ class _EditCourseScreenState extends State<EditCourseScreen> {
               child: Container(
                 padding: AppPad.v12,
                 decoration: BoxDecoration(
-                  border: Border(bottom: BorderSide(color: Colors.blue, width: 1)),
+                  border: Border(
+                    bottom: BorderSide(color: Colors.blue, width: 1),
+                  ),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      term.language,
-                      style: AppTextStyles.textContent2.copyWith(color: Colors.blue),
+                      _languageDisplay(term.language),
+                      style: AppTextStyles.textContent2.copyWith(
+                        color: Colors.blue,
+                      ),
                     ),
                     Icon(Icons.arrow_drop_down, color: Colors.blue, size: 20),
                   ],
@@ -540,7 +644,13 @@ class _EditCourseScreenState extends State<EditCourseScreen> {
   }
 
   void _showLanguagePicker(TermData term, int index) {
-    final languages = ['Tiếng Việt', 'English', '日本語', '한국어', '中文'];
+    final languages = [
+      'language.vietnamese'.tr(),
+      'language.english'.tr(),
+      'language.japanese'.tr(),
+      'language.korean'.tr(),
+      'language.chinese'.tr(),
+    ];
 
     showModalBottomSheet(
       context: context,
@@ -556,18 +666,77 @@ class _EditCourseScreenState extends State<EditCourseScreen> {
                       onTap: () {
                         final updatedTerm = term.copyWith(language: language);
                         setState(() {
-                          final updatedTerms = List<TermData>.from(_originalCourseData!.terms);
+                          final updatedTerms = List<TermData>.from(
+                            _originalCourseData!.terms,
+                          );
                           updatedTerms[index] = updatedTerm;
-                          _originalCourseData = _originalCourseData!.copyWith(terms: updatedTerms);
+                          _originalCourseData = _originalCourseData!.copyWith(
+                            terms: updatedTerms,
+                          );
                         });
                         Navigator.pop(context);
                       },
-                      trailing: term.language == language ? const Icon(Icons.check) : null,
+                      trailing:
+                          _normalizeLanguage(term.language) ==
+                                  _normalizeLanguage(language)
+                              ? const Icon(Icons.check)
+                              : null,
                     );
                   }).toList(),
             ),
           ),
     );
+  }
+
+  String _languageDisplay(String language) {
+    switch (language) {
+      case 'Tiếng Việt':
+      case 'vi':
+      case 'Vietnamese':
+      case 'language.vietnamese':
+        return 'language.vietnamese'.tr();
+      case 'English':
+      case 'en':
+      case 'Tiếng Anh':
+        return 'language.english'.tr();
+      case '日本語':
+      case 'ja':
+      case 'Tiếng Nhật':
+        return 'language.japanese'.tr();
+      case '한국어':
+      case 'ko':
+      case 'Tiếng Hàn':
+        return 'language.korean'.tr();
+      case '中文':
+      case 'zh':
+      case 'Tiếng Trung':
+        return 'language.chinese'.tr();
+      default:
+        return language;
+    }
+  }
+
+  String _normalizeLanguage(String language) {
+    switch (language) {
+      case 'Tiếng Việt':
+      case 'Vietnamese':
+      case 'language.vietnamese':
+        return 'vi';
+      case 'English':
+      case 'Tiếng Anh':
+        return 'en';
+      case '日本語':
+      case 'Tiếng Nhật':
+        return 'ja';
+      case '한국어':
+      case 'Tiếng Hàn':
+        return 'ko';
+      case '中文':
+      case 'Tiếng Trung':
+        return 'zh';
+      default:
+        return language;
+    }
   }
 
   bool _isDataValid() {

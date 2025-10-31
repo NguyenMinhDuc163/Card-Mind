@@ -4,6 +4,7 @@ import 'package:card_mind/modules/library/provider/class_notifier.dart';
 import 'package:card_mind/modules/library/widgets/class_item_widget.dart';
 import 'package:card_mind/modules/library/widgets/create_class_bottom_sheet.dart';
 import 'package:card_mind/modules/library/widgets/data_group_widget.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -71,7 +72,9 @@ class _ClassScreenState extends State<ClassScreen> {
         if (!_isInitialized || notifier.isLoading) {
           return FunctionScreenTemplate(
             backgroundColor: context.colors.primary,
-            screen: const Center(child: CircularProgressIndicator(color: Colors.white)),
+            screen: const Center(
+              child: CircularProgressIndicator(color: Colors.white),
+            ),
           );
         }
 
@@ -85,12 +88,18 @@ class _ClassScreenState extends State<ClassScreen> {
                   Icon(Icons.error, color: context.colors.onPrimary, size: 48),
                   const SizedBox(height: 16),
                   Text(
-                    notifier.errorMessage ?? 'Có lỗi xảy ra',
-                    style: AppTextStyles.textContent2.copyWith(color: context.colors.onPrimary),
+                    notifier.errorMessage ??
+                        'library.common.error_generic'.tr(),
+                    style: AppTextStyles.textContent2.copyWith(
+                      color: context.colors.onPrimary,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
-                  ElevatedButton(onPressed: () => _initializeData(), child: const Text('Thử lại')),
+                  ElevatedButton(
+                    onPressed: () => _initializeData(),
+                    child: Text('common.retry'.tr()),
+                  ),
                 ],
               ),
             ),
@@ -118,16 +127,20 @@ class _ClassScreenState extends State<ClassScreen> {
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              'Chưa có Chủ đề nào',
+                              'library.class_screen.empty_title'.tr(),
                               style: AppTextStyles.textContent2.copyWith(
-                                color: context.colors.onPrimary.withOpacity(0.7),
+                                color: context.colors.onPrimary.withOpacity(
+                                  0.7,
+                                ),
                               ),
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              'Tạo Chủ đề đầu tiên của bạn',
+                              'library.class_screen.empty_subtitle'.tr(),
                               style: AppTextStyles.textContent3.copyWith(
-                                color: context.colors.onPrimary.withOpacity(0.5),
+                                color: context.colors.onPrimary.withOpacity(
+                                  0.5,
+                                ),
                               ),
                             ),
                           ],
@@ -135,7 +148,7 @@ class _ClassScreenState extends State<ClassScreen> {
                       )
                     else
                       DataGroupWidget(
-                        date: 'Chủ đề của tôi',
+                        date: 'library.class_screen.group_mine'.tr(),
                         items:
                             notifier.classes.reversed.map((classData) {
                               return ClassItemWidget(
@@ -176,14 +189,14 @@ class _ClassScreenState extends State<ClassScreen> {
           (context) => AlertDialog(
             backgroundColor: context.colors.primary,
             title: Text(
-              'Xóa Chủ đề',
+              'library.class_screen.delete_title'.tr(),
               style: AppTextStyles.textContent1.copyWith(
                 color: context.colors.onPrimary,
                 fontWeight: FontWeight.w600,
               ),
             ),
             content: Text(
-              'Bạn có chắc chắn muốn xóa Chủ đề này?',
+              'library.class_screen.delete_confirm'.tr(),
               style: AppTextStyles.textContent2.copyWith(
                 color: context.colors.onPrimary.withOpacity(0.8),
               ),
@@ -192,7 +205,7 @@ class _ClassScreenState extends State<ClassScreen> {
               TextButton(
                 onPressed: () => Navigator.pop(context),
                 child: Text(
-                  'Hủy',
+                  'common.cancel'.tr(),
                   style: AppTextStyles.textContent2.copyWith(
                     color: context.colors.onPrimary.withOpacity(0.7),
                   ),
@@ -200,18 +213,25 @@ class _ClassScreenState extends State<ClassScreen> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  final notifier = Provider.of<ClassNotifier>(context, listen: false);
+                  final notifier = Provider.of<ClassNotifier>(
+                    context,
+                    listen: false,
+                  );
                   notifier.deleteClass(classId);
                   Navigator.pop(context);
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(const SnackBar(content: Text('Đã xóa Chủ đề')));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'library.class_screen.snackbar_deleted'.tr(),
+                      ),
+                    ),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                   foregroundColor: Colors.white,
                 ),
-                child: const Text('Xóa'),
+                child: Text('common.delete'.tr()),
               ),
             ],
           ),

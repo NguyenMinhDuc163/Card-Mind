@@ -1,6 +1,7 @@
 import 'package:card_mind/modules/library/services/topic_interface.dart';
 import 'package:card_mind/modules/library/model/topic_data.dart';
 import 'package:card_mind/core/helpers/local_storage_helper.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class TopicService implements ITopicInterface {
   static const String _topicsKey = 'library_topics';
@@ -22,7 +23,9 @@ class TopicService implements ITopicInterface {
         allTopics.map((topic) => topic.toJson()).toList(),
       );
     } catch (e) {
-      throw Exception('Không thể lưu chủ đề: $e');
+      throw Exception(
+        tr('library.topic_service.error_save', args: [e.toString()]),
+      );
     }
   }
 
@@ -32,7 +35,8 @@ class TopicService implements ITopicInterface {
       final allTopics = await getAllTopics();
       return allTopics.firstWhere(
         (topic) => topic.id == topicId,
-        orElse: () => throw Exception('Không tìm thấy chủ đề'),
+        orElse:
+            () => throw Exception(tr('library.topic_service.error_not_found')),
       );
     } catch (e) {
       return null;
@@ -50,7 +54,9 @@ class TopicService implements ITopicInterface {
         allTopics.map((topic) => topic.toJson()).toList(),
       );
     } catch (e) {
-      throw Exception('Không thể xóa chủ đề: $e');
+      throw Exception(
+        tr('library.topic_service.error_delete', args: [e.toString()]),
+      );
     }
   }
 
@@ -63,7 +69,9 @@ class TopicService implements ITopicInterface {
       }
       return [];
     } catch (e) {
-      throw Exception('Không thể tải danh sách chủ đề: $e');
+      throw Exception(
+        tr('library.topic_service.error_load_list', args: [e.toString()]),
+      );
     }
   }
 
@@ -80,7 +88,9 @@ class TopicService implements ITopicInterface {
           )
           .toList();
     } catch (e) {
-      throw Exception('Không thể tìm kiếm chủ đề: $e');
+      throw Exception(
+        tr('library.topic_service.error_search', args: [e.toString()]),
+      );
     }
   }
 }

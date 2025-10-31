@@ -6,6 +6,7 @@ import 'package:card_mind/modules/home/provider/global_search_notifier.dart';
 import 'package:card_mind/modules/course/screen/course_info_screen.dart';
 import 'package:card_mind/modules/course/screen/detail_flash_card_screen.dart';
 import 'package:card_mind/modules/library/screen/class_detail_screen.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -40,7 +41,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
     return FunctionScreenTemplate(
       isShowAppBar: true,
       backgroundColor: context.colors.primary,
-      title: 'Tìm kiếm',
+      title: 'global_search.title'.tr(),
       screen: Column(
         children: [_buildSearchBar(), Expanded(child: _buildSearchResults())],
       ),
@@ -72,7 +73,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
                 color: context.brandColors.searchBarText,
               ),
               decoration: InputDecoration(
-                hintText: 'Tìm kiếm học phần, Chủ đề, thẻ chưa học...',
+                hintText: 'global_search.hint'.tr(),
                 hintStyle: AppTextStyles.textContent2.copyWith(
                   color: context.brandColors.searchBarText.withOpacity(0.7),
                 ),
@@ -122,7 +123,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  notifier.errorMessage ?? 'Có lỗi xảy ra',
+                  notifier.errorMessage ?? 'global_search.error_occurred'.tr(),
                   style: AppTextStyles.textContent2.copyWith(
                     color: context.brandColors.searchBarText,
                   ),
@@ -158,14 +159,14 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-            'Tìm kiếm toàn bộ nội dung',
+            'global_search.search_all'.tr(),
             style: AppTextStyles.textContent1.copyWith(
               color: context.brandColors.searchBarText.withOpacity(0.7),
             ),
           ),
           const SizedBox(height: 8),
           Text(
-            'Tìm kiếm trong học phần, Chủ đề và thẻ chưa học',
+            'global_search.search_in'.tr(),
             style: AppTextStyles.textContent3.copyWith(
               color: context.brandColors.searchBarText.withOpacity(0.5),
             ),
@@ -188,14 +189,14 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-            'Không tìm thấy kết quả',
+            'global_search.no_results'.tr(),
             style: AppTextStyles.textContent1.copyWith(
               color: context.brandColors.searchBarText.withOpacity(0.7),
             ),
           ),
           const SizedBox(height: 8),
           Text(
-            'Thử tìm kiếm với từ khóa khác',
+            'global_search.try_different'.tr(),
             style: AppTextStyles.textContent3.copyWith(
               color: context.brandColors.searchBarText.withOpacity(0.5),
             ),
@@ -306,11 +307,11 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
   String _getTypeLabel(SearchResultType type) {
     switch (type) {
       case SearchResultType.course:
-        return 'Học phần';
+        return 'global_search.type_course'.tr();
       case SearchResultType.classroom:
-        return 'Chủ đề';
+        return 'global_search.type_classroom'.tr();
       case SearchResultType.bookmark:
-        return 'Thẻ chưa học';
+        return 'global_search.type_bookmark'.tr();
     }
   }
 

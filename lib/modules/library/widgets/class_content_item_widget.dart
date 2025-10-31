@@ -2,6 +2,7 @@ import 'package:card_mind/core/theme/theme_extensions.dart';
 import 'package:card_mind/init.dart';
 import 'package:card_mind/modules/library/model/content_data.dart';
 import 'package:card_mind/modules/course/screen/course_info_screen.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class ClassContentItemWidget extends StatelessWidget {
@@ -82,7 +83,9 @@ class ClassContentItemWidget extends StatelessWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        '${content.totalTerms} thuật ngữ • ${content.author}',
+                        'library.class_content.details'.tr(
+                          args: [content.totalTerms.toString(), content.author],
+                        ),
                         style: AppTextStyles.textContent3.copyWith(
                           color: context.colors.onPrimary.withOpacity(0.7),
                         ),
@@ -103,7 +106,10 @@ class ClassContentItemWidget extends StatelessWidget {
                               : Colors.red.withOpacity(0.7),
                       size: 20,
                     ),
-                    tooltip: isPendingRemoval ? 'Hủy xóa' : 'Đánh dấu xóa',
+                    tooltip:
+                        isPendingRemoval
+                            ? 'library.class_content.tooltip_cancel'.tr()
+                            : 'library.class_content.tooltip_mark'.tr(),
                   ),
                 Icon(
                   Icons.arrow_forward_ios,

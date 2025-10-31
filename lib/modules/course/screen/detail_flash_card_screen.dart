@@ -7,6 +7,7 @@ import 'package:card_mind/core/theme/theme_extensions.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:card_mind/data/models/flashcard.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../provider/detail_flash_card_notifier.dart';
 
 class DetailFlashCardScreen extends StatefulWidget {
@@ -130,7 +131,8 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      notifier.errorMessage ?? 'Có lỗi xảy ra',
+                      notifier.errorMessage ??
+                          'course_info.error_occurred'.tr(),
                       style: TextStyle(
                         color: context.brandColors.textSecondary,
                       ),
@@ -139,7 +141,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () => _initializeData(),
-                      child: const Text('Thử lại'),
+                      child: Text('course_info.retry'.tr()),
                     ),
                   ],
                 ),
@@ -208,7 +210,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'Đang chuyển đến kết quả...',
+                        'course_detail.navigating_to_result'.tr(),
                         style: TextStyle(
                           color: context.brandColors.textSecondary,
                         ),
@@ -219,7 +221,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'Đang tải dữ liệu...',
+                        'course_detail.loading_data'.tr(),
                         style: TextStyle(
                           color: context.brandColors.textSecondary,
                         ),
@@ -232,7 +234,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'Chào mừng đến với khóa học mới!',
+                        'course_detail.welcome_title'.tr(),
                         style: TextStyle(
                           color: context.brandColors.textPrimary,
                           fontSize: 18,
@@ -242,7 +244,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Bắt đầu học ngay để xem tiến độ của bạn',
+                        'course_detail.welcome_subtitle'.tr(),
                         style: TextStyle(
                           color: context.brandColors.textSecondary,
                           fontSize: 14,
@@ -262,7 +264,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
                           ),
                         ),
                         child: Text(
-                          'Bắt đầu học',
+                          'course_detail.start_learning'.tr(),
                           style: TextStyle(
                             color: context.brandColors.textPrimary,
                           ),
@@ -546,9 +548,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
                     notifier.totalCards == 0) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: const Text(
-                        'Đã xóa hết thẻ đã đánh dấu',
-                      ),
+                      content: Text('course_detail.bookmarks_cleared'.tr()),
                       backgroundColor: context.brandColors.progressValue,
                       duration: const Duration(seconds: 1),
                     ),
@@ -596,8 +596,8 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
       notifier.revertLastCard();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Không có thẻ nào để hoàn tác'),
+        SnackBar(
+          content: Text('course_detail.no_cards_to_undo'.tr()),
           backgroundColor: Colors.orange,
         ),
       );
@@ -636,20 +636,20 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
               ),
               const SizedBox(width: 8),
               Text(
-                'Làm lại khóa học',
+                'course_detail.reset_title'.tr(),
                 style: TextStyle(color: context.brandColors.textPrimary),
               ),
             ],
           ),
           content: Text(
-            'Bạn có chắc chắn muốn làm lại khóa học này? Tất cả tiến độ học tập sẽ bị xóa và bạn sẽ bắt đầu lại từ đầu.',
+            'course_detail.reset_message'.tr(),
             style: TextStyle(color: context.brandColors.textSecondary),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Text(
-                'Hủy',
+                'common.cancel'.tr(),
                 style: TextStyle(color: context.brandColors.buttonPrimary),
               ),
             ),
@@ -659,7 +659,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
                 _resetLearningData(notifier);
               },
               child: Text(
-                'Làm lại',
+                'course_detail.reset_action'.tr(),
                 style: TextStyle(color: context.brandColors.buttonDestructive),
               ),
             ),
@@ -676,7 +676,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Đã reset khóa học! Bắt đầu học lại từ đầu.'),
+            content: Text('course_detail.reset_success'.tr()),
             backgroundColor: context.brandColors.progressValue,
           ),
         );

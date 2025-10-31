@@ -2,6 +2,7 @@ import 'package:card_mind/modules/library/services/class_interface.dart';
 import 'package:card_mind/modules/library/model/class_data.dart';
 import 'package:card_mind/core/helpers/local_storage_helper.dart';
 import 'package:card_mind/core/services/data_sync_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ClassService implements IClassInterface {
   static const String _classesKey = 'library_classes';
@@ -29,7 +30,9 @@ class ClassService implements IClassInterface {
         // Không throw error, data đã lưu local thành công
       });
     } catch (e) {
-      throw Exception('Không thể lưu Chủ đề: $e');
+      throw Exception(
+        tr('library.class_service.error_save', args: [e.toString()]),
+      );
     }
   }
 
@@ -39,7 +42,8 @@ class ClassService implements IClassInterface {
       final allClasses = await getAllClasses();
       return allClasses.firstWhere(
         (classData) => classData.id == classId,
-        orElse: () => throw Exception('Không tìm thấy Chủ đề'),
+        orElse:
+            () => throw Exception(tr('library.class_service.error_not_found')),
       );
     } catch (e) {
       return null;
@@ -57,7 +61,9 @@ class ClassService implements IClassInterface {
         allClasses.map((classData) => classData.toJson()).toList(),
       );
     } catch (e) {
-      throw Exception('Không thể xóa Chủ đề: $e');
+      throw Exception(
+        tr('library.class_service.error_delete', args: [e.toString()]),
+      );
     }
   }
 
@@ -70,7 +76,9 @@ class ClassService implements IClassInterface {
       }
       return [];
     } catch (e) {
-      throw Exception('Không thể tải danh sách Chủ đề: $e');
+      throw Exception(
+        tr('library.class_service.error_load_list', args: [e.toString()]),
+      );
     }
   }
 
@@ -93,7 +101,9 @@ class ClassService implements IClassInterface {
           )
           .toList();
     } catch (e) {
-      throw Exception('Không thể tìm kiếm Chủ đề: $e');
+      throw Exception(
+        tr('library.class_service.error_search', args: [e.toString()]),
+      );
     }
   }
 }

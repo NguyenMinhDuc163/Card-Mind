@@ -5,6 +5,7 @@ import 'package:card_mind/core/theme/app_text_styles.dart';
 import 'package:card_mind/modules/library/widgets/bookmark_screen.dart';
 import 'package:card_mind/modules/library/widgets/class_screen.dart';
 import 'package:card_mind/modules/library/widgets/content_screen.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class LibraryScreen extends StatefulWidget {
@@ -23,7 +24,11 @@ class _LibraryScreenState extends State<LibraryScreen>
   String _searchQuery = '';
   late TextEditingController _searchController;
 
-  final List<String> _tabs = ['Học phần', 'Chủ đề', 'Ôn tập'];
+  final List<String> _tabs = [
+    'library.tabs.courses',
+    'library.tabs.classes',
+    'library.tabs.bookmarks',
+  ];
 
   @override
   void initState() {
@@ -88,7 +93,7 @@ class _LibraryScreenState extends State<LibraryScreen>
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'Thư viện',
+            'library.title'.tr(),
             style: AppTextStyles.textHeader1.copyWith(
               color: context.colors.onPrimary,
             ),
@@ -118,7 +123,7 @@ class _LibraryScreenState extends State<LibraryScreen>
         children:
             _tabs.asMap().entries.map((entry) {
               int index = entry.key;
-              String tab = entry.value;
+              String tabKey = entry.value;
               bool isSelected = index == _selectedTabIndex;
 
               return Expanded(
@@ -141,7 +146,7 @@ class _LibraryScreenState extends State<LibraryScreen>
                       ),
                     ),
                     child: Text(
-                      tab,
+                      tabKey.tr(),
                       textAlign: TextAlign.center,
                       style: AppTextStyles.textContent2.copyWith(
                         color:
@@ -220,7 +225,10 @@ class _LibraryScreenState extends State<LibraryScreen>
     return TabBarView(
       controller: _tabController,
       children: [
-        ContentScreen(tabType: 'Học phần', searchQuery: _searchQuery),
+        ContentScreen(
+          tabType: 'library.tabs.courses'.tr(),
+          searchQuery: _searchQuery,
+        ),
         ClassScreen(searchQuery: _searchQuery),
         BookmarkScreen(searchQuery: _searchQuery),
       ],
@@ -230,13 +238,13 @@ class _LibraryScreenState extends State<LibraryScreen>
   String _getSearchHint() {
     switch (_selectedTabIndex) {
       case 0:
-        return 'Tìm kiếm học phần...';
+        return 'library.search_hint.courses'.tr();
       case 1:
-        return 'Tìm kiếm Chủ đề...';
+        return 'library.search_hint.classes'.tr();
       case 2:
-        return 'Tìm kiếm thẻ chưa học...';
+        return 'library.search_hint.bookmarks'.tr();
       default:
-        return 'Tìm kiếm...';
+        return 'library.search_hint.general'.tr();
     }
   }
 
