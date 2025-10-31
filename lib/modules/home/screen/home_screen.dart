@@ -6,6 +6,7 @@ import 'package:card_mind/modules/home/screen/global_search_screen.dart';
 import 'package:card_mind/modules/library/screen/class_detail_screen.dart';
 import 'package:card_mind/modules/dashboard/screen/dashboard_screen.dart';
 import 'package:card_mind/providers/auth_provider.dart';
+import 'package:card_mind/core/services/data_sync_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -125,6 +126,54 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
+          ),
+          // Sync indicator
+          Consumer<AuthProvider>(
+            builder: (context, authProvider, child) {
+              if (!authProvider.isSyncing) {
+                return const SliverToBoxAdapter(child: SizedBox.shrink());
+              }
+
+              return SliverPadding(
+                padding: AppPad.h16v8,
+                sliver: SliverToBoxAdapter(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: context.brandColors.cardBackground.withOpacity(0.9),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: context.colors.primary.withOpacity(0.3),
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              context.colors.primary,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'Đang đồng bộ dữ liệu...',
+                            style: AppTextStyles.textContent2.copyWith(
+                              color: context.brandColors.textPrimary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
           // Section: Cần ôn tập (Spaced Repetition)
           Consumer<HomeNotifier>(
@@ -853,18 +902,11 @@ class _HomeScreenState extends State<HomeScreen> {
       // Not signed in - trigger Google Sign-In
       final success = await authProvider.signInWithGoogle();
 
-      if (success && mounted) {
-        // Show success message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Đăng nhập thành công! Xin chào ${authProvider.displayName ?? authProvider.email}',
-            ),
-            backgroundColor: context.brandColors.progressValue,
-          ),
-        );
-      } else if (authProvider.errorMessage != null && mounted) {
-        // Show error message
+      // Không hiển thị toast nữa - loading indicator sẽ hiển thị trạng thái sync
+      // UI sẽ tự động cập nhật khi sync xong thông qua notifyListeners()
+
+      if (!success && authProvider.errorMessage != null && mounted) {
+        // Chỉ hiển thị lỗi nếu đăng nhập thất bại
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(authProvider.errorMessage!),
@@ -982,6 +1024,12 @@ class _HomeScreenState extends State<HomeScreen> {
             TextButton(
               onPressed: () async {
                 Navigator.of(context).pop();
+
+                // Đồng bộ dữ liệu lên Firestore TRƯỚC KHI đăng xuất
+                print('🔄 [HomeScreen] Syncing data before logout...');
+                await DataSyncService().syncAllData();
+                print('✅ [HomeScreen] Data synced successfully');
+
                 await authProvider.signOut();
 
                 if (mounted) {

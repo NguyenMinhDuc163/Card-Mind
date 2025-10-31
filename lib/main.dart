@@ -49,6 +49,9 @@ void main() async {
   // Khởi tạo sample data nếu cần
   await SampleDataService.initializeSampleData();
 
+  // KHÔNG sync ở đây nữa - để SplashScreen xử lý
+  // Lý do: Cần đợi sync xong trước khi render UI
+
   Locale defaultLocale = const Locale('en', 'US');
 
   runApp(

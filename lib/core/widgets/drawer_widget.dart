@@ -4,7 +4,7 @@ import 'package:card_mind/core/widgets/switch_botton_widget.dart';
 import 'package:card_mind/core/theme/theme_extensions.dart';
 import 'package:card_mind/core/services/data_management_service.dart';
 import 'package:card_mind/core/services/notification_service.dart';
-import 'package:card_mind/core/services/sample_data_service.dart';
+import 'package:card_mind/core/services/data_sync_service.dart';
 import 'package:card_mind/modules/settings/screen/spaced_repetition_settings_screen.dart';
 import 'package:card_mind/providers/auth_provider.dart';
 import 'package:provider/provider.dart';
@@ -104,80 +104,60 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     );
 
     // Nếu user hủy, không làm gì
-    if (confirmed != true) return;
+    if (confirmed != true || !mounted) return;
 
     // Đóng drawer trước
-    if (mounted) {
-      Navigator.pop(context);
-    }
+    Navigator.pop(context);
 
-    // Hiển thị loading
-    if (mounted) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext dialogContext) {
-          return AlertDialog(
-            backgroundColor: context.colors.surface,
-            content: Row(
-              children: [
-                CircularProgressIndicator(
-                  color: context.colors.primary,
-                ),
-                const SizedBox(width: 16),
-                Text(
-                  'Đang đăng xuất và reset dữ liệu...',
-                  style: TextStyle(color: context.colors.onSurface),
+    // Perform logout
+    await _performLogout(context, authProvider);
+  }
+
+  /// Thực hiện logout (tách riêng để tránh BuildContext issues)
+  Future<void> _performLogout(BuildContext context, AuthProvider authProvider) async {
+    try {
+      // Đồng bộ dữ liệu lên Firestore TRƯỚC KHI đăng xuất (chạy im lặng)
+      print('🔄 [Drawer] Syncing data before logout...');
+      await DataSyncService().syncAllData();
+      print('✅ [Drawer] Data synced successfully');
+
+      // Đăng xuất khỏi Google/Firebase (cũng clear local và load sample)
+      await authProvider.signOut();
+      print('✅ [Drawer] Signed out successfully');
+
+      print('✅ [Drawer] Logout completed - UI will auto-refresh via auth listeners');
+    } catch (e) {
+      print('❌ [Drawer] Logout error: $e');
+
+      // Chỉ hiển thị lỗi nếu có vấn đề
+      if (mounted && context.mounted) {
+        showDialog(
+          context: context,
+          builder: (BuildContext errorContext) {
+            return AlertDialog(
+              backgroundColor: context.colors.surface,
+              title: Row(
+                children: [
+                  Icon(Icons.error, color: Colors.red),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Lỗi',
+                    style: TextStyle(color: context.colors.onSurface),
+                  ),
+                ],
+              ),
+              content: Text(
+                'Lỗi khi đăng xuất: $e',
+                style: TextStyle(color: context.colors.onSurface),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(errorContext).pop(),
+                  child: Text('Đóng'),
                 ),
               ],
-            ),
-          );
-        },
-      );
-    }
-
-    try {
-      // 1. Đăng xuất khỏi Google/Firebase
-      await authProvider.signOut();
-
-      // 2. Tạo lại dữ liệu mẫu (xóa dữ liệu cũ và tạo mới)
-      await SampleDataService.recreateSampleData();
-
-      // Đóng loading dialog
-      if (mounted) {
-        Navigator.of(context).pop();
-      }
-
-      // Hiển thị thông báo thành công
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Đã đăng xuất và reset về dữ liệu mặc định'),
-            backgroundColor: Colors.green,
-            duration: const Duration(seconds: 3),
-          ),
-        );
-      }
-
-      // Restart app để load lại dữ liệu mới
-      if (mounted) {
-        await Future.delayed(const Duration(milliseconds: 500));
-        await DataManagementService.restartApp(context);
-      }
-    } catch (e) {
-      // Đóng loading dialog nếu có lỗi
-      if (mounted) {
-        Navigator.of(context).pop();
-      }
-
-      // Hiển thị lỗi
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Lỗi khi đăng xuất: $e'),
-            backgroundColor: Colors.red,
-            duration: const Duration(seconds: 3),
-          ),
+            );
+          },
         );
       }
     }

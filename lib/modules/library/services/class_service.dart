@@ -1,6 +1,7 @@
 import 'package:card_mind/modules/library/services/class_interface.dart';
 import 'package:card_mind/modules/library/model/class_data.dart';
 import 'package:card_mind/core/helpers/local_storage_helper.dart';
+import 'package:card_mind/core/services/data_sync_service.dart';
 
 class ClassService implements IClassInterface {
   static const String _classesKey = 'library_classes';
@@ -21,6 +22,12 @@ class ClassService implements IClassInterface {
         _classesKey,
         allClasses.map((classData) => classData.toJson()).toList(),
       );
+
+      // Đồng bộ class lên Firestore (nếu user đã đăng nhập)
+      DataSyncService().syncClass(classData).catchError((error) {
+        print('⚠️ [ClassService] Sync failed (will retry): $error');
+        // Không throw error, data đã lưu local thành công
+      });
     } catch (e) {
       throw Exception('Không thể lưu Chủ đề: $e');
     }

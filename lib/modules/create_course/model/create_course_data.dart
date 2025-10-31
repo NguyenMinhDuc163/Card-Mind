@@ -5,6 +5,7 @@ class CreateCourseData extends Equatable {
   final String topic;
   final String title;
   final String? description;
+  final String author;
   final List<TermData> terms;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -14,6 +15,7 @@ class CreateCourseData extends Equatable {
     required this.topic,
     required this.title,
     this.description,
+    required this.author,
     required this.terms,
     required this.createdAt,
     required this.updatedAt,
@@ -25,6 +27,7 @@ class CreateCourseData extends Equatable {
     topic,
     title,
     description,
+    author,
     terms,
     createdAt,
     updatedAt,
@@ -35,6 +38,7 @@ class CreateCourseData extends Equatable {
     String? topic,
     String? title,
     String? description,
+    String? author,
     List<TermData>? terms,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -44,6 +48,7 @@ class CreateCourseData extends Equatable {
       topic: topic ?? this.topic,
       title: title ?? this.title,
       description: description ?? this.description,
+      author: author ?? this.author,
       terms: terms ?? this.terms,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -56,6 +61,7 @@ class CreateCourseData extends Equatable {
       'topic': topic,
       'title': title,
       'description': description,
+      'author': author,
       'terms': terms.map((x) => x.toJson()).toList(),
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
@@ -68,6 +74,7 @@ class CreateCourseData extends Equatable {
       topic: json['topic'] as String,
       title: json['title'] as String,
       description: json['description'] as String?,
+      author: json['author'] as String? ?? 'Unknown',
       terms:
           (json['terms'] as List<dynamic>)
               .map((e) => TermData.fromJson(e as Map<String, dynamic>))
@@ -77,7 +84,7 @@ class CreateCourseData extends Equatable {
     );
   }
 
-  
+
   factory CreateCourseData.createNew() {
     final now = DateTime.now();
     return CreateCourseData(
@@ -85,6 +92,7 @@ class CreateCourseData extends Equatable {
       topic: '',
       title: '',
       description: null,
+      author: 'Me', // Default value, will be updated when saving
       terms: [TermData.createNew()],
       createdAt: now,
       updatedAt: now,

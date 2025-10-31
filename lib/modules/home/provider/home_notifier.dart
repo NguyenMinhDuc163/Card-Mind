@@ -4,6 +4,7 @@ import 'package:card_mind/core/helpers/local_storage_helper.dart';
 import 'package:card_mind/core/event_service.dart';
 import 'package:card_mind/core/services/spaced_repetition_service.dart';
 import 'package:card_mind/modules/home/model/home_data.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HomeNotifier extends ChangeNotifier {
   HomeData _homeData = const HomeData(courses: [], classes: []);
@@ -12,6 +13,7 @@ class HomeNotifier extends ChangeNotifier {
   StreamSubscription<CourseEvent>? _courseEventSubscription;
   StreamSubscription<ClassEvent>? _classEventSubscription;
   StreamSubscription<ReviewEvent>? _reviewEventSubscription;
+  StreamSubscription<User?>? _authStateSubscription;
   Timer? _autoRefreshTimer; // Timer để tự động refresh
   Map<String, int> _coursesNeedingReview = {}; // courseId -> số lượng thẻ cần ôn
 
@@ -42,6 +44,7 @@ class HomeNotifier extends ChangeNotifier {
       _setupCourseEventSubscription();
       _setupClassEventSubscription();
       _setupReviewEventSubscription();
+      _setupAuthStateSubscription();
       _setupAutoRefreshTimer();
     } catch (e) {
       _errorMessage = 'Không thể tải dữ liệu: $e';
@@ -49,6 +52,16 @@ class HomeNotifier extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  /// Lắng nghe auth state để refresh khi login/logout
+  void _setupAuthStateSubscription() {
+    _authStateSubscription?.cancel();
+    _authStateSubscription = FirebaseAuth.instance.authStateChanges().listen((user) {
+      print('🔐 Auth state changed: ${user != null ? "Logged in" : "Logged out"}');
+      // Refresh data khi auth state thay đổi (login/logout)
+      _refreshData();
+    });
   }
 
   /// Setup timer để tự động refresh data theo chu kỳ
@@ -144,7 +157,7 @@ class HomeNotifier extends ChangeNotifier {
             title: jsonData['title'] as String,
             description: jsonData['description'] as String? ?? '',
             totalTerms: (jsonData['terms'] as List<dynamic>).length,
-            author: jsonData['topic'] as String? ?? 'Unknown',
+            author: jsonData['author'] as String? ?? 'Unknown',
             reviewCardsCount: reviewCardsCount,
           );
 
@@ -336,6 +349,7 @@ class HomeNotifier extends ChangeNotifier {
     _courseEventSubscription?.cancel();
     _classEventSubscription?.cancel();
     _reviewEventSubscription?.cancel();
+    _authStateSubscription?.cancel();
     _autoRefreshTimer?.cancel();
     super.dispose();
   }

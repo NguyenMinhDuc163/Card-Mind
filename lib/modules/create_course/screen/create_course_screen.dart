@@ -6,6 +6,7 @@ import 'package:card_mind/modules/create_course/provider/create_course_notifier.
 import 'package:card_mind/modules/create_course/model/create_course_data.dart';
 import 'package:card_mind/modules/create_course/model/import_data_config.dart';
 import 'package:card_mind/modules/create_course/screen/import_data_screen.dart';
+import 'package:card_mind/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -271,7 +272,15 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
       return;
     }
 
-    await notifier.completeCourse();
+    // Lấy tên người dùng nếu đã đăng nhập
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final author = authProvider.isSignedIn
+        ? (authProvider.displayName ?? authProvider.email ?? 'Me')
+        : 'Me';
+
+    print('📝 [CreateCourseScreen] Completing course...');
+    await notifier.completeCourse(author: author);
+    print('✅ [CreateCourseScreen] Course completed, sync triggered');
 
     _topicController.clear();
     _titleController.clear();

@@ -1,6 +1,7 @@
 import 'package:card_mind/init.dart';
 import 'package:card_mind/core/helpers/local_storage_helper.dart';
 import 'package:card_mind/core/event_service.dart';
+import 'package:card_mind/core/services/data_sync_service.dart';
 import 'package:card_mind/modules/create_course/model/create_course_data.dart';
 
 class CreateCourseNotifier extends ChangeNotifier {
@@ -38,7 +39,7 @@ class CreateCourseNotifier extends ChangeNotifier {
     }
   }
 
-  Future<void> completeCourse() async {
+  Future<void> completeCourse({String? author}) async {
     try {
       // Loại bỏ các thuật ngữ trống (không có cả thuật ngữ và định nghĩa)
       final validTerms =
@@ -58,6 +59,7 @@ class CreateCourseNotifier extends ChangeNotifier {
       final now = DateTime.now();
       final newCourseData = _courseData.copyWith(
         id: now.millisecondsSinceEpoch.toString(),
+        author: author ?? _courseData.author, // Sử dụng author được truyền vào hoặc giữ nguyên
         terms: validTerms,
         createdAt: now,
         updatedAt: now,
@@ -74,6 +76,12 @@ class CreateCourseNotifier extends ChangeNotifier {
         LocalStorageHelper.setValue('course_keys', courseKeys);
         print('Added key to course_keys list');
       }
+
+      // Đồng bộ course lên Firestore (nếu user đã đăng nhập)
+      DataSyncService().syncCourse(newCourseData).catchError((error) {
+        print('⚠️ [CreateCourseNotifier] Sync failed (will retry): $error');
+        // Không throw error, data đã lưu local thành công
+      });
 
       _clearError();
 

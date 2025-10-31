@@ -1,6 +1,7 @@
 import 'package:card_mind/modules/create_course/services/create_course_interface.dart';
 import 'package:card_mind/modules/create_course/model/create_course_data.dart';
 import 'package:card_mind/core/helpers/local_storage_helper.dart';
+import 'package:card_mind/core/services/data_sync_service.dart';
 
 class CourseService implements ICreateCourseInterface {
   static const String _courseDataKey = 'create_course_data';
@@ -81,6 +82,12 @@ class CourseService implements ICreateCourseInterface {
       );
 
       await deleteCourseData();
+
+      // Đồng bộ course lên Firestore (nếu user đã đăng nhập)
+      DataSyncService().syncCourse(courseData).catchError((error) {
+        print('⚠️ [CourseService] Sync failed (will retry): $error');
+        // Không throw error, data đã lưu local thành công
+      });
     } catch (e) {
       throw Exception('Không thể lưu khóa học đã hoàn thành: $e');
     }

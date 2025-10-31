@@ -153,7 +153,7 @@ class SampleDataService {
       },
     ];
 
-    // Lưu từng course vào storage
+    // Lưu từng course vào storage (course_keys format)
     final List<String> courseKeys = [];
     for (final course in sampleCourses) {
       final courseKey = 'course_${course['id']}';
@@ -161,8 +161,11 @@ class SampleDataService {
       courseKeys.add(courseKey);
     }
 
-    // Lưu danh sách course keys
+    // Lưu danh sách course keys (CreateCourseNotifier format)
     await LocalStorageHelper.setValue('course_keys', courseKeys);
+
+    // Cũng lưu vào courses_list format (CourseService format) để backward compatibility
+    await LocalStorageHelper.setValue('courses_list', sampleCourses);
   }
 
   /// Tạo 3 Chủ đề mẫu về tiếng Anh
@@ -210,11 +213,7 @@ class SampleDataService {
 
   /// Reset sample data (chỉ dùng cho testing)
   static Future<void> resetSampleData() async {
-    await LocalStorageHelper.deleteValue(_firstLaunchKey);
-    await LocalStorageHelper.deleteValue('course_keys');
-    await LocalStorageHelper.deleteValue('library_classes');
-
-    // Xóa các course keys
+    // Xóa các course keys trước (đọc trước khi xóa danh sách)
     final courseKeys =
         LocalStorageHelper.getValue('course_keys') as List<dynamic>?;
     if (courseKeys != null) {
@@ -222,6 +221,12 @@ class SampleDataService {
         await LocalStorageHelper.deleteValue(key as String);
       }
     }
+
+    // Sau đó xóa metadata
+    await LocalStorageHelper.deleteValue(_firstLaunchKey);
+    await LocalStorageHelper.deleteValue('course_keys');
+    await LocalStorageHelper.deleteValue('courses_list');
+    await LocalStorageHelper.deleteValue('library_classes');
   }
 
   /// Force recreate sample data với format mới
@@ -234,9 +239,12 @@ class SampleDataService {
       await _createSampleCourses();
       await _createSampleClasses();
 
-      print('Sample data recreated successfully');
+      // Đánh dấu đã có dữ liệu (không phải first launch)
+      await LocalStorageHelper.setValue(_firstLaunchKey, false);
+
+      print('✅ [SampleData] Sample data recreated successfully');
     } catch (e) {
-      print('Error recreating sample data: $e');
+      print('❌ [SampleData] Error recreating sample data: $e');
     }
   }
 }

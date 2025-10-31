@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:card_mind/core/theme/theme_extensions.dart';
 import 'package:card_mind/modules/create_course/screen/create_course_screen.dart';
 import 'package:card_mind/modules/home/screen/home_screen.dart';
@@ -12,6 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:card_mind/core/widgets/drawer_widget.dart';
 import 'package:card_mind/modules/dashboard/model/tab_item.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -30,6 +32,49 @@ final List<TabItem> _tabs = [
 
 class _DashboardScreenState extends State<DashboardScreen> {
   int _currentIndex = 0;
+  StreamSubscription<User?>? _authStateSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _setupAuthStateListener();
+  }
+
+  @override
+  void dispose() {
+    _authStateSubscription?.cancel();
+    super.dispose();
+  }
+
+  /// Lắng nghe auth state để refresh tất cả tabs khi login/logout
+  void _setupAuthStateListener() {
+    _authStateSubscription = FirebaseAuth.instance.authStateChanges().listen((user) {
+      print('🔐 [Dashboard] Auth state changed: ${user != null ? "Logged in" : "Logged out"}');
+      // Refresh tất cả tabs khi auth state thay đổi
+      _refreshAllTabs();
+    });
+  }
+
+  /// Refresh tất cả tabs (Home và Library)
+  void _refreshAllTabs() {
+    try {
+      // Refresh HomeNotifier
+      final homeNotifier = Provider.of<HomeNotifier>(context, listen: false);
+      homeNotifier.initializeData();
+      print('✅ [Dashboard] Refreshed HomeNotifier');
+    } catch (e) {
+      print('❌ [Dashboard] Error refreshing HomeNotifier: $e');
+    }
+
+    try {
+      // Refresh ContentNotifier (Library)
+      final contentNotifier = Provider.of<ContentNotifier>(context, listen: false);
+      contentNotifier.initializeData();
+      print('✅ [Dashboard] Refreshed ContentNotifier');
+    } catch (e) {
+      print('❌ [Dashboard] Error refreshing ContentNotifier: $e');
+    }
+  }
 
   // Public method để switch tab từ các screen khác
   void switchToTab(int index) {
