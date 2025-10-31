@@ -203,7 +203,8 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     context,
                     icon: Icon(
                       Icons.nightlight,
-                      color: context.colors.onPrimary,
+                      color: context
+                          .colors.onPrimary,
                     ),
                     title: 'common.dark_mode'.tr(),
                     onTap: () => Navigator.pop(context),
@@ -248,7 +249,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                 Icons.schedule,
                 color: context.colors.onPrimary,
               ),
-              title: 'Cài đặt Spaced Repetition',
+              title: 'Cài đặt',
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pushNamed(
@@ -257,16 +258,16 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                 );
               },
             ),
-            _buildDrawerItem(
-              context,
-              icon: Icon(Icons.delete_forever, color: Colors.red),
-              title: 'Xóa dữ liệu'.tr(),
-              iconColor: Colors.red,
-              textStyle: AppTextStyles.textContent2.copyWith(color: Colors.red),
-              onTap: () async {
-                await DataManagementService.handleDeleteData(context);
-              },
-            ),
+            // _buildDrawerItem(
+            //   context,
+            //   icon: Icon(Icons.delete_forever, color: Colors.red),
+            //   title: 'Xóa dữ liệu'.tr(),
+            //   iconColor: Colors.red,
+            //   textStyle: AppTextStyles.textContent2.copyWith(color: Colors.red),
+            //   onTap: () async {
+            //     await DataManagementService.handleDeleteData(context);
+            //   },
+            // ),
             Consumer<AuthProvider>(
               builder: (context, authProvider, child) {
                 // Chỉ hiển thị nút đăng xuất khi đã đăng nhập
