@@ -8,6 +8,8 @@ import 'locale_service.dart';
 class LocaleCubit extends Cubit<Locale> {
   LocaleCubit() : super(LocaleService.load());
 
+  bool _isChanging = false;
+
   /// Các locale được hỗ trợ
   static const List<Locale> supportedLocales = [
     Locale('en', 'US'),
@@ -16,23 +18,43 @@ class LocaleCubit extends Cubit<Locale> {
 
   /// Chuyển đổi sang locale cụ thể
   Future<void> changeLocale(Locale locale, BuildContext context) async {
+    // Ngăn chặn multiple clicks
+    if (_isChanging) {
+      debugPrint('⚠️ Locale change already in progress, ignoring...');
+      return;
+    }
+
     if (!supportedLocales.contains(locale)) {
       debugPrint('⚠️ Locale $locale is not supported');
       return;
     }
 
-    // Emit state mới
-    emit(locale);
-
-    // Lưu vào SharedPreferences
-    await LocaleService.save(locale);
-
-    // Cập nhật EasyLocalization context (mounted check không cần thiết vì setLocale không dùng mounted widget)
-    if (context.mounted) {
-      await context.setLocale(locale);
+    // Nếu locale đã là locale hiện tại, không làm gì
+    if (state == locale) {
+      debugPrint('ℹ️ Locale is already ${locale.languageCode}_${locale.countryCode}');
+      return;
     }
 
-    debugPrint('✅ Locale changed to: ${locale.languageCode}_${locale.countryCode}');
+    _isChanging = true;
+
+    try {
+      debugPrint('🔄 Changing locale to: ${locale.languageCode}_${locale.countryCode}');
+
+      // Cập nhật EasyLocalization context TRƯỚC
+      if (context.mounted) {
+        await context.setLocale(locale);
+      }
+
+      // Lưu vào SharedPreferences
+      await LocaleService.save(locale);
+
+      // Emit state mới SAU KHI đã update context
+      emit(locale);
+
+      debugPrint('✅ Locale changed to: ${locale.languageCode}_${locale.countryCode}');
+    } finally {
+      _isChanging = false;
+    }
   }
 
   /// Toggle giữa tiếng Anh và tiếng Việt

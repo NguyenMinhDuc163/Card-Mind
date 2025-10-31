@@ -233,11 +233,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     context,
                     icon: Icon(Icons.language, color: context.colors.onPrimary),
                     title: 'common.language'.tr(),
-                    onTap: () {
-                      // Toggle ngôn ngữ khi tap vào item
-                      final localeCubit = context.read<LocaleCubit>();
-                      localeCubit.toggleLocale(context);
-                    },
+                    onTap: () {}, // Không làm gì - chỉ để hiển thị label
                   ),
                 ),
                 Padding(
