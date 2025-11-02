@@ -257,35 +257,35 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                 ),
               ],
             ),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildDrawerItem(
-                    context,
-                    icon: Icon(
-                      Icons.notifications_active,
-                      color: context.colors.onPrimary,
-                    ),
-                    title: 'drawer.review_reminder'.tr(),
-                    onTap: () => Navigator.pop(context),
-                  ),
-                ),
-                Padding(
-                  padding: AppPad.h10,
-                  child: Switch(
-                    value: _notificationsEnabled,
-                    onChanged: _toggleNotifications,
-                    activeColor: Colors.white,
-                    activeTrackColor: Colors.green,
-                    inactiveThumbColor: Colors.white,
-                    inactiveTrackColor: Colors.grey[300],
-                  ),
-                ),
-              ],
-            ),
+            // Row(
+            //   children: [
+            //     Expanded(
+            //       child: _buildDrawerItem(
+            //         context,
+            //         icon: Icon(
+            //           Icons.notifications_active,
+            //           color: context.colors.onPrimary,
+            //         ),
+            //         title: 'drawer.review_reminder'.tr(),
+            //         onTap: () => Navigator.pop(context),
+            //       ),
+            //     ),
+            //     Padding(
+            //       padding: AppPad.h10,
+            //       child: Switch(
+            //         value: _notificationsEnabled,
+            //         onChanged: _toggleNotifications,
+            //         activeColor: Colors.white,
+            //         activeTrackColor: Colors.green,
+            //         inactiveThumbColor: Colors.white,
+            //         inactiveTrackColor: Colors.grey[300],
+            //       ),
+            //     ),
+            //   ],
+            // ),
             _buildDrawerItem(
               context,
-              icon: Icon(Icons.schedule, color: context.colors.onPrimary),
+              icon: Icon(Icons.settings, color: context.colors.onPrimary),
               title: 'drawer.settings'.tr(),
               onTap: () {
                 Navigator.pop(context);

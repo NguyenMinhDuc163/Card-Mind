@@ -20,12 +20,21 @@ class DetailFlashCardScreen extends StatefulWidget {
 }
 
 class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
+  final CardSwiperController _cardController = CardSwiperController();
+  GlobalKey<FlipCardState>? _currentFlipCardKey;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initializeData();
     });
+  }
+
+  @override
+  void dispose() {
+    _cardController.dispose();
+    super.dispose();
   }
 
   Future<void> _initializeData({bool resetLearningData = false}) async {
@@ -417,6 +426,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
     }
 
     return CardSwiper(
+      controller: _cardController,
       cardsCount: notifier.currentCards.length,
       numberOfCardsDisplayed: 1,
 
@@ -430,8 +440,12 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
 
         final flashcard = notifier.currentCards[index];
         final isBookmarked = notifier.isCardBookmarked(flashcard.id);
+
+        // Tạo key mới cho card hiện tại
+        _currentFlipCardKey = GlobalKey<FlipCardState>();
+
         return FlipCard(
-          key: ValueKey(flashcard.id),
+          key: _currentFlipCardKey,
           direction: FlipDirection.HORIZONTAL,
           speed: 400,
           flipOnTouch: true,
@@ -593,6 +607,8 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
   void _revertLastCard(DetailFlashCardNotifier notifier) {
     if (notifier.learnedCards.isNotEmpty ||
         notifier.unlearnedCards.isNotEmpty) {
+      // Undo card bằng controller
+      _cardController.undo();
       notifier.revertLastCard();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -605,8 +621,10 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
   }
 
   void _autoPlayCard(DetailFlashCardNotifier notifier) {
+    // Swipe sang thẻ tiếp theo (sang phải = learned)
     if (notifier.currentCard != null) {
-      notifier.onSwipeRight(notifier.currentCard!);
+      _cardController.swipe(CardSwiperDirection.right);
+      HapticFeedback.lightImpact();
     }
   }
 
