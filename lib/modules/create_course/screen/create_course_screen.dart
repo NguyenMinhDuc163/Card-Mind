@@ -620,9 +620,6 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
     int index,
     CreateCourseNotifier notifier,
   ) {
-    final termController = TextEditingController(text: term.term);
-    final definitionController = TextEditingController(text: term.definition);
-
     return Dismissible(
       key: Key('term_${term.id}_$index'),
       direction: DismissDirection.horizontal,
@@ -678,8 +675,9 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
               ),
             ),
             const SizedBox(height: 8),
-            TextField(
-              controller: termController,
+            TextFormField(
+              key: Key('term_input_${term.id}'),
+              initialValue: term.term,
               onChanged: (value) {
                 final updatedTerm = term.copyWith(term: value);
                 notifier.updateTerm(index, updatedTerm);
@@ -720,8 +718,9 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
               ),
             ),
             const SizedBox(height: 8),
-            TextField(
-              controller: definitionController,
+            TextFormField(
+              key: Key('definition_input_${term.id}'),
+              initialValue: term.definition,
               onChanged: (value) {
                 final updatedTerm = term.copyWith(definition: value);
                 notifier.updateTerm(index, updatedTerm);

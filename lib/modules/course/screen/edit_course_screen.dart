@@ -458,9 +458,6 @@ class _EditCourseScreenState extends State<EditCourseScreen> {
   }
 
   Widget _buildTermItem(TermData term, int index) {
-    final termController = TextEditingController(text: term.term);
-    final definitionController = TextEditingController(text: term.definition);
-
     return Dismissible(
       key: Key('term_${term.id}'),
       direction: DismissDirection.horizontal,
@@ -514,8 +511,9 @@ class _EditCourseScreenState extends State<EditCourseScreen> {
               ),
             ),
             const SizedBox(height: 8),
-            TextField(
-              controller: termController,
+            TextFormField(
+              key: Key('term_input_${term.id}'),
+              initialValue: term.term,
               onChanged: (value) {
                 final updatedTerm = term.copyWith(term: value);
                 setState(() {
@@ -563,8 +561,9 @@ class _EditCourseScreenState extends State<EditCourseScreen> {
               ),
             ),
             const SizedBox(height: 8),
-            TextField(
-              controller: definitionController,
+            TextFormField(
+              key: Key('definition_input_${term.id}'),
+              initialValue: term.definition,
               onChanged: (value) {
                 final updatedTerm = term.copyWith(definition: value);
                 setState(() {
@@ -647,9 +646,6 @@ class _EditCourseScreenState extends State<EditCourseScreen> {
     final languages = [
       'language.vietnamese'.tr(),
       'language.english'.tr(),
-      'language.japanese'.tr(),
-      'language.korean'.tr(),
-      'language.chinese'.tr(),
     ];
 
     showModalBottomSheet(

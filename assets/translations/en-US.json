@@ -426,6 +426,59 @@
       "error_load_unlearned": "Unable to load unlearned cards: {}"
     }
   },
+  "spaced_repetition_settings": {
+    "title": "Spaced Repetition Settings",
+    "tooltip_reset": "Reset to default",
+    "snackbar_saved": "Settings saved successfully!",
+    "snackbar_reset": "Reset to default!",
+    "info": {
+      "title": "Information",
+      "description": "Configure parameters for the Spaced Repetition algorithm. Changes apply to all new flashcards."
+    },
+    "sections": {
+      "time_unit": {
+        "title": "Time unit",
+        "days_title": "Days (Production)",
+        "days_subtitle": "Review by day - recommended for real use",
+        "minutes_title": "Minutes (Test)",
+        "minutes_subtitle": "Review by minute - for quick testing"
+      },
+      "intervals": {
+        "title": "Review intervals",
+        "first_title": "First interval",
+        "first_subtitle": "Review after {} {}",
+        "second_title": "Second interval",
+        "second_subtitle": "Review after {} {}",
+        "max_title": "Maximum interval",
+        "max_subtitle": "Maximum {} {}"
+      },
+      "auto_refresh": {
+        "title": "Auto refresh",
+        "interval_title": "Auto refresh interval",
+        "interval_subtitle": "Refresh every {} {}"
+      },
+      "timeline": {
+        "title": "Timeline preview",
+        "first_label": "First",
+        "first_value": "{} {}",
+        "second_label": "Second",
+        "second_value": "{} {}",
+        "third_label": "Third",
+        "third_value": "~{} {} ({} × 2.5)",
+        "max_label": "Max",
+        "max_value": "{} {}"
+      }
+    },
+    "button_save": "Save configuration",
+    "units": {
+      "day": "day",
+      "days": "days",
+      "minute": "minute",
+      "minutes": "minutes",
+      "second": "second",
+      "seconds": "seconds"
+    }
+  },
   "course_edit": {
     "error_loading_course": "Unable to load course data",
     "title": "Edit course",

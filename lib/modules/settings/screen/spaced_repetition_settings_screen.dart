@@ -1,6 +1,7 @@
 import 'package:card_mind/core/services/spaced_repetition_service.dart';
 import 'package:card_mind/core/theme/theme_extensions.dart';
 import 'package:card_mind/init.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class SpacedRepetitionSettingsScreen extends StatefulWidget {
@@ -65,7 +66,7 @@ class _SpacedRepetitionSettingsScreenState
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Đã lưu cấu hình thành công!'),
+          content: Text('spaced_repetition_settings.snackbar_saved'.tr()),
           backgroundColor: context.brandColors.progressValue,
         ),
       );
@@ -81,7 +82,7 @@ class _SpacedRepetitionSettingsScreenState
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Đã reset về mặc định!'),
+          content: Text('spaced_repetition_settings.snackbar_reset'.tr()),
           backgroundColor: context.brandColors.progressValue,
         ),
       );
@@ -90,12 +91,19 @@ class _SpacedRepetitionSettingsScreenState
 
   @override
   Widget build(BuildContext context) {
+    final firstUnitLabel = _timeUnitLabel(_interval1);
+    final secondUnitLabel = _timeUnitLabel(_interval2);
+    final maxUnitLabel = _timeUnitLabel(_maxInterval);
+    final approxInterval = (_interval2 * 2.5).round();
+    final approxUnitLabel = _timeUnitLabel(approxInterval);
+    final autoRefreshUnitLabel = _secondsLabel(_autoRefreshInterval);
+
     return Scaffold(
       backgroundColor: context.colors.primary,
       appBar: AppBar(
         backgroundColor: context.colors.primary,
         title: Text(
-          'Cài đặt Spaced Repetition',
+          'spaced_repetition_settings.title'.tr(),
           style: TextStyle(color: context.colors.onPrimary),
         ),
         iconTheme: IconThemeData(color: context.colors.onPrimary),
@@ -103,7 +111,7 @@ class _SpacedRepetitionSettingsScreenState
           IconButton(
             icon: Icon(Icons.refresh),
             onPressed: _resetToDefault,
-            tooltip: 'Reset về mặc định',
+            tooltip: 'spaced_repetition_settings.tooltip_reset'.tr(),
           ),
         ],
       ),
@@ -128,7 +136,7 @@ class _SpacedRepetitionSettingsScreenState
                         ),
                         SizedBox(width: 8),
                         Text(
-                          'Thông tin',
+                          'spaced_repetition_settings.info.title'.tr(),
                           style: AppTextStyles.textHeader3.copyWith(
                             color: context.brandColors.textPrimary,
                           ),
@@ -137,8 +145,7 @@ class _SpacedRepetitionSettingsScreenState
                     ),
                     SizedBox(height: 8),
                     Text(
-                      'Cấu hình tham số cho thuật toán Spaced Repetition. '
-                      'Thay đổi sẽ áp dụng cho tất cả flashcard mới.',
+                      'spaced_repetition_settings.info.description'.tr(),
                       style: AppTextStyles.textContent3.copyWith(
                         color: context.brandColors.textSecondary,
                       ),
@@ -151,20 +158,25 @@ class _SpacedRepetitionSettingsScreenState
             SizedBox(height: 24),
 
             // Đơn vị thời gian
-            _buildSectionTitle('Đơn vị thời gian'),
+            _buildSectionTitle(
+              'spaced_repetition_settings.sections.time_unit.title'.tr(),
+            ),
             Card(
               color: context.brandColors.cardBackground,
               child: Column(
                 children: [
                   RadioListTile<String>(
                     title: Text(
-                      'Ngày (Production)',
+                      'spaced_repetition_settings.sections.time_unit.days_title'
+                          .tr(),
                       style: TextStyle(color: context.brandColors.textPrimary),
                     ),
                     subtitle: Text(
-                      'Ôn tập theo ngày - Dành cho sử dụng thực tế',
-                      style:
-                          TextStyle(color: context.brandColors.textSecondary),
+                      'spaced_repetition_settings.sections.time_unit.days_subtitle'
+                          .tr(),
+                      style: TextStyle(
+                        color: context.brandColors.textSecondary,
+                      ),
                     ),
                     value: 'days',
                     groupValue: _timeUnit,
@@ -179,13 +191,16 @@ class _SpacedRepetitionSettingsScreenState
                   Divider(height: 1),
                   RadioListTile<String>(
                     title: Text(
-                      'Phút (Test)',
+                      'spaced_repetition_settings.sections.time_unit.minutes_title'
+                          .tr(),
                       style: TextStyle(color: context.brandColors.textPrimary),
                     ),
                     subtitle: Text(
-                      'Ôn tập theo phút - Dành cho kiểm thử nhanh',
-                      style:
-                          TextStyle(color: context.brandColors.textSecondary),
+                      'spaced_repetition_settings.sections.time_unit.minutes_subtitle'
+                          .tr(),
+                      style: TextStyle(
+                        color: context.brandColors.textSecondary,
+                      ),
                     ),
                     value: 'minutes',
                     groupValue: _timeUnit,
@@ -204,12 +219,17 @@ class _SpacedRepetitionSettingsScreenState
             SizedBox(height: 24),
 
             // Intervals
-            _buildSectionTitle('Khoảng thời gian ôn tập'),
+            _buildSectionTitle(
+              'spaced_repetition_settings.sections.intervals.title'.tr(),
+            ),
 
             _buildSliderSetting(
-              title: 'Interval lần 1',
+              title:
+                  'spaced_repetition_settings.sections.intervals.first_title'
+                      .tr(),
               subtitle:
-                  'Ôn lại sau $_interval1 ${_timeUnit == "days" ? "ngày" : "phút"}',
+                  'spaced_repetition_settings.sections.intervals.first_subtitle'
+                      .tr(args: [_interval1.toString(), firstUnitLabel]),
               value: _interval1.toDouble(),
               min: 1,
               max: _timeUnit == 'days' ? 7 : 10,
@@ -220,9 +240,12 @@ class _SpacedRepetitionSettingsScreenState
             ),
 
             _buildSliderSetting(
-              title: 'Interval lần 2',
+              title:
+                  'spaced_repetition_settings.sections.intervals.second_title'
+                      .tr(),
               subtitle:
-                  'Ôn lại sau $_interval2 ${_timeUnit == "days" ? "ngày" : "phút"}',
+                  'spaced_repetition_settings.sections.intervals.second_subtitle'
+                      .tr(args: [_interval2.toString(), secondUnitLabel]),
               value: _interval2.toDouble(),
               min: 1,
               max: _timeUnit == 'days' ? 14 : 20,
@@ -233,9 +256,12 @@ class _SpacedRepetitionSettingsScreenState
             ),
 
             _buildSliderSetting(
-              title: 'Interval tối đa',
+              title:
+                  'spaced_repetition_settings.sections.intervals.max_title'
+                      .tr(),
               subtitle:
-                  'Tối đa $_maxInterval ${_timeUnit == "days" ? "ngày" : "phút"}',
+                  'spaced_repetition_settings.sections.intervals.max_subtitle'
+                      .tr(args: [_maxInterval.toString(), maxUnitLabel]),
               value: _maxInterval.toDouble(),
               min: _timeUnit == 'days' ? 30 : 20,
               max: _timeUnit == 'days' ? 365 : 60,
@@ -248,10 +274,21 @@ class _SpacedRepetitionSettingsScreenState
             SizedBox(height: 24),
 
             // Auto Refresh Interval
-            _buildSectionTitle('Tự động làm mới dữ liệu'),
+            _buildSectionTitle(
+              'spaced_repetition_settings.sections.auto_refresh.title'.tr(),
+            ),
             _buildSliderSetting(
-              title: 'Khoảng thời gian tự động làm mới',
-              subtitle: 'Làm mới mỗi $_autoRefreshInterval giây',
+              title:
+                  'spaced_repetition_settings.sections.auto_refresh.interval_title'
+                      .tr(),
+              subtitle:
+                  'spaced_repetition_settings.sections.auto_refresh.interval_subtitle'
+                      .tr(
+                        args: [
+                          _autoRefreshInterval.toString(),
+                          autoRefreshUnitLabel,
+                        ],
+                      ),
               value: _autoRefreshInterval.toDouble(),
               min: 10,
               max: 300,
@@ -264,7 +301,9 @@ class _SpacedRepetitionSettingsScreenState
             SizedBox(height: 24),
 
             // Timeline preview
-            _buildSectionTitle('Xem trước timeline'),
+            _buildSectionTitle(
+              'spaced_repetition_settings.sections.timeline.title'.tr(),
+            ),
             Card(
               color: context.brandColors.cardBackground,
               child: Padding(
@@ -273,20 +312,34 @@ class _SpacedRepetitionSettingsScreenState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildTimelineItem(
-                      'Lần 1',
-                      '$_interval1 ${_timeUnit == "days" ? "ngày" : "phút"}',
+                      'spaced_repetition_settings.sections.timeline.first_label'
+                          .tr(),
+                      'spaced_repetition_settings.sections.timeline.first_value'
+                          .tr(args: [_interval1.toString(), firstUnitLabel]),
                     ),
                     _buildTimelineItem(
-                      'Lần 2',
-                      '$_interval2 ${_timeUnit == "days" ? "ngày" : "phút"}',
+                      'spaced_repetition_settings.sections.timeline.second_label'
+                          .tr(),
+                      'spaced_repetition_settings.sections.timeline.second_value'
+                          .tr(args: [_interval2.toString(), secondUnitLabel]),
                     ),
                     _buildTimelineItem(
-                      'Lần 3',
-                      '~${(_interval2 * 2.5).round()} ${_timeUnit == "days" ? "ngày" : "phút"} (${_interval2} × 2.5)',
+                      'spaced_repetition_settings.sections.timeline.third_label'
+                          .tr(),
+                      'spaced_repetition_settings.sections.timeline.third_value'
+                          .tr(
+                            args: [
+                              approxInterval.toString(),
+                              approxUnitLabel,
+                              _interval2.toString(),
+                            ],
+                          ),
                     ),
                     _buildTimelineItem(
-                      'Max',
-                      '$_maxInterval ${_timeUnit == "days" ? "ngày" : "phút"}',
+                      'spaced_repetition_settings.sections.timeline.max_label'
+                          .tr(),
+                      'spaced_repetition_settings.sections.timeline.max_value'
+                          .tr(args: [_maxInterval.toString(), maxUnitLabel]),
                     ),
                   ],
                 ),
@@ -306,7 +359,7 @@ class _SpacedRepetitionSettingsScreenState
                 ),
               ),
               child: Text(
-                'Lưu cấu hình',
+                'spaced_repetition_settings.button_save'.tr(),
                 style: AppTextStyles.textHeader3.copyWith(
                   color: context.brandColors.textPrimary,
                 ),
@@ -318,6 +371,27 @@ class _SpacedRepetitionSettingsScreenState
         ),
       ),
     );
+  }
+
+  String _timeUnitLabel(int value) {
+    final isDays = _timeUnit == 'days';
+    final key =
+        value == 1
+            ? (isDays
+                ? 'spaced_repetition_settings.units.day'
+                : 'spaced_repetition_settings.units.minute')
+            : (isDays
+                ? 'spaced_repetition_settings.units.days'
+                : 'spaced_repetition_settings.units.minutes');
+    return key.tr();
+  }
+
+  String _secondsLabel(int value) {
+    final key =
+        value == 1
+            ? 'spaced_repetition_settings.units.second'
+            : 'spaced_repetition_settings.units.seconds';
+    return key.tr();
   }
 
   Widget _buildSectionTitle(String title) {

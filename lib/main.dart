@@ -1,7 +1,7 @@
 import 'package:card_mind/core/app_bloc_observer.dart';
 import 'package:card_mind/core/helpers/local_storage_helper.dart';
 import 'package:card_mind/core/services/sample_data_service.dart';
-import 'package:card_mind/core/services/notification_service.dart';
+// import 'package:card_mind/core/services/notification_service.dart'; // TEMPORARY: Disabled notifications
 import 'package:card_mind/core/theme/locale_service.dart';
 import 'package:card_mind/providers/provider_setup.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -19,9 +19,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Khởi tạo Firebase cho tất cả platforms (Android, Web)
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   Bloc.observer = AppBlocObserver();
   await EasyLocalization.ensureInitialized();
@@ -29,23 +27,25 @@ void main() async {
   await Hive.initFlutter();
   await LocalStorageHelper.initLocalStorageHelper();
 
+  // TEMPORARY FIX: Tắt tạm thời notifications để tránh crash trên Google Play
+  // TODO: Fix ProGuard issue với flutter_local_notifications và bật lại
   // Khởi tạo notification service
-  await NotificationService().initialize();
+  // await NotificationService().initialize();
 
   // Request notification permissions
-  await NotificationService().requestPermissions();
+  // await NotificationService().requestPermissions();
 
   // Force enable notifications if disabled (for development/testing)
   // TODO: Remove this in production, let user control via settings
-  await NotificationService().setNotificationsEnabled(true);
+  // await NotificationService().setNotificationsEnabled(true);
 
   // Schedule daily reminders (sáng, trưa, tối)
   // Note: Mỗi lần mở app sẽ reschedule để đảm bảo notifications không bị mất
-  await NotificationService().scheduleDailyReminders();
+  // await NotificationService().scheduleDailyReminders();
 
   // Reschedule tất cả review notifications khi app mở lại
   // Điều này đảm bảo notifications không bị mất khi app ở background
-  await NotificationService().rescheduleAllReviewNotifications();
+  // await NotificationService().rescheduleAllReviewNotifications();
 
   // Khởi tạo sample data nếu cần
   await SampleDataService.initializeSampleData();
@@ -58,9 +58,9 @@ void main() async {
 
   runApp(
     EasyLocalization(
-      supportedLocales: const [Locale('en', 'US'), Locale('vi', 'VN')],
+      supportedLocales: const [Locale('vi', 'VN'), Locale('en', 'US')],
       path: 'assets/translations',
-      fallbackLocale: const Locale('en', 'US'),
+      fallbackLocale: const Locale('vi', 'VN'),
       startLocale: savedLocale, // Sử dụng locale đã lưu
       child: MultiProvider(
         providers: ProviderSetup.getProviders(),

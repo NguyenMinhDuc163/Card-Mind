@@ -10,8 +10,8 @@ class LocaleService {
     final String? value = SpUtil.getString(_key);
 
     if (value == null) {
-      // Mặc định là tiếng Anh
-      return const Locale('en', 'US');
+      // Mặc định là tiếng Việt
+      return const Locale('vi', 'VN');
     }
 
     // Parse locale từ string format: "en_US" hoặc "vi_VN"
@@ -21,7 +21,7 @@ class LocaleService {
     }
 
     // Fallback
-    return const Locale('en', 'US');
+    return const Locale('vi', 'VN');
   }
 
   /// Lưu locale vào SharedPreferences

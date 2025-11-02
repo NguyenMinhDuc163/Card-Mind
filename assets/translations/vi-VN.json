@@ -426,6 +426,59 @@
       "error_load_unlearned": "Không thể tải thẻ chưa thuộc: {}"
     }
   },
+  "spaced_repetition_settings": {
+    "title": "Cài đặt Spaced Repetition",
+    "tooltip_reset": "Reset về mặc định",
+    "snackbar_saved": "Đã lưu cấu hình thành công!",
+    "snackbar_reset": "Đã reset về mặc định!",
+    "info": {
+      "title": "Thông tin",
+      "description": "Cấu hình các tham số cho thuật toán Spaced Repetition. Thay đổi sẽ áp dụng cho tất cả flashcard mới."
+    },
+    "sections": {
+      "time_unit": {
+        "title": "Đơn vị thời gian",
+        "days_title": "Ngày (Production)",
+        "days_subtitle": "Ôn tập theo ngày - Khuyến nghị cho sử dụng thực tế",
+        "minutes_title": "Phút (Test)",
+        "minutes_subtitle": "Ôn tập theo phút - Phục vụ kiểm thử nhanh"
+      },
+      "intervals": {
+        "title": "Khoảng thời gian ôn tập",
+        "first_title": "Interval lần 1",
+        "first_subtitle": "Ôn lại sau {} {}",
+        "second_title": "Interval lần 2",
+        "second_subtitle": "Ôn lại sau {} {}",
+        "max_title": "Interval tối đa",
+        "max_subtitle": "Tối đa {} {}"
+      },
+      "auto_refresh": {
+        "title": "Tự động làm mới dữ liệu",
+        "interval_title": "Khoảng thời gian tự động làm mới",
+        "interval_subtitle": "Làm mới mỗi {} {}"
+      },
+      "timeline": {
+        "title": "Xem trước timeline",
+        "first_label": "Lần 1",
+        "first_value": "{} {}",
+        "second_label": "Lần 2",
+        "second_value": "{} {}",
+        "third_label": "Lần 3",
+        "third_value": "~{} {} ({} × 2.5)",
+        "max_label": "Tối đa",
+        "max_value": "{} {}"
+      }
+    },
+    "button_save": "Lưu cấu hình",
+    "units": {
+      "day": "ngày",
+      "days": "ngày",
+      "minute": "phút",
+      "minutes": "phút",
+      "second": "giây",
+      "seconds": "giây"
+    }
+  },
   "course_edit": {
     "error_loading_course": "Không thể tải dữ liệu khóa học",
     "title": "Sửa khóa học",

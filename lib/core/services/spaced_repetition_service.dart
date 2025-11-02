@@ -1,6 +1,6 @@
 import 'package:card_mind/core/helpers/local_storage_helper.dart';
 import 'package:card_mind/data/models/card_review_data.dart';
-import 'package:card_mind/core/services/notification_service.dart';
+// import 'package:card_mind/core/services/notification_service.dart'; // TEMPORARY: Disabled notifications
 
 /// Service quản lý Spaced Repetition
 /// Lưu trữ và tính toán lịch ôn tập cho các flashcards
@@ -280,15 +280,16 @@ class SpacedRepetitionService {
         final key = _getCardReviewKey(courseId, cardId);
         LocalStorageHelper.deleteValue(key);
 
+        // TEMPORARY: Disabled notification cancellation
         // Cancel notification cho card này
-        NotificationService()
-            .cancelReviewNotification(
-          courseId: courseId,
-          cardId: cardId,
-        )
-            .catchError((e) {
-          print('⚠️ Failed to cancel notification for card $cardId: $e');
-        });
+        // NotificationService()
+        //     .cancelReviewNotification(
+        //   courseId: courseId,
+        //   cardId: cardId,
+        // )
+        //     .catchError((e) {
+        //   print('⚠️ Failed to cancel notification for card $cardId: $e');
+        // });
       }
 
       // Xóa danh sách course reviews
@@ -310,15 +311,16 @@ class SpacedRepetitionService {
       // Xóa khỏi danh sách course reviews
       await _removeFromCourseReviewsList(courseId, cardId);
 
+      // TEMPORARY: Disabled notification cancellation
       // Cancel notification cho card này
-      NotificationService()
-          .cancelReviewNotification(
-        courseId: courseId,
-        cardId: cardId,
-      )
-          .catchError((e) {
-        print('⚠️ Failed to cancel notification: $e');
-      });
+      // NotificationService()
+      //     .cancelReviewNotification(
+      //   courseId: courseId,
+      //   cardId: cardId,
+      // )
+      //     .catchError((e) {
+      //   print('⚠️ Failed to cancel notification: $e');
+      // });
 
       print('🗑️ Deleted review data for card $cardId');
     } catch (e) {
@@ -436,14 +438,15 @@ class SpacedRepetitionService {
         print('⚠️ Could not get course title: $e');
       }
 
+      // TEMPORARY: Disabled notification scheduling
       // Schedule notification
-      await NotificationService().scheduleReviewNotification(
-        courseId: reviewData.courseId,
-        cardId: reviewData.cardId,
-        nextReviewDate: reviewData.nextReviewDate,
-        courseTitle: courseTitle,
-        cardCount: 1,
-      );
+      // await NotificationService().scheduleReviewNotification(
+      //   courseId: reviewData.courseId,
+      //   cardId: reviewData.cardId,
+      //   nextReviewDate: reviewData.nextReviewDate,
+      //   courseTitle: courseTitle,
+      //   cardCount: 1,
+      // );
     } catch (e) {
       print('❌ Error scheduling notification for card: $e');
     }
