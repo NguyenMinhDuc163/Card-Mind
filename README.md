@@ -10,8 +10,9 @@
   [![Firebase](https://img.shields.io/badge/Firebase-Cloud-orange.svg)](https://firebase.google.com/)
   [![Hive](https://img.shields.io/badge/Hive-Database-green.svg)](https://hivedb.dev/)
   
-  [![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-Card_Mind-brightgreen.svg)](https://card_mind.nguyenduc.click)
-  [![Web App](https://img.shields.io/badge/Web_App-Available-success.svg)](https://card_mind.nguyenduc.click)
+  [![Google Play](https://img.shields.io/badge/Google_Play-Download-blue.svg)](https://play.google.com/store/apps/details?id=com.nguyenduc.card_mind)
+  [![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-Card_Mind-brightgreen.svg)](https://nguyenminhduc163.github.io/Card-Mind)
+  [![Web App](https://img.shields.io/badge/Web_App-Available-success.svg)](https://nguyenminhduc163.github.io/Card-Mind)
 </div>
 
 ## 📱 Giới thiệu
@@ -23,6 +24,12 @@
 - **Học tập thông minh**: Ứng dụng tự động điều chỉnh lịch học dựa trên khả năng tiếp thu của từng người dùng
 - **Tối ưu hóa thời gian**: Chỉ học những gì cần thiết, không lãng phí thời gian ôn tập những kiến thức đã thuộc
 - **🌐 Trải nghiệm ngay**: [Truy cập demo trực tiếp](https://nguyenminhduc163.github.io/Card-Mind) để khám phá tất cả tính năng
+
+## 📥 Tải ứng dụng
+
+Ứng dụng **Card Mind** hiện đã có mặt trên Google Play Store. Tải ngay để bắt đầu hành trình học tập hiệu quả của bạn!
+
+**[⬇️ Tải xuống từ Google Play](https://play.google.com/store/apps/details?id=com.nguyenduc.card_mind)**
 
 ## 📸 Demo ứng dụng
 
@@ -163,7 +170,7 @@ flutter pub get
 flutter run
 ```
 
-### 🌐 **Demo trực tuyến**Tie
+### 🌐 **Demo trực tuyến**
 - **Web App**: [Tại đây](https://nguyenminhduc163.github.io/Card-Mind/)
 - **Tương thích**: Chrome, Firefox, Safari, Edge
 - **Không cần cài đặt**: Chạy trực tiếp trên trình duyệt
@@ -218,6 +225,6 @@ Mọi đóng góp đều được chào đón! Vui lòng:
 Dự án này được phân phối dưới giấy phép MIT. Xem file `LICENSE` để biết thêm thông tin.
 
 <div align="center">
-  <p>Được phát triển với ❤️ bằng Flutter</p>
-  <p>© 2024 Card Mind. All rights reserved.</p>
+  <p>Được phát triển với Nguyễn Đức ❤️ bằng Flutter</p>
+  <p>© 2025 Card Mind. All rights reserved.</p>
 </div>
