@@ -1,0 +1,510 @@
+{
+  "common": {
+    "dark_mode": "Chế độ tối",
+    "language": "Ngôn ngữ",
+    "account_information": "Thông tin tài khoản",
+    "change_password": "Đổi mật khẩu",
+    "settings": "Cài đặt",
+    "logout": "Đăng xuất",
+    "verified_profile": "Hồ sơ đã xác minh",
+    "loading": "Đang tải...",
+    "cancel": "Hủy",
+    "delete": "Xóa",
+    "retry": "Thử lại",
+    "close": "Đóng",
+    "email": "Email",
+    "user": "Người dùng",
+    "time_ago": {
+      "days": "{} ngày trước",
+      "hours": "{} giờ trước",
+      "minutes": "{} phút trước",
+      "just_now": "Vừa xong"
+    }
+  },
+  "language": {
+    "english": "Tiếng Anh",
+    "vietnamese": "Tiếng Việt",
+    "japanese": "Tiếng Nhật",
+    "korean": "Tiếng Hàn",
+    "chinese": "Tiếng Trung",
+    "current": "Ngôn ngữ hiện tại"
+  },
+  "splash_screen": {
+    "initializing": "Đang khởi tạo...",
+    "syncing_data": "Đang đồng bộ dữ liệu...",
+    "loading_data": "Đang tải dữ liệu..."
+  },
+  "dashboard": {
+    "home": "Trang chủ",
+    "create": "Tạo",
+    "chat": "Chat",
+    "library": "Thư viện"
+  },
+  "home_screen": {
+    "title": "trang chủ",
+    "search": "Tìm kiếm",
+    "syncing_data": "Đang đồng bộ dữ liệu...",
+    "review_today": "Cần ôn tập hôm nay",
+    "cards": "thẻ",
+    "card": "thẻ",
+    "author": "Tác giả",
+    "team_picks": "Lựa chọn của đội ngũ",
+    "try_these": "Hãy thử các học phần này",
+    "view_all": "Xem tất cả",
+    "no_courses": "Chưa có khóa học nào",
+    "study_topics": "Các chủ đề học tập",
+    "students": "học sinh",
+    "active": "Hoạt động",
+    "paused": "Tạm dừng",
+    "delete_course": "Xóa học phần",
+    "delete_course_confirm": "Bạn có chắc chắn muốn xóa học phần \"{}\"?\n\nHành động này không thể hoàn tác và sẽ xóa tất cả dữ liệu liên quan.",
+    "deleting_course": "Đang xóa học phần...",
+    "course_deleted": "Đã xóa học phần \"{}\" thành công",
+    "cannot_delete_course": "Không thể xóa học phần \"{}\"",
+    "delete_error": "Có lỗi xảy ra khi xóa: {}",
+    "delete_topic": "Xóa Chủ đề học",
+    "delete_topic_confirm": "Bạn có chắc chắn muốn xóa Chủ đề học \"{}\"?\n\nHành động này không thể hoàn tác.",
+    "deleting_topic": "Đang xóa Chủ đề học...",
+    "topic_deleted": "Đã xóa Chủ đề học \"{}\" thành công",
+    "cannot_delete_topic": "Không thể xóa Chủ đề học \"{}\"",
+    "sign_out": "Đăng xuất",
+    "sign_out_confirm": "Bạn có chắc chắn muốn đăng xuất?",
+    "signed_out": "Đã đăng xuất thành công"
+  },
+  "global_search": {
+    "title": "Tìm kiếm",
+    "hint": "Tìm kiếm học phần, Chủ đề, thẻ chưa học...",
+    "error_occurred": "Có lỗi xảy ra",
+    "search_all": "Tìm kiếm toàn bộ nội dung",
+    "search_in": "Tìm kiếm trong học phần, Chủ đề và thẻ chưa học",
+    "no_results": "Không tìm thấy kết quả",
+    "try_different": "Thử tìm kiếm với từ khóa khác",
+    "type_course": "Học phần",
+    "type_classroom": "Chủ đề",
+    "type_bookmark": "Thẻ chưa học"
+  },
+  "course_info": {
+    "error_occurred": "Có lỗi xảy ra",
+    "retry": "Thử lại",
+    "course_not_found": "Không tìm thấy khóa học",
+    "error_loading": "Không thể tải dữ liệu: {}",
+    "error_loading_course": "Không thể tải khóa học: {}",
+    "delete_course": "Xóa học phần",
+    "delete_confirm": "Bạn có chắc chắn muốn xóa học phần này không? Hành động này không thể hoàn tác.",
+    "deleting": "Đang xóa học phần...",
+    "deleted_success": "Đã xóa học phần thành công",
+    "cannot_delete": "Không thể xóa học phần",
+    "error": "Lỗi: {}",
+    "basic_info": "Thông tin cơ bản về {}",
+    "terms": "{} thuật ngữ",
+    "term": "thuật ngữ",
+    "author_label": "Tác giả: {}",
+    "review_cards": "Có {} thẻ cần ôn tập",
+    "learning_modes": "Chế độ học tập",
+    "mode_review": "Ôn tập ({} thẻ)",
+    "mode_review_desc": "Ôn lại những thẻ cần ôn tập hôm nay",
+    "mode_flashcards": "Thẻ ghi nhớ",
+    "mode_flashcards_desc": "Học từ vựng với thẻ flashcard",
+    "mode_edit": "Sửa",
+    "mode_edit_desc": "Học từ vựng theo phương pháp thích ứng",
+    "mode_test": "Kiểm tra",
+    "mode_test_desc": "Kiểm tra kiến thức với các câu hỏi",
+    "mode_delete": "Xóa học phần",
+    "mode_delete_desc": "Xóa học phần này khỏi thư viện",
+    "front_side": "Mặt trước",
+    "back_side": "Mặt sau",
+    "tap_to_flip": "Chạm để lật",
+    "tap_to_flip_back": "Chạm để lật lại",
+    "no_cards": "Chưa có thẻ học nào"
+  },
+  "course_detail": {
+    "navigating_to_result": "Đang chuyển đến kết quả...",
+    "loading_data": "Đang tải dữ liệu...",
+    "welcome_title": "Chào mừng đến với khóa học mới!",
+    "welcome_subtitle": "Bắt đầu học ngay để theo dõi tiến độ của bạn",
+    "start_learning": "Bắt đầu học",
+    "bookmarks_cleared": "Đã xóa hết thẻ đã đánh dấu",
+    "no_cards_to_undo": "Không có thẻ nào để hoàn tác",
+    "reset_title": "Làm lại khóa học",
+    "reset_message": "Bạn có chắc chắn muốn làm lại khóa học này? Tất cả tiến độ học tập sẽ bị xóa và bạn sẽ bắt đầu lại từ đầu.",
+    "reset_action": "Làm lại",
+    "reset_success": "Đã reset khóa học! Bắt đầu học lại từ đầu.",
+    "error_loading": "Không thể tải dữ liệu: {}",
+    "error_loading_course": "Không thể tải khóa học: {}"
+  },
+  "course_result": {
+    "progress_title": "Tiến độ của bạn",
+    "legend_known": "Đã thuộc",
+    "legend_learning": "Đang học",
+    "legend_remaining": "Còn lại",
+    "action_review_terms": "Tiếp tục ôn thuật ngữ",
+    "action_reset_cards": "Đặt lại thẻ ghi nhớ",
+    "action_view_history": "Xem lịch sử học tập",
+    "action_back_home": "Về trang chủ",
+    "reset_progress_success": "Đã đặt lại tiến độ học tập",
+    "history_title": "Lịch sử học tập",
+    "history_course_placeholder": "Khóa học",
+    "history_empty": "Chưa có lịch sử học tập",
+    "history_item_learned": "{}/{} thẻ đã học",
+    "error_loading": "Không thể tải dữ liệu: {}",
+    "error_loading_course": "Không thể tải khóa học: {}",
+    "congrats": {
+      "excellent": "Tuyệt vời! Bạn đã hoàn thành tất cả!",
+      "great": "Bạn đang làm rất tốt!",
+      "good": "Tiến bộ tốt! Hãy tiếp tục!",
+      "keep_going": "Hãy tiếp tục cố gắng!"
+    },
+    "description": {
+      "excellent": "Bạn đã thành thạo tất cả thuật ngữ trong khóa học này.",
+      "great": "Hãy tiếp tục tập trung vào các thuật ngữ khó.",
+      "good": "Bạn đang tiến bộ tốt, hãy tiếp tục luyện tập.",
+      "keep_going": "Hãy dành thêm thời gian để học các thuật ngữ còn lại."
+    }
+  },
+  "course_test": {
+    "creating_test": "Đang tạo bài kiểm tra...",
+    "no_questions": "Không có câu hỏi để kiểm tra",
+    "title_with_progress": "Kiểm tra - Câu {}/{}",
+    "choose_answer": "Chọn đáp án đúng:",
+    "completed_title": "Hoàn thành bài kiểm tra!",
+    "score_summary": "Điểm: {}/{} ({}%)",
+    "view_details": "Xem kết quả chi tiết",
+    "error_create": "Không thể tạo bài kiểm tra: {}",
+    "error_no_cards": "Không có thẻ học để tạo bài kiểm tra"
+  },
+  "course_test_result": {
+    "empty_state": "Không có kết quả để hiển thị",
+    "title": "Kết quả kiểm tra",
+    "score_title": "Điểm số của bạn",
+    "score_value": "{}/{}",
+    "score_percent": "{}%",
+    "answers_title": "Chi tiết câu trả lời",
+    "snackbar_no_data": "Không có dữ liệu để tạo bài kiểm tra",
+    "snackbar_no_course": "Không tìm thấy thông tin khóa học",
+    "retake": "Làm lại",
+    "complete": "Hoàn thành",
+    "question_title": "Câu {}",
+    "your_answer": "Đáp án của bạn: {}",
+    "correct_answer": "Đáp án đúng: {}",
+    "score_message": {
+      "excellent": "Xuất sắc! Bạn đã nắm vững kiến thức.",
+      "good": "Tốt! Hãy tiếp tục cố gắng.",
+      "fair": "Khá tốt! Cần ôn tập thêm.",
+      "retry": "Cần cố gắng hơn! Hãy ôn tập lại."
+    }
+  },
+  "create_course": {
+    "error_occurred": "Có lỗi xảy ra",
+    "retry": "Thử lại",
+    "import_button": "Nhập",
+    "add_description": "+ Mô tả",
+    "snackbar_saved": "Đã lưu khóa học!",
+    "validation_topic": "Vui lòng nhập chủ đề khóa học",
+    "validation_title": "Vui lòng nhập tiêu đề khóa học",
+    "validation_no_terms": "Vui lòng thêm ít nhất một thuật ngữ",
+    "validation_missing_definition": "Thuật ngữ {}: Vui lòng nhập định nghĩa",
+    "validation_missing_term": "Thuật ngữ {}: Vui lòng nhập thuật ngữ",
+    "validation_dialog_title": "Thông báo",
+    "clear_data_title": "Xóa dữ liệu",
+    "clear_data_message": "Bạn có chắc chắn muốn xóa tất cả dữ liệu đã nhập?",
+    "field_topic_hint": "Chủ đề, chương, đơn vị",
+    "field_title_label": "TIÊU ĐỀ",
+    "field_description_label": "MÔ TẢ",
+    "field_description_hint": "Nhập mô tả cho khóa học...",
+    "term_label": "THUẬT NGỮ",
+    "definition_label": "ĐỊNH NGHĨA",
+    "language_label": "CHỌN NGÔN NGỮ",
+    "author_default": "Tôi",
+    "error_initialize": "Không thể khởi tạo: {}",
+    "error_save": "Không thể lưu dữ liệu: {}",
+    "error_complete": "Không thể lưu khóa học: {}"
+  },
+  "create_course_import": {
+    "title": "Nhập dữ liệu",
+    "data_input_label": "Chép và dán dữ liệu ở đây (từ Word, Excel, Google Docs, v.v.)",
+    "data_input_hint": "Dán dữ liệu...",
+    "format_section_title": "ĐỊNH DẠNG DỮ LIỆU",
+    "term_definition_label": "Giữa thuật ngữ và định nghĩa",
+    "card_label": "Giữa các thẻ",
+    "option_tab": "Tab",
+    "option_comma": "Phẩy",
+    "option_custom": "Tùy chỉnh",
+    "option_newline": "Dòng mới",
+    "option_semicolon": "Chấm phẩy",
+    "custom_placeholder": "Nhập ký tự...",
+    "preview_title": "XEM TRƯỚC",
+    "preview_empty": "Chưa có dữ liệu để xem trước",
+    "preview_error": "Lỗi khi phân tích dữ liệu",
+    "preview_no_terms": "Không tìm thấy thuật ngữ nào",
+    "preview_summary": "Tìm thấy {} thuật ngữ:",
+    "button_cancel": "Hủy nhập",
+    "button_import": "Nhập",
+    "snackbar_empty": "Vui lòng nhập dữ liệu trước khi import",
+    "snackbar_parse_error": "Không thể parse dữ liệu",
+    "snackbar_success": "Đã import {} thuật ngữ thành công!",
+    "errors": {
+      "empty_data": "Dữ liệu không được để trống",
+      "empty_card_delimiter": "Delimiter giữa các thẻ không được để trống",
+      "empty_term_delimiter": "Delimiter giữa thuật ngữ và định nghĩa không được để trống",
+      "no_valid_data": "Không tìm thấy dữ liệu hợp lệ",
+      "no_valid_terms": "Không tìm thấy thuật ngữ hợp lệ nào",
+      "parse_exception": "Lỗi khi parse dữ liệu: {}",
+      "config_term_required": "Vui lòng nhập delimiter tùy chỉnh cho thuật ngữ và định nghĩa",
+      "config_card_required": "Vui lòng nhập delimiter tùy chỉnh cho các thẻ"
+    }
+  },
+  "create_course_service": {
+    "error_save_data": "Không thể lưu dữ liệu khóa học: {}",
+    "error_load_data": "Không thể tải dữ liệu khóa học: {}",
+    "error_delete_data": "Không thể xóa dữ liệu khóa học: {}",
+    "error_load_list": "Không thể tải danh sách khóa học: {}",
+    "error_save_completed": "Không thể lưu khóa học đã hoàn thành: {}"
+  },
+  "message": {
+    "chat_bot": {
+      "title": "Chat Bot",
+      "empty_state": "Gửi tin nhắn để bắt đầu trò chuyện",
+      "ai_name": "AI Chat Bot",
+      "copy_text": "Sao chép",
+      "copy_success": "Đã sao chép vào clipboard",
+      "input_hint": "Hỏi AI bất cứ điều gì",
+      "error": {
+        "no_response": "Không nhận được phản hồi từ AI. Vui lòng thử lại.",
+        "network": "Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng.",
+        "timeout": "Yêu cầu quá thời gian chờ. Vui lòng thử lại.",
+        "generic": "Đã xảy ra lỗi. Vui lòng thử lại sau."
+      }
+    },
+    "history": {
+      "title": "Lịch sử",
+      "group_today": "Hôm nay",
+      "group_yesterday": "Hôm qua, 27 Tháng 5",
+      "item_ai_chat_bot": "Chat bot AI là gì",
+      "item_brand_names": "Tên thương hiệu bất động sản",
+      "item_code_readability": "Cải thiện khả năng đọc của đoạn code sau",
+      "item_python_library": "Gợi ý thư viện Python để giải quyết vấn đề"
+    }
+  },
+  "library": {
+    "title": "Thư viện",
+    "tabs": {
+      "courses": "Học phần",
+      "classes": "Chủ đề",
+      "bookmarks": "Ôn tập"
+    },
+    "search_hint": {
+      "courses": "Tìm kiếm học phần...",
+      "classes": "Tìm kiếm Chủ đề...",
+      "bookmarks": "Tìm kiếm thẻ ôn tập...",
+      "general": "Tìm kiếm..."
+    },
+    "common": {
+      "error_generic": "Đã xảy ra lỗi",
+      "error_loading": "Không thể tải dữ liệu: {}"
+    },
+    "content": {
+      "empty_title": "Chưa có nội dung nào",
+      "group_all": "Tất cả nội dung",
+      "item_details": "{} thuật ngữ • Tác giả: {}",
+      "error_load_contents": "Không thể tải nội dung: {}"
+    },
+    "class_detail": {
+      "error_loading": "Không thể tải dữ liệu: {}",
+      "not_found": "Không tìm thấy Chủ đề",
+      "snackbar_added": "Đã thêm {} học phần vào danh sách chờ",
+      "delete_title": "Xóa Chủ đề",
+      "delete_confirm": "Bạn có chắc chắn muốn xóa Chủ đề \"{}\"?",
+      "snackbar_deleted": "Đã xóa Chủ đề",
+      "section_title": "Học phần trong Chủ đề",
+      "pending_changes": "{} thêm, {} xóa",
+      "edit": "Chỉnh sửa",
+      "empty_contents_title": "Chưa có học phần nào",
+      "empty_contents_subtitle": "Thêm học phần vào Chủ đề này",
+      "info_students": "{} học viên",
+      "info_courses": "{} học phần",
+      "snackbar_saved_changes": "Đã lưu {} thay đổi",
+      "delete_action": "Xóa Chủ đề",
+      "add_modal": {
+        "title": "Thêm học phần vào Chủ đề",
+        "empty": "Không có học phần nào để thêm",
+        "term_count": "{} thuật ngữ",
+        "confirm": "Thêm {} học phần"
+      }
+    },
+    "class_content": {
+      "details": "{} thuật ngữ • {}",
+      "tooltip_cancel": "Hủy đánh dấu xóa",
+      "tooltip_mark": "Đánh dấu xóa"
+    },
+    "class_screen": {
+      "empty_title": "Chưa có Chủ đề nào",
+      "empty_subtitle": "Tạo Chủ đề đầu tiên của bạn",
+      "group_mine": "Chủ đề của tôi",
+      "delete_title": "Xóa Chủ đề",
+      "delete_confirm": "Bạn có chắc chắn muốn xóa Chủ đề này?",
+      "snackbar_deleted": "Đã xóa Chủ đề",
+      "error_load_classes": "Không thể tải Chủ đề: {}",
+      "error_load_contents": "Không thể tải nội dung: {}",
+      "error_save_class": "Không thể lưu Chủ đề: {}",
+      "error_delete_class": "Không thể xóa Chủ đề: {}"
+    },
+    "class_item": {
+      "delete": "Xóa Chủ đề",
+      "info_students": "{} học viên",
+      "info_courses": "{} học phần",
+      "course_chip": "Học phần {}...",
+      "more_courses": "+{} học phần khác"
+    },
+    "class_edit": {
+      "error_name_required": "Vui lòng nhập tên Chủ đề",
+      "snackbar_updated": "Đã cập nhật Chủ đề",
+      "title": "Chỉnh sửa Chủ đề",
+      "field_name": "Tên Chủ đề",
+      "hint_name": "Nhập tên Chủ đề...",
+      "field_description": "Mô tả (tùy chọn)",
+      "hint_description": "Nhập mô tả cho Chủ đề...",
+      "section_courses": "Học phần trong Chủ đề",
+      "empty_courses": "Chưa có học phần nào. Hãy tạo học phần trước.",
+      "term_count": "{} thuật ngữ",
+      "update": "Cập nhật"
+    },
+    "class_create": {
+      "error_name_required": "Vui lòng nhập tên Chủ đề",
+      "snackbar_created": "Đã tạo Chủ đề thành công",
+      "title": "Tạo Chủ đề mới",
+      "field_name": "Tên Chủ đề",
+      "hint_name": "Nhập tên Chủ đề...",
+      "field_description": "Mô tả (tùy chọn)",
+      "hint_description": "Nhập mô tả cho Chủ đề...",
+      "section_select_courses": "Chọn học phần",
+      "empty_courses": "Chưa có học phần nào. Hãy tạo học phần trước.",
+      "term_count": "{} thuật ngữ",
+      "submit": "Tạo Chủ đề"
+    },
+    "class_service": {
+      "error_save": "Không thể lưu Chủ đề: {}",
+      "error_not_found": "Không tìm thấy Chủ đề",
+      "error_delete": "Không thể xóa Chủ đề: {}",
+      "error_load_list": "Không thể tải danh sách Chủ đề: {}",
+      "error_search": "Không thể tìm kiếm Chủ đề: {}"
+    },
+    "topic_service": {
+      "error_save": "Không thể lưu chủ đề: {}",
+      "error_not_found": "Không tìm thấy chủ đề",
+      "error_delete": "Không thể xóa chủ đề: {}",
+      "error_load_list": "Không thể tải danh sách chủ đề: {}",
+      "error_search": "Không thể tìm kiếm chủ đề: {}"
+    },
+    "content_service": {
+      "error_save": "Không thể lưu nội dung: {}",
+      "error_not_found": "Không tìm thấy nội dung",
+      "error_delete": "Không thể xóa nội dung: {}",
+      "error_load_list": "Không thể tải danh sách nội dung: {}",
+      "error_search": "Không thể tìm kiếm nội dung: {}"
+    },
+    "bookmark": {
+      "section": {
+        "review_today": "Cần ôn tập hôm nay",
+        "bookmarked": "Học phần đã đánh dấu",
+        "unlearned_by_course": "Thẻ chưa thuộc theo học phần"
+      },
+      "header": {
+        "title": "Tổng hợp học tập"
+      },
+      "stats": {
+        "review": "Cần ôn tập",
+        "unlearned": "Chưa thuộc"
+      },
+      "empty_title": "Tuyệt vời! Bạn đã thuộc hết tất cả thẻ",
+      "empty_subtitle": "Tiếp tục học thêm các khóa học mới",
+      "no_title": "Không có tiêu đề",
+      "review_badge": "{} thẻ cần ôn",
+      "bookmarked_badge": "{} thẻ đã đánh dấu",
+      "unlearned_badge": "{} thẻ",
+      "no_category": "Không có chủ đề",
+      "time_unknown": "Không xác định",
+      "error_load_unlearned": "Không thể tải thẻ chưa thuộc: {}"
+    }
+  },
+  "spaced_repetition_settings": {
+    "title": "Cài đặt Spaced Repetition",
+    "tooltip_reset": "Reset về mặc định",
+    "snackbar_saved": "Đã lưu cấu hình thành công!",
+    "snackbar_reset": "Đã reset về mặc định!",
+    "info": {
+      "title": "Thông tin",
+      "description": "Cấu hình các tham số cho thuật toán Spaced Repetition. Thay đổi sẽ áp dụng cho tất cả flashcard mới."
+    },
+    "sections": {
+      "time_unit": {
+        "title": "Đơn vị thời gian",
+        "days_title": "Ngày (Production)",
+        "days_subtitle": "Ôn tập theo ngày - Khuyến nghị cho sử dụng thực tế",
+        "minutes_title": "Phút (Test)",
+        "minutes_subtitle": "Ôn tập theo phút - Phục vụ kiểm thử nhanh"
+      },
+      "intervals": {
+        "title": "Khoảng thời gian ôn tập",
+        "first_title": "Interval lần 1",
+        "first_subtitle": "Ôn lại sau {} {}",
+        "second_title": "Interval lần 2",
+        "second_subtitle": "Ôn lại sau {} {}",
+        "max_title": "Interval tối đa",
+        "max_subtitle": "Tối đa {} {}"
+      },
+      "auto_refresh": {
+        "title": "Tự động làm mới dữ liệu",
+        "interval_title": "Khoảng thời gian tự động làm mới",
+        "interval_subtitle": "Làm mới mỗi {} {}"
+      },
+      "timeline": {
+        "title": "Xem trước timeline",
+        "first_label": "Lần 1",
+        "first_value": "{} {}",
+        "second_label": "Lần 2",
+        "second_value": "{} {}",
+        "third_label": "Lần 3",
+        "third_value": "~{} {} ({} × 2.5)",
+        "max_label": "Tối đa",
+        "max_value": "{} {}"
+      }
+    },
+    "button_save": "Lưu cấu hình",
+    "units": {
+      "day": "ngày",
+      "days": "ngày",
+      "minute": "phút",
+      "minutes": "phút",
+      "second": "giây",
+      "seconds": "giây"
+    }
+  },
+  "course_edit": {
+    "error_loading_course": "Không thể tải dữ liệu khóa học",
+    "title": "Sửa khóa học",
+    "topic_hint": "Chủ đề, chương, đơn vị",
+    "title_label": "TIÊU ĐỀ",
+    "description_label": "MÔ TẢ",
+    "description_hint": "Nhập mô tả cho khóa học...",
+    "scan_document": "Quét tài liệu",
+    "add_description": "+ Mô tả",
+    "term_label": "THUẬT NGỮ",
+    "definition_label": "ĐỊNH NGHĨA",
+    "language_label": "CHỌN NGÔN NGỮ",
+    "update_success": "Đã cập nhật khóa học!",
+    "update_not_found": "Không tìm thấy khóa học để cập nhật",
+    "error_generic": "Lỗi: {}"
+  },
+  "drawer": {
+    "greeting_guest": "Card mind xin chào!",
+    "greeting_user": "Xin chào, {}!",
+    "review_reminder": "Nhắc nhở ôn tập",
+    "settings": "Cài đặt",
+    "notification_enabled": "✅ Thông báo đã bật",
+    "notification_body": "Bạn sẽ nhận được nhắc nhở khi đến giờ ôn tập!",
+    "confirm_logout": "Xác nhận đăng xuất",
+    "logout_confirm": "Bạn có chắc chắn muốn đăng xuất?",
+    "error_title": "Lỗi",
+    "logout_error": "Lỗi khi đăng xuất: {}"
+  }
+}
