@@ -3,7 +3,7 @@ import 'package:card_mind/core/services/notification_service.dart';
 import 'package:card_mind/core/services/spaced_repetition_service.dart';
 import 'package:card_mind/core/theme/theme_extensions.dart';
 
-/// Màn hình test notification - CHỈ DÙNG ĐỂ TEST
+
 class NotificationTestScreen extends StatefulWidget {
   const NotificationTestScreen({super.key});
 
@@ -30,7 +30,7 @@ class _NotificationTestScreenState extends State<NotificationTestScreen> {
     });
   }
 
-  // Test 1: Gửi notification ngay lập tức
+  
   Future<void> _testImmediateNotification() async {
     setState(() => _status = 'Đang gửi notification...');
 
@@ -46,7 +46,7 @@ class _NotificationTestScreenState extends State<NotificationTestScreen> {
     }
   }
 
-  // Test 2: Schedule notification sau 10 giây
+  
   Future<void> _testScheduleNotification() async {
     setState(() => _status = 'Đang schedule notification...');
 
@@ -69,7 +69,7 @@ class _NotificationTestScreenState extends State<NotificationTestScreen> {
     }
   }
 
-  // Test 3: Request permissions
+  
   Future<void> _testRequestPermissions() async {
     setState(() => _status = 'Đang request permissions...');
 
@@ -84,7 +84,7 @@ class _NotificationTestScreenState extends State<NotificationTestScreen> {
     }
   }
 
-  // Test 4: Check if notifications enabled
+  
   Future<void> _testCheckEnabled() async {
     setState(() => _status = 'Đang check...');
 
@@ -99,7 +99,7 @@ class _NotificationTestScreenState extends State<NotificationTestScreen> {
     }
   }
 
-  // Test 5: Toggle notifications on/off
+  
   Future<void> _testToggleNotifications() async {
     setState(() => _status = 'Đang toggle...');
 
@@ -115,7 +115,7 @@ class _NotificationTestScreenState extends State<NotificationTestScreen> {
     }
   }
 
-  // Test 6: Cancel all notifications
+  
   Future<void> _testCancelAll() async {
     setState(() => _status = 'Đang cancel...');
 
@@ -129,7 +129,7 @@ class _NotificationTestScreenState extends State<NotificationTestScreen> {
     }
   }
 
-  // Test 7: Schedule notification cho ngày mai
+  
   Future<void> _testScheduleTomorrow() async {
     setState(() => _status = 'Đang schedule cho ngày mai...');
 
@@ -139,7 +139,7 @@ class _NotificationTestScreenState extends State<NotificationTestScreen> {
         tomorrow.year,
         tomorrow.month,
         tomorrow.day,
-        9, // 9:00 sáng
+        9, 
         0,
       );
 
@@ -173,7 +173,7 @@ class _NotificationTestScreenState extends State<NotificationTestScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Status card
+            
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -210,7 +210,7 @@ class _NotificationTestScreenState extends State<NotificationTestScreen> {
 
             const SizedBox(height: 24),
 
-            // Test buttons
+            
             _buildTestButton(
               icon: Icons.notifications_active,
               title: '1. Test Notification Ngay',
@@ -281,7 +281,7 @@ class _NotificationTestScreenState extends State<NotificationTestScreen> {
 
             const SizedBox(height: 24),
 
-            // Instructions
+            
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(

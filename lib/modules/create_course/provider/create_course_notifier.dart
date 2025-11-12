@@ -45,12 +45,12 @@ class CreateCourseNotifier extends ChangeNotifier {
 
   Future<void> completeCourse({String? author}) async {
     try {
-      // Loại bỏ các thuật ngữ trống (không có cả thuật ngữ và định nghĩa)
+      
       final validTerms =
           _courseData.terms.where((term) {
             final hasTerm = term.term.trim().isNotEmpty;
             final hasDefinition = term.definition.trim().isNotEmpty;
-            // Chỉ giữ lại những thuật ngữ có ít nhất thuật ngữ hoặc định nghĩa
+            
             return hasTerm && hasDefinition;
           }).toList();
 
@@ -66,7 +66,7 @@ class CreateCourseNotifier extends ChangeNotifier {
         author:
             author ??
             _courseData
-                .author, // Sử dụng author được truyền vào hoặc giữ nguyên
+                .author, 
         terms: validTerms,
         createdAt: now,
         updatedAt: now,
@@ -84,10 +84,10 @@ class CreateCourseNotifier extends ChangeNotifier {
         print('Added key to course_keys list');
       }
 
-      // Đồng bộ course lên Firestore (nếu user đã đăng nhập)
+      
       DataSyncService().syncCourse(newCourseData).catchError((error) {
         print('⚠️ [CreateCourseNotifier] Sync failed (will retry): $error');
-        // Không throw error, data đã lưu local thành công
+        
       });
 
       _clearError();

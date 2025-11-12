@@ -28,7 +28,7 @@ class _SpacedRepetitionSettingsScreenState
   void initState() {
     super.initState();
     _loadConfig();
-    // Đảm bảo các giá trị interval phù hợp với timeUnit hiện tại
+    
     _adjustIntervalsForTimeUnit();
   }
 
@@ -42,12 +42,12 @@ class _SpacedRepetitionSettingsScreenState
 
   void _adjustIntervalsForTimeUnit() {
     if (_timeUnit == 'minutes') {
-      // Điều chỉnh về giá trị phù hợp cho phút
+      
       _interval1 = _interval1.clamp(1, 10);
       _interval2 = _interval2.clamp(1, 20);
       _maxInterval = _maxInterval.clamp(20, 60);
     } else {
-      // Điều chỉnh về giá trị phù hợp cho ngày
+      
       _interval1 = _interval1.clamp(1, 7);
       _interval2 = _interval2.clamp(1, 14);
       _maxInterval = _maxInterval.clamp(30, 365);
@@ -120,7 +120,7 @@ class _SpacedRepetitionSettingsScreenState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Info card
+            
             Card(
               color: context.brandColors.cardBackground,
               child: Padding(
@@ -157,7 +157,7 @@ class _SpacedRepetitionSettingsScreenState
 
             SizedBox(height: 24),
 
-            // Đơn vị thời gian
+            
             _buildSectionTitle(
               'spaced_repetition_settings.sections.time_unit.title'.tr(),
             ),
@@ -218,7 +218,7 @@ class _SpacedRepetitionSettingsScreenState
 
             SizedBox(height: 24),
 
-            // Intervals
+            
             _buildSectionTitle(
               'spaced_repetition_settings.sections.intervals.title'.tr(),
             ),
@@ -273,7 +273,7 @@ class _SpacedRepetitionSettingsScreenState
 
             SizedBox(height: 24),
 
-            // Auto Refresh Interval
+            
             _buildSectionTitle(
               'spaced_repetition_settings.sections.auto_refresh.title'.tr(),
             ),
@@ -300,7 +300,7 @@ class _SpacedRepetitionSettingsScreenState
 
             SizedBox(height: 24),
 
-            // Timeline preview
+            
             _buildSectionTitle(
               'spaced_repetition_settings.sections.timeline.title'.tr(),
             ),
@@ -348,7 +348,7 @@ class _SpacedRepetitionSettingsScreenState
 
             SizedBox(height: 32),
 
-            // Nút lưu
+            
             ElevatedButton(
               onPressed: _saveConfig,
               style: ElevatedButton.styleFrom(

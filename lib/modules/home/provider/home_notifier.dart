@@ -14,8 +14,8 @@ class HomeNotifier extends ChangeNotifier {
   StreamSubscription<ClassEvent>? _classEventSubscription;
   StreamSubscription<ReviewEvent>? _reviewEventSubscription;
   StreamSubscription<User?>? _authStateSubscription;
-  Timer? _autoRefreshTimer; // Timer để tự động refresh
-  Map<String, int> _coursesNeedingReview = {}; // courseId -> số lượng thẻ cần ôn
+  Timer? _autoRefreshTimer; 
+  Map<String, int> _coursesNeedingReview = {}; 
 
   HomeData get homeData => _homeData;
 
@@ -25,7 +25,7 @@ class HomeNotifier extends ChangeNotifier {
 
   bool get hasError => _errorMessage != null;
 
-  /// Lấy danh sách courses cần ôn tập (có ít nhất 1 thẻ cần ôn)
+  
   List<CourseItem> get coursesNeedingReview {
     return _homeData.courses
         .where((course) => course.reviewCardsCount > 0)
@@ -54,21 +54,21 @@ class HomeNotifier extends ChangeNotifier {
     }
   }
 
-  /// Lắng nghe auth state để refresh khi login/logout
+  
   void _setupAuthStateSubscription() {
     _authStateSubscription?.cancel();
     _authStateSubscription = FirebaseAuth.instance.authStateChanges().listen((user) {
       print('🔐 Auth state changed: ${user != null ? "Logged in" : "Logged out"}');
-      // Refresh data khi auth state thay đổi (login/logout)
+      
       _refreshData();
     });
   }
 
-  /// Setup timer để tự động refresh data theo chu kỳ
+  
   void _setupAutoRefreshTimer() {
     _autoRefreshTimer?.cancel();
 
-    // Lấy autoRefreshInterval từ SpacedRepetitionService config
+    
     final service = SpacedRepetitionService();
     final refreshIntervalSeconds = service.autoRefreshInterval;
     final refreshInterval = Duration(seconds: refreshIntervalSeconds);
@@ -108,7 +108,7 @@ class HomeNotifier extends ChangeNotifier {
     _reviewEventSubscription = EventService().reviewEvents.listen((event) {
       if (event.type == ReviewEventType.reviewUpdated ||
           event.type == ReviewEventType.reviewCompleted) {
-        // Refresh lại danh sách courses cần ôn tập
+        
         _refreshData();
       }
     });
@@ -165,11 +165,11 @@ class HomeNotifier extends ChangeNotifier {
         }
       }
 
-      // Sắp xếp theo ID (mới nhất lên đầu - vì ID = timestamp)
+      
       coursesList.sort((a, b) {
         final idA = int.tryParse(a.id) ?? 0;
         final idB = int.tryParse(b.id) ?? 0;
-        return idB.compareTo(idA); // Giảm dần (mới nhất trước)
+        return idB.compareTo(idA); 
       });
 
       _homeData = _homeData.copyWith(courses: coursesList);
@@ -213,7 +213,7 @@ class HomeNotifier extends ChangeNotifier {
     try {
       print('🗑️ Deleting course: $courseId');
 
-      // Tìm course key từ courseId
+      
       final courseKeys =
           LocalStorageHelper.getValue('course_keys') as List<dynamic>? ?? [];
       String? courseKey;
@@ -236,20 +236,20 @@ class HomeNotifier extends ChangeNotifier {
         return false;
       }
 
-      // Xóa course data từ Hive
+      
       LocalStorageHelper.deleteValue(courseKey);
 
-      // Xóa course key khỏi danh sách
+      
       courseKeys.remove(courseKey);
       LocalStorageHelper.setValue('course_keys', courseKeys);
 
-      // Xóa các dữ liệu liên quan (learning results, bookmarks, etc.)
+      
       await _deleteRelatedCourseData(courseId);
 
-      // Refresh data
+      
       await _refreshData();
 
-      // Emit event
+      
       EventService().emitCourseEvent(
         CourseEvent(type: CourseEventType.courseDeleted, courseId: courseId),
       );
@@ -264,7 +264,7 @@ class HomeNotifier extends ChangeNotifier {
 
   Future<void> _deleteRelatedCourseData(String courseId) async {
     try {
-      // Xóa learning results
+      
       final allResults =
           LocalStorageHelper.getValue('all_learning_results')
               as List<dynamic>? ??
@@ -282,14 +282,14 @@ class HomeNotifier extends ChangeNotifier {
         LocalStorageHelper.deleteValue(resultKey.toString());
       }
 
-      // Cập nhật danh sách all_learning_results
+      
       allResults.removeWhere(
         (resultKey) =>
             resultKey.toString().contains('learning_result_${courseId}_'),
       );
       LocalStorageHelper.setValue('all_learning_results', allResults);
 
-      // Xóa khỏi courses_with_results
+      
       final coursesWithResults =
           LocalStorageHelper.getValue('courses_with_results')
               as List<dynamic>? ??
@@ -297,7 +297,7 @@ class HomeNotifier extends ChangeNotifier {
       coursesWithResults.removeWhere((id) => id == courseId);
       LocalStorageHelper.setValue('courses_with_results', coursesWithResults);
 
-      // Xóa learned/unlearned cards
+      
       LocalStorageHelper.deleteValue('learned_cards_$courseId');
       LocalStorageHelper.deleteValue('unlearned_cards_$courseId');
 
@@ -311,12 +311,12 @@ class HomeNotifier extends ChangeNotifier {
     try {
       print('🗑️ Deleting class: $classId');
 
-      // Lấy danh sách classes
+      
       final classesData =
           LocalStorageHelper.getValue('library_classes') as List<dynamic>? ??
           [];
 
-      // Tìm và xóa class
+      
       final updatedClasses =
           classesData.where((classJson) {
             final Map<String, dynamic> jsonMap = Map<String, dynamic>.from(
@@ -325,13 +325,13 @@ class HomeNotifier extends ChangeNotifier {
             return jsonMap['id'] != classId;
           }).toList();
 
-      // Cập nhật danh sách classes
+      
       LocalStorageHelper.setValue('library_classes', updatedClasses);
 
-      // Refresh data
+      
       await _refreshData();
 
-      // Emit event
+      
       EventService().emitClassEvent(
         ClassEvent(type: ClassEventType.classDeleted, classId: classId),
       );

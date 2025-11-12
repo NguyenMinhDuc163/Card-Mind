@@ -67,7 +67,7 @@ class CourseInfoNotifier extends ChangeNotifier {
     _reviewEventSubscription?.cancel();
     _reviewEventSubscription = EventService().reviewEvents.listen((event) {
       if (event.courseId == _currentCourseId) {
-        // Refresh số lượng thẻ cần ôn tập khi có thay đổi
+        
         _loadReviewCardsCount(_currentCourseId!);
       }
     });
@@ -79,7 +79,7 @@ class CourseInfoNotifier extends ChangeNotifier {
           .getCardsNeedingReview(courseId);
       _reviewCardsCount = cardsNeedingReview.length;
 
-      // Log thông tin repetitions của từng card trong course
+      
       await _printCourseRepetitionsInfo(courseId);
 
       notifyListeners();

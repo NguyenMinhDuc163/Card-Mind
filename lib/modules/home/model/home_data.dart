@@ -23,7 +23,7 @@ class CourseItem extends Equatable {
   final String description;
   final int totalTerms;
   final String author;
-  final int reviewCardsCount; // Số lượng thẻ cần ôn tập (spaced repetition)
+  final int reviewCardsCount; 
 
   const CourseItem({
     required this.id,

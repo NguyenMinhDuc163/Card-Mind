@@ -46,7 +46,7 @@ class App extends StatelessWidget {
                 themeMode: themeMode,
                 localizationsDelegates: context.localizationDelegates,
                 supportedLocales: context.supportedLocales,
-                locale: locale, // Sử dụng locale từ LocaleCubit
+                locale: locale,
                 routes: Routers.routes,
                 initialRoute: DashboardScreen.routeName,
                 onGenerateRoute: Routers.generateRoute,

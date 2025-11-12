@@ -43,7 +43,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
       listen: false,
     );
 
-    // Lấy arguments - có thể là String (courseId) hoặc Map (courseId + learningMode)
+    
     final arguments = ModalRoute.of(context)?.settings.arguments;
     String? courseId;
     LearningMode learningMode = LearningMode.fullCourse;
@@ -53,7 +53,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
     } else if (arguments is Map<String, dynamic>) {
       courseId = arguments['courseId'] as String?;
 
-      // Parse learningMode từ string
+      
       final learningModeStr = arguments['learningMode'] as String?;
       if (learningModeStr != null) {
         switch (learningModeStr) {
@@ -160,7 +160,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
         }
 
         if (notifier.currentCards.isEmpty && !notifier.isLoading) {
-          // Debug: Kiểm tra các điều kiện
+          
           print('=== DEBUG DETAIL FLASHCARD ===');
           print('Current cards: ${notifier.currentCards.length}');
           print('Is loading: ${notifier.isLoading}');
@@ -171,7 +171,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
           print('Course ID: ${notifier.courseId}');
           print('==============================');
 
-          // Check nếu đang ở bookmark mode và hết cards → auto navigate back
+          
           if (notifier.learningMode == LearningMode.bookmarked &&
               notifier.totalCards == 0 &&
               !notifier.isLoading) {
@@ -441,7 +441,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
         final flashcard = notifier.currentCards[index];
         final isBookmarked = notifier.isCardBookmarked(flashcard.id);
 
-        // Tạo key mới cho card hiện tại
+        
         _currentFlipCardKey = GlobalKey<FlipCardState>();
 
         return FlipCard(
@@ -557,7 +557,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
                 notifier.toggleBookmark(flashcard);
                 HapticFeedback.mediumImpact();
 
-                // Nếu xóa card cuối trong bookmark mode, hiện thông báo
+                
                 if (notifier.learningMode == LearningMode.bookmarked &&
                     notifier.totalCards == 0) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -607,7 +607,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
   void _revertLastCard(DetailFlashCardNotifier notifier) {
     if (notifier.learnedCards.isNotEmpty ||
         notifier.unlearnedCards.isNotEmpty) {
-      // Undo card bằng controller
+      
       _cardController.undo();
       notifier.revertLastCard();
     } else {
@@ -621,7 +621,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
   }
 
   void _autoPlayCard(DetailFlashCardNotifier notifier) {
-    // Swipe sang thẻ tiếp theo (sang phải = learned)
+    
     if (notifier.currentCard != null) {
       _cardController.swipe(CardSwiperDirection.right);
       HapticFeedback.lightImpact();

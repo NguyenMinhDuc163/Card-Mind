@@ -9,10 +9,10 @@ import 'package:flutter/foundation.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 enum LearningMode {
-  fullCourse, // Học tất cả thẻ trong khóa học
-  bookmarked, // Chỉ học thẻ đã bookmark
-  unlearned, // Chỉ học thẻ chưa thuộc
-  review, // Chỉ học thẻ cần ôn tập
+  fullCourse, 
+  bookmarked, 
+  unlearned, 
+  review, 
 }
 
 class DetailFlashCardNotifier extends ChangeNotifier {
@@ -27,8 +27,8 @@ class DetailFlashCardNotifier extends ChangeNotifier {
   bool _isLoading = false;
   String? _errorMessage;
   String? _courseId;
-  int _currentCardIndex = 0; // Track thẻ hiện tại đang hiển thị
-  LearningMode _learningMode = LearningMode.fullCourse; // Chế độ học tập
+  int _currentCardIndex = 0; 
+  LearningMode _learningMode = LearningMode.fullCourse; 
 
   CourseData? get courseData => _courseData;
 
@@ -71,7 +71,7 @@ class DetailFlashCardNotifier extends ChangeNotifier {
   }
 
   int get totalCards {
-    // Tổng số thẻ cố định = số thẻ trong list A
+    
     return _originalCards.length;
   }
 
@@ -98,11 +98,11 @@ class DetailFlashCardNotifier extends ChangeNotifier {
       if (courseId != null) {
         _resetAllData();
         await _loadCourseFromHive(courseId);
-        await _loadBookmarkedCardIds(); // Load bookmark IDs trước khi filter
+        await _loadBookmarkedCardIds(); 
         await _filterCardsByLearningMode(courseId);
 
-        // B và C luôn bắt đầu rỗng, không load từ Hive
-        // Chỉ load khi hoàn thành khóa học
+        
+        
         print('🔄 Initialized with learning mode: ${_learningMode.name}');
         print('🔄 Cards after filtering: ${_originalCards.length}');
         print('🔖 Bookmarked card IDs: $_bookmarkedCardIds');
@@ -125,11 +125,11 @@ class DetailFlashCardNotifier extends ChangeNotifier {
     _learnedCardIds = <String>{};
     _bookmarkedCardIds = <String>{};
     _bookmarkedCards = [];
-    _currentCardIndex = 0; // Reset về thẻ đầu tiên
+    _currentCardIndex = 0; 
   }
 
-  // Xóa method _clearLearningData vì không cần thiết nữa
-  // B và C luôn bắt đầu rỗng
+  
+  
 
   Future<void> _loadBookmarkedCardIds() async {
     try {
@@ -178,7 +178,7 @@ class DetailFlashCardNotifier extends ChangeNotifier {
       final now = DateTime.now();
       final courseId = _courseData!.id;
 
-      // Lưu bookmark theo courseId (mỗi course riêng biệt)
+      
       final bookmarkedData = {
         'courseId': courseId,
         'courseTitle': _courseData!.title,
@@ -202,11 +202,11 @@ class DetailFlashCardNotifier extends ChangeNotifier {
         'lastUpdated': now.toIso8601String(),
       };
 
-      // Lưu theo course ID để không bị overwrite
+      
       final key = 'bookmarked_cards_$courseId';
       LocalStorageHelper.setValue(key, bookmarkedData);
 
-      // Cập nhật danh sách courses có bookmark
+      
       await _updateBookmarkedCoursesList(courseId);
 
       print(
@@ -232,7 +232,7 @@ class DetailFlashCardNotifier extends ChangeNotifier {
         );
       }
 
-      // Nếu không còn bookmark nào, xóa khỏi list
+      
       if (_bookmarkedCards.isEmpty) {
         bookmarkedCourses.remove(courseId);
         LocalStorageHelper.setValue(
@@ -276,24 +276,24 @@ class DetailFlashCardNotifier extends ChangeNotifier {
     }
   }
 
-  // Xóa các method _saveLearnedCards và _saveUnlearnedCards
-  // Vì B và C chỉ lưu khi hoàn thành khóa học
+  
+  
 
-  // Xóa method _loadExistingLearningData vì không cần load từ Hive nữa
-  // B và C luôn bắt đầu rỗng
+  
+  
 
   Future<void> _filterCardsByLearningMode(String courseId) async {
     try {
       switch (_learningMode) {
         case LearningMode.fullCourse:
-          // Giữ nguyên tất cả thẻ
+          
           print(
             '📚 Learning mode: Full course - ${_originalCards.length} cards',
           );
           break;
 
         case LearningMode.bookmarked:
-          // Chỉ giữ thẻ đã bookmark (của course này)
+          
           final bookmarkedCards = await getBookmarkedCardsByCourse(courseId);
           final bookmarkedIds =
               bookmarkedCards.map((card) => card['id'] as String).toSet();
@@ -307,7 +307,7 @@ class DetailFlashCardNotifier extends ChangeNotifier {
           break;
 
         case LearningMode.unlearned:
-          // Chỉ giữ thẻ chưa thuộc
+          
           final unlearnedCards = await getUnlearnedCards(courseId);
           final unlearnedIds =
               unlearnedCards.map((card) => card['id'] as String).toSet();
@@ -319,7 +319,7 @@ class DetailFlashCardNotifier extends ChangeNotifier {
           break;
 
         case LearningMode.review:
-          // Chỉ giữ thẻ cần ôn tập
+          
           final reviewCards = await SpacedRepetitionService()
               .getCardsNeedingReview(courseId);
           final reviewCardIds = reviewCards.map((data) => data.cardId).toSet();
@@ -374,13 +374,13 @@ class DetailFlashCardNotifier extends ChangeNotifier {
   }
 
   void onSwipeRight(Flashcard card) {
-    // Thêm vào list B (learned) - tạm thời, không lưu Hive
+    
     if (!_learnedCardIds.contains(card.id)) {
       _learnedCards.add(card);
       _learnedCardIds.add(card.id);
     }
 
-    // Cập nhật spaced repetition data (đã học = true)
+    
     if (_courseId != null) {
       SpacedRepetitionService().updateAfterReview(
         courseId: _courseId!,
@@ -388,7 +388,7 @@ class DetailFlashCardNotifier extends ChangeNotifier {
         isCorrect: true,
       );
 
-      // Emit review event để HomeNotifier biết và refresh
+      
       EventService().emitReviewEvent(
         ReviewEvent(
           type: ReviewEventType.reviewUpdated,
@@ -398,7 +398,7 @@ class DetailFlashCardNotifier extends ChangeNotifier {
       );
     }
 
-    // Chuyển sang thẻ tiếp theo
+    
     _currentCardIndex++;
 
     print('📚 Swiped RIGHT - Learned: ${card.frontText}');
@@ -411,12 +411,12 @@ class DetailFlashCardNotifier extends ChangeNotifier {
   }
 
   void onSwipeLeft(Flashcard card) {
-    // Thêm vào list C (unlearned) - tạm thời, không lưu Hive
+    
     if (!_unlearnedCards.any((c) => c.id == card.id)) {
       _unlearnedCards.add(card);
     }
 
-    // Cập nhật spaced repetition data (chưa học = false)
+    
     if (_courseId != null) {
       SpacedRepetitionService().updateAfterReview(
         courseId: _courseId!,
@@ -424,7 +424,7 @@ class DetailFlashCardNotifier extends ChangeNotifier {
         isCorrect: false,
       );
 
-      // Emit review event để HomeNotifier biết và refresh
+      
       EventService().emitReviewEvent(
         ReviewEvent(
           type: ReviewEventType.reviewUpdated,
@@ -434,7 +434,7 @@ class DetailFlashCardNotifier extends ChangeNotifier {
       );
     }
 
-    // Chuyển sang thẻ tiếp theo
+    
     _currentCardIndex++;
 
     print('❌ Swiped LEFT - Unlearned: ${card.frontText}');
@@ -447,12 +447,12 @@ class DetailFlashCardNotifier extends ChangeNotifier {
   }
 
   bool get hasCardsToStudy {
-    // Kết thúc khi đã học hết tất cả thẻ (index >= length)
+    
     return _currentCardIndex < _originalCards.length;
   }
 
   Flashcard? get currentCard {
-    // Hiển thị thẻ tại index hiện tại
+    
     if (_currentCardIndex < _originalCards.length) {
       return _originalCards[_currentCardIndex];
     }
@@ -460,17 +460,17 @@ class DetailFlashCardNotifier extends ChangeNotifier {
   }
 
   void revertLastCard() {
-    // Hoàn tác thẻ learned cuối cùng (không lưu Hive)
+    
     if (_learnedCards.isNotEmpty) {
       final lastLearnedCard = _learnedCards.removeLast();
       _learnedCardIds.remove(lastLearnedCard.id);
-      _currentCardIndex--; // Giảm index
+      _currentCardIndex--; 
       print('↩️ Reverted learned card: ${lastLearnedCard.frontText}');
     }
-    // Hoặc hoàn tác thẻ unlearned cuối cùng (không lưu Hive)
+    
     else if (_unlearnedCards.isNotEmpty) {
       final lastUnlearnedCard = _unlearnedCards.removeLast();
-      _currentCardIndex--; // Giảm index
+      _currentCardIndex--; 
       print('↩️ Reverted unlearned card: ${lastUnlearnedCard.frontText}');
     }
 
@@ -493,7 +493,7 @@ class DetailFlashCardNotifier extends ChangeNotifier {
         '💾 Saving learning result - List B: ${_learnedCards.length}, List C: ${_unlearnedCards.length}',
       );
 
-      // Lưu kết quả học tập
+      
       final resultKey =
           'learning_result_${_courseData!.id}_${now.millisecondsSinceEpoch}';
       final result = {
@@ -513,7 +513,7 @@ class DetailFlashCardNotifier extends ChangeNotifier {
       };
       LocalStorageHelper.setValue(resultKey, result);
 
-      // Lưu list B (learned cards) vào Hive
+      
       final learnedCardsKey = 'learned_cards_${_courseData!.id}';
       final learnedCardsData = {
         'courseId': _courseData!.id,
@@ -537,7 +537,7 @@ class DetailFlashCardNotifier extends ChangeNotifier {
       };
       LocalStorageHelper.setValue(learnedCardsKey, learnedCardsData);
 
-      // Lưu list C (unlearned cards) vào Hive
+      
       final unlearnedCardsKey = 'unlearned_cards_${_courseData!.id}';
       final unlearnedCardsData = {
         'courseId': _courseData!.id,
@@ -561,7 +561,7 @@ class DetailFlashCardNotifier extends ChangeNotifier {
       };
       LocalStorageHelper.setValue(unlearnedCardsKey, unlearnedCardsData);
 
-      // Cập nhật danh sách kết quả
+      
       final allResults =
           LocalStorageHelper.getValue('all_learning_results')
               as List<dynamic>? ??
@@ -591,7 +591,7 @@ class DetailFlashCardNotifier extends ChangeNotifier {
       final learnedCardsKey = 'learned_cards_$courseId';
       final data = LocalStorageHelper.getValue(learnedCardsKey);
       if (data != null) {
-        // Convert Map<dynamic, dynamic> to Map<String, dynamic> safely
+        
         final rawData = data as Map<dynamic, dynamic>;
         final Map<String, dynamic> learnedData = {};
 
@@ -599,7 +599,7 @@ class DetailFlashCardNotifier extends ChangeNotifier {
           learnedData[key.toString()] = value;
         });
 
-        // Convert cards list
+        
         final rawCards = learnedData['cards'] as List<dynamic>? ?? [];
         final List<Map<String, dynamic>> cards = [];
 
@@ -634,7 +634,7 @@ class DetailFlashCardNotifier extends ChangeNotifier {
       final data = LocalStorageHelper.getValue(unlearnedCardsKey);
 
       if (data != null) {
-        // Convert Map<dynamic, dynamic> to Map<String, dynamic> safely
+        
         final rawData = data as Map<dynamic, dynamic>;
         final Map<String, dynamic> unlearnedData = {};
 
@@ -642,7 +642,7 @@ class DetailFlashCardNotifier extends ChangeNotifier {
           unlearnedData[key.toString()] = value;
         });
 
-        // Convert cards list
+        
         final rawCards = unlearnedData['cards'] as List<dynamic>? ?? [];
         final List<Map<String, dynamic>> cards = [];
 
@@ -678,7 +678,7 @@ class DetailFlashCardNotifier extends ChangeNotifier {
     }
   }
 
-  // Load bookmarks của 1 course cụ thể
+  
   static Future<List<Map<String, dynamic>>> getBookmarkedCardsByCourse(
     String courseId,
   ) async {
@@ -686,7 +686,7 @@ class DetailFlashCardNotifier extends ChangeNotifier {
       final key = 'bookmarked_cards_$courseId';
       final data = LocalStorageHelper.getValue(key);
       if (data != null) {
-        // Convert Map<dynamic, dynamic> to Map<String, dynamic> safely
+        
         final rawData = data as Map<dynamic, dynamic>;
         final Map<String, dynamic> bookmarkedData = {};
 
@@ -694,7 +694,7 @@ class DetailFlashCardNotifier extends ChangeNotifier {
           bookmarkedData[key.toString()] = value;
         });
 
-        // Convert cards list
+        
         final rawCards = bookmarkedData['cards'] as List<dynamic>? ?? [];
         final List<Map<String, dynamic>> cards = [];
 
@@ -717,7 +717,7 @@ class DetailFlashCardNotifier extends ChangeNotifier {
     }
   }
 
-  // Load tất cả bookmarks (aggregate từ tất cả courses)
+  
   static Future<List<Map<String, dynamic>>> getAllBookmarkedCourses() async {
     try {
       final bookmarkedCourses =
@@ -740,7 +740,7 @@ class DetailFlashCardNotifier extends ChangeNotifier {
 
         if (data != null) {
           try {
-            // Convert Map<dynamic, dynamic> to Map<String, dynamic> safely
+            
             final rawData = data as Map<dynamic, dynamic>;
             final Map<String, dynamic> bookmarkedData = {};
 
@@ -748,7 +748,7 @@ class DetailFlashCardNotifier extends ChangeNotifier {
               bookmarkedData[key.toString()] = value;
             });
 
-            // Convert cards list
+            
             final rawCards = bookmarkedData['cards'] as List<dynamic>? ?? [];
             final List<Map<String, dynamic>> cards = [];
 
@@ -804,7 +804,7 @@ class DetailFlashCardNotifier extends ChangeNotifier {
     }
   }
 
-  // Deprecated: Giữ lại cho backward compatibility
+  
   @Deprecated('Use getBookmarkedCardsByCourse(courseId) instead')
   static Future<List<Map<String, dynamic>>> getBookmarkedCards() async {
     try {
@@ -822,7 +822,7 @@ class DetailFlashCardNotifier extends ChangeNotifier {
     }
   }
 
-  // Deprecated: Giữ lại cho backward compatibility
+  
   @Deprecated('Use getAllBookmarkedCourses() instead')
   static Future<Map<String, dynamic>?> getBookmarkedCourseInfo() async {
     try {
@@ -850,7 +850,7 @@ class DetailFlashCardNotifier extends ChangeNotifier {
   void markCardAsLearned(String cardId) {
     if (!_learnedCardIds.contains(cardId)) {
       _learnedCardIds.add(cardId);
-      // Không lưu Hive, chỉ lưu khi hoàn thành
+      
       notifyListeners();
     }
   }
@@ -858,7 +858,7 @@ class DetailFlashCardNotifier extends ChangeNotifier {
   void unmarkCardAsLearned(String cardId) {
     if (_learnedCardIds.contains(cardId)) {
       _learnedCardIds.remove(cardId);
-      // Không lưu Hive, chỉ lưu khi hoàn thành
+      
       notifyListeners();
     }
   }
@@ -875,13 +875,13 @@ class DetailFlashCardNotifier extends ChangeNotifier {
       _bookmarkedCardIds.remove(cardId);
       _bookmarkedCards.removeWhere((c) => c.id == cardId);
 
-      // Nếu đang ở chế độ bookmarked, remove card khỏi _originalCards
+      
       if (_learningMode == LearningMode.bookmarked) {
         final removedIndex = _originalCards.indexWhere((c) => c.id == cardId);
         if (removedIndex != -1) {
           _originalCards.removeAt(removedIndex);
 
-          // Điều chỉnh currentCardIndex nếu cần
+          
           if (_currentCardIndex >= _originalCards.length &&
               _originalCards.isNotEmpty) {
             _currentCardIndex = _originalCards.length - 1;

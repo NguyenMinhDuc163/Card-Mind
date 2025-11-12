@@ -30,7 +30,7 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
   @override
   void initState() {
     super.initState();
-    // Parse empty data initially
+    
     _parseData();
   }
 
@@ -47,9 +47,9 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
       _isLoading = true;
     });
 
-    // Simulate async operation
+    
     Future.delayed(const Duration(milliseconds: 100), () {
-      // If no data entered, show empty result without error
+      
       if (_dataController.text.trim().isEmpty) {
         setState(() {
           _parseResult = ParsedDataResult.success([]);
@@ -74,7 +74,7 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
   }
 
   void _onImport() {
-    // Check if user has entered any data
+    
     if (_dataController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -85,7 +85,7 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
       return;
     }
 
-    // Check if parsing was successful
+    
     if (_parseResult == null ||
         _parseResult!.hasError ||
         _parseResult!.terms.isEmpty) {
@@ -202,14 +202,14 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
           ),
         ),
         const SizedBox(height: 16),
-        // Two column layout
+        
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Left column - Term and Definition delimiter
+            
             Expanded(child: _buildTermDefinitionDelimiterSection()),
             const SizedBox(width: 24),
-            // Right column - Card delimiter
+            
             Expanded(child: _buildCardDelimiterSection()),
           ],
         ),
@@ -309,7 +309,7 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Radio buttons arranged vertically
+        
         ...options.map((option) {
           final value = option['value']!;
           final label = option['label']!;
@@ -345,7 +345,7 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
                   ),
                 ],
               ),
-              // Custom input field (if custom is selected)
+              
               if (value == 'custom' && isSelected) ...[
                 const SizedBox(height: 8),
                 Container(
@@ -463,9 +463,9 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      // Scrollable list of all terms
+                      
                       SizedBox(
-                        height: 200, // Fixed height for scrolling
+                        height: 200, 
                         child: ListView.builder(
                           itemCount: _parseResult!.terms.length,
                           itemBuilder: (context, index) {
@@ -485,7 +485,7 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
                               ),
                               child: Row(
                                 children: [
-                                  // Term number
+                                  
                                   Container(
                                     width: 24,
                                     height: 24,
@@ -508,11 +508,11 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
                                     ),
                                   ),
                                   const SizedBox(width: 12),
-                                  // Term and Definition side by side
+                                  
                                   Expanded(
                                     child: Row(
                                       children: [
-                                        // Term section
+                                        
                                         Expanded(
                                           child: Column(
                                             crossAxisAlignment:
@@ -549,7 +549,7 @@ class _ImportDataScreenState extends State<ImportDataScreen> {
                                           ),
                                         ),
                                         const SizedBox(width: 16),
-                                        // Definition section
+                                        
                                         Expanded(
                                           child: Column(
                                             crossAxisAlignment:

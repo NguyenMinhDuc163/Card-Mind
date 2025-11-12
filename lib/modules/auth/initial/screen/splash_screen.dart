@@ -18,7 +18,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // Set initial status after first frame to ensure context is ready
+    
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         setState(() {
@@ -29,17 +29,17 @@ class _SplashScreenState extends State<SplashScreen> {
     _initializeAndSync();
   }
 
-  /// Khởi tạo và đồng bộ dữ liệu trước khi vào Dashboard
+  
   Future<void> _initializeAndSync() async {
     try {
-      // Đợi context ready
+      
       await Future.delayed(const Duration(milliseconds: 100));
 
-      // Kiểm tra user đã đăng nhập chưa
+      
       final user = FirebaseAuth.instance.currentUser;
 
       if (user != null) {
-        // User đã đăng nhập → Đồng bộ dữ liệu từ Firestore
+        
         if (mounted) {
           setState(() {
             _syncStatus = 'splash_screen.syncing_data'.tr();
@@ -50,7 +50,7 @@ class _SplashScreenState extends State<SplashScreen> {
         await DataSyncService().syncAllData();
         print('✅ [Splash] Sync completed');
       } else {
-        // User chưa đăng nhập → Chỉ load local data
+        
         if (mounted) {
           setState(() {
             _syncStatus = 'splash_screen.loading_data'.tr();
@@ -59,17 +59,17 @@ class _SplashScreenState extends State<SplashScreen> {
         print('ℹ️ [Splash] User not logged in, skip sync');
       }
 
-      // Đợi tối thiểu 500ms để hiển thị splash screen
+      
       await Future.delayed(const Duration(milliseconds: 500));
 
-      // Chuyển sang Dashboard
+      
       if (mounted) {
         Navigator.of(context).pushReplacementNamed(DashboardScreen.routeName);
       }
     } catch (e) {
       print('❌ [Splash] Error during initialization: $e');
 
-      // Vẫn cho vào app dù sync thất bại (offline-first)
+      
       if (mounted) {
         setState(() {
           _syncStatus = 'common.loading'.tr();
@@ -97,25 +97,25 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Stack(
         children: [
           Positioned.fill(child: Container(color: AppColors.lavenderColor)),
-          // Loading indicator và status
+          
           if (_isSyncing)
             Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Logo hoặc icon
+                  
                   const Icon(
                     Icons.credit_card,
                     size: 80,
                     color: Colors.white,
                   ),
                   const SizedBox(height: 24),
-                  // Loading spinner
+                  
                   const CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                   ),
                   const SizedBox(height: 16),
-                  // Status text
+                  
                   Text(
                     _syncStatus,
                     style: const TextStyle(

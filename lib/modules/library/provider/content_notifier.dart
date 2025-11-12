@@ -86,7 +86,7 @@ class ContentNotifier extends ChangeNotifier {
         }
       }
 
-      // Sắp xếp theo thời gian tạo (mới nhất lên đầu)
+      
       contentsList.sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
       _contents = contentsList;

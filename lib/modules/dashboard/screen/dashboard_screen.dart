@@ -17,6 +17,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
+
   static const String routeName = '/dashboardScreen';
 
   @override
@@ -46,19 +47,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
     super.dispose();
   }
 
-  /// Lắng nghe auth state để refresh tất cả tabs khi login/logout
+
   void _setupAuthStateListener() {
     _authStateSubscription = FirebaseAuth.instance.authStateChanges().listen((user) {
       print('🔐 [Dashboard] Auth state changed: ${user != null ? "Logged in" : "Logged out"}');
-      // Refresh tất cả tabs khi auth state thay đổi
+
       _refreshAllTabs();
     });
   }
 
-  /// Refresh tất cả tabs (Home và Library)
+
   void _refreshAllTabs() {
     try {
-      // Refresh HomeNotifier
       final homeNotifier = Provider.of<HomeNotifier>(context, listen: false);
       homeNotifier.initializeData();
       print('✅ [Dashboard] Refreshed HomeNotifier');
@@ -67,7 +67,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
 
     try {
-      // Refresh ContentNotifier (Library)
       final contentNotifier = Provider.of<ContentNotifier>(context, listen: false);
       contentNotifier.initializeData();
       print('✅ [Dashboard] Refreshed ContentNotifier');
@@ -76,7 +75,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
-  // Public method để switch tab từ các screen khác
+
   void switchToTab(int index) {
     if (index >= 0 && index < _tabs.length) {
       setState(() {
@@ -87,9 +86,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   void _refreshCurrentTab() {
-    // Refresh data khi switch tab
     if (_currentIndex == 0) {
-      // Home tab - refresh HomeNotifier
       try {
         final homeNotifier = Provider.of<HomeNotifier>(context, listen: false);
         homeNotifier.initializeData();
@@ -97,7 +94,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
         print('Error refreshing HomeNotifier: $e');
       }
     } else if (_currentIndex == 3) {
-      // Library tab - refresh ContentNotifier
       try {
         final contentNotifier = Provider.of<ContentNotifier>(context, listen: false);
         contentNotifier.initializeData();
@@ -138,7 +134,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 _currentIndex = index;
               });
               print('====>: ${_tabs[index].route}');
-              // Refresh data khi switch về Home hoặc Library
+
               _refreshCurrentTab();
             },
             items: [

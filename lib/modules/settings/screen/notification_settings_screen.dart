@@ -97,7 +97,7 @@ class _NotificationSettingsScreenState
   }
 
   Future<void> _rescheduleAllNotifications() async {
-    // Hiển thị loading
+    
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -113,14 +113,14 @@ class _NotificationSettingsScreenState
     );
 
     try {
-      // Reschedule tất cả notifications
+      
       await _notificationService.rescheduleAllReviewNotifications();
       await _notificationService.scheduleDailyReminders();
 
-      // Đóng loading
+      
       if (mounted) Navigator.pop(context);
 
-      // Hiển thị thông báo thành công
+      
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -130,10 +130,10 @@ class _NotificationSettingsScreenState
         );
       }
     } catch (e) {
-      // Đóng loading
+      
       if (mounted) Navigator.pop(context);
 
-      // Hiển thị lỗi
+      
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -209,7 +209,7 @@ class _NotificationSettingsScreenState
           : ListView(
               padding: EdgeInsets.all(16),
               children: [
-                // Header
+                
                 _buildSectionHeader('Thông báo Ôn tập'),
                 SizedBox(height: 8),
                 Text(
@@ -221,7 +221,7 @@ class _NotificationSettingsScreenState
                 ),
                 SizedBox(height: 16),
 
-                // Toggle Review Notifications
+                
                 _buildSwitchTile(
                   title: 'Thông báo ôn tập',
                   subtitle: 'Nhắc nhở khi có thẻ cần ôn tập',
@@ -232,7 +232,7 @@ class _NotificationSettingsScreenState
 
                 Divider(height: 32),
 
-                // Daily Reminders Section
+                
                 _buildSectionHeader('Nhắc nhở Hàng ngày'),
                 SizedBox(height: 8),
                 Text(
@@ -244,7 +244,7 @@ class _NotificationSettingsScreenState
                 ),
                 SizedBox(height: 16),
 
-                // Toggle Daily Reminders
+                
                 _buildSwitchTile(
                   title: 'Nhắc nhở hàng ngày',
                   subtitle: 'Sáng (${NotificationConfig.morningReminderHour}:00), '
@@ -255,7 +255,7 @@ class _NotificationSettingsScreenState
                   icon: Icons.schedule,
                 ),
 
-                // Daily reminder messages preview
+                
                 if (_dailyRemindersEnabled) ...[
                   SizedBox(height: 16),
                   _buildMessagesPreview(),
@@ -263,16 +263,16 @@ class _NotificationSettingsScreenState
 
                 Divider(height: 32),
 
-                // Battery Optimization Warning
+                
                 _buildBatteryOptimizationWarning(),
 
                 Divider(height: 32),
 
-                // Debug Section
+                
                 _buildSectionHeader('Công cụ Debug'),
                 SizedBox(height: 16),
 
-                // Test Notification Button
+                
                 _buildActionButton(
                   title: 'Gửi thông báo thử nghiệm',
                   icon: Icons.send,
@@ -280,7 +280,7 @@ class _NotificationSettingsScreenState
                 ),
                 SizedBox(height: 12),
 
-                // Show Pending Notifications
+                
                 _buildActionButton(
                   title: 'Xem thông báo đang chờ',
                   icon: Icons.list,
@@ -288,7 +288,7 @@ class _NotificationSettingsScreenState
                 ),
                 SizedBox(height: 12),
 
-                // Reschedule All Notifications
+                
                 _buildActionButton(
                   title: 'Reschedule tất cả notifications',
                   icon: Icons.refresh,

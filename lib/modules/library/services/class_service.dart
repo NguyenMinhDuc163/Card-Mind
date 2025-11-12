@@ -24,10 +24,10 @@ class ClassService implements IClassInterface {
         allClasses.map((classData) => classData.toJson()).toList(),
       );
 
-      // Đồng bộ class lên Firestore (nếu user đã đăng nhập)
+      
       DataSyncService().syncClass(classData).catchError((error) {
         print('⚠️ [ClassService] Sync failed (will retry): $error');
-        // Không throw error, data đã lưu local thành công
+        
       });
     } catch (e) {
       throw Exception(

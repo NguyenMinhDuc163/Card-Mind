@@ -23,7 +23,7 @@ class _BookmarkScreenState extends State<BookmarkScreen>
   bool _isInitialized = false;
 
   @override
-  bool get wantKeepAlive => false; // Không cache state, luôn refresh
+  bool get wantKeepAlive => false; 
 
   @override
   void initState() {
@@ -36,7 +36,7 @@ class _BookmarkScreenState extends State<BookmarkScreen>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Refresh mỗi khi dependencies thay đổi (screen hiển thị lại)
+    
     if (_isInitialized) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _refreshData();
@@ -85,7 +85,7 @@ class _BookmarkScreenState extends State<BookmarkScreen>
     LearningMode? learningMode,
   }) async {
     if (learningMode != null) {
-      // Convert enum to string
+      
       String learningModeStr;
       switch (learningMode) {
         case LearningMode.review:
@@ -115,7 +115,7 @@ class _BookmarkScreenState extends State<BookmarkScreen>
       );
     }
 
-    // Refresh data khi quay về (đặc biệt cho bookmark mode)
+    
     if (mounted) {
       final notifier = Provider.of<BookMarkNotifier>(context, listen: false);
       await notifier.initializeData();
@@ -124,7 +124,7 @@ class _BookmarkScreenState extends State<BookmarkScreen>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context); // Required for AutomaticKeepAliveClientMixin
+    super.build(context); 
     return Consumer<BookMarkNotifier>(
       builder: (context, notifier, child) {
         if (!_isInitialized || notifier.isLoading) {

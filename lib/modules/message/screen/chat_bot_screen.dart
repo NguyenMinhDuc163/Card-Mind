@@ -46,7 +46,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
       backgroundColor: context.colors.primary,
       screen: Consumer<ChatNotifier>(
         builder: (context, notifier, child) {
-          // Scroll to bottom khi có tin nhắn mới
+          
           if (notifier.messages.isNotEmpty) {
             _scrollToBottom();
           }
@@ -85,7 +85,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                           },
                         ),
               ),
-              // Hiển thị error message
+              
               if (notifier.hasError && notifier.errorMessage != null)
                 Container(
                   margin: const EdgeInsets.symmetric(
@@ -450,13 +450,13 @@ class _ChatInput extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // IconButton(
-                  //   icon: Icon(
-                  //     Icons.attachment,
-                  //     color: Colors.white.withOpacity(0.8),
-                  //   ),
-                  //   onPressed: isLoading ? null : () {},
-                  // ),
+                  
+                  
+                  
+                  
+                  
+                  
+                  
                 ],
               ),
             ),

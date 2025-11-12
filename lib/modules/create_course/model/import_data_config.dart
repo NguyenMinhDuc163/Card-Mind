@@ -55,7 +55,7 @@ class ImportDataConfig extends Equatable {
   String _getDelimiterValue(String delimiter) {
     switch (delimiter) {
       case 'tab':
-        return '\t'; // Tab character
+        return '\t'; 
       case 'comma':
         return ',';
       case 'semicolon':

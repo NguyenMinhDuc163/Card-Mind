@@ -166,7 +166,7 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
           arguments: notifier.course!.id,
         );
       } else if (mode == LearningMode.review) {
-        // Navigate với learningMode = review để chỉ học thẻ cần ôn tập
+        
         Navigator.pushNamed(
           context,
           DetailFlashCardScreen.routeName,

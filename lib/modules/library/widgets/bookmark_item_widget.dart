@@ -28,7 +28,7 @@ class BookmarkItemWidget extends StatelessWidget {
     final reviewCount = courseData['reviewCount'] as int?;
     final lastUpdated = courseData['lastUpdated'] as String? ?? '';
 
-    // Xác định loại card: review, bookmark, hoặc unlearned
+    
     final isReview = reviewCount != null && reviewCount > 0;
 
     return GestureDetector(

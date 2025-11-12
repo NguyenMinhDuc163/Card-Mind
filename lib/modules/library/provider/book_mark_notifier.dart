@@ -16,7 +16,7 @@ class BookMarkNotifier extends ChangeNotifier {
   bool _isLoading = false;
   String? _errorMessage;
   String _searchQuery = '';
-  Timer? _autoRefreshTimer; // Timer để tự động refresh
+  Timer? _autoRefreshTimer; 
 
   List<Map<String, dynamic>> get unlearnedCardsByCourse =>
       _searchQuery.isEmpty
@@ -54,11 +54,11 @@ class BookMarkNotifier extends ChangeNotifier {
     }
   }
 
-  /// Setup timer để tự động refresh data theo chu kỳ
+  
   void _setupAutoRefreshTimer() {
     _autoRefreshTimer?.cancel();
 
-    // Lấy autoRefreshInterval từ SpacedRepetitionService config
+    
     final service = SpacedRepetitionService();
     final refreshIntervalSeconds = service.autoRefreshInterval;
     final refreshInterval = Duration(seconds: refreshIntervalSeconds);
@@ -168,7 +168,7 @@ class BookMarkNotifier extends ChangeNotifier {
 
   Future<void> _loadBookmarkedCoursesByCourse() async {
     try {
-      // Sử dụng method mới để load tất cả bookmarks từ tất cả courses
+      
       final allBookmarkedCourses =
           await DetailFlashCardNotifier.getAllBookmarkedCourses();
 
@@ -179,7 +179,7 @@ class BookMarkNotifier extends ChangeNotifier {
       );
       print('📚 Bookmarked courses data: $_bookmarkedCoursesByCourse');
 
-      // Debug: Print chi tiết từng course
+      
       for (var course in _bookmarkedCoursesByCourse) {
         print(
           '  - Course ${course['courseId']}: ${course['courseTitle']} (${course['bookmarkedCount']} cards)',

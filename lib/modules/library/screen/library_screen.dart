@@ -47,7 +47,7 @@ class _LibraryScreenState extends State<LibraryScreen>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Lấy tab index từ arguments (nếu có)
+    
     final args = ModalRoute.of(context)?.settings.arguments;
     if (args != null && args is int) {
       if (args >= 0 && args < _tabs.length) {
@@ -98,19 +98,19 @@ class _LibraryScreenState extends State<LibraryScreen>
               color: context.colors.onPrimary,
             ),
           ),
-          // GestureDetector(
-          //   onTap: () {
-          //     // TODO: Implement add new content
-          //   },
-          //   child: Container(
-          //     padding: AppPad.a8,
-          //     decoration: BoxDecoration(
-          //       color: context.colors.onSecondary,
-          //       shape: BoxShape.circle,
-          //     ),
-          //     child: Icon(Icons.add, color: context.colors.primary, size: 24),
-          //   ),
-          // ),
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
         ],
       ),
     );

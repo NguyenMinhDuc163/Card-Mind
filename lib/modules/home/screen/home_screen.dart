@@ -132,7 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          // Sync indicator
+          
           Consumer<AuthProvider>(
             builder: (context, authProvider, child) {
               if (!authProvider.isSyncing) {
@@ -185,7 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             },
           ),
-          // Section: Cần ôn tập (Spaced Repetition)
+          
           Consumer<HomeNotifier>(
             builder: (context, notifier, child) {
               final coursesNeedingReview = notifier.coursesNeedingReview;
@@ -353,14 +353,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          // Switch sang Library tab (index 3) trong Dashboard
+                          
                           final dashboardState =
                               context
                                   .findAncestorStateOfType<
                                     State<DashboardScreen>
                                   >();
                           if (dashboardState != null) {
-                            // Call switchToTab method
+                            
                             (dashboardState as dynamic).switchToTab(3);
                           }
                         },
@@ -730,7 +730,7 @@ class _HomeScreenState extends State<HomeScreen> {
   ) async {
     final notifier = Provider.of<HomeNotifier>(context, listen: false);
 
-    // Hiển thị loading
+    
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -756,11 +756,11 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       final success = await notifier.deleteCourse(courseId);
 
-      // Đóng loading dialog
+      
       Navigator.of(context).pop();
 
       if (success) {
-        // Hiển thị thông báo thành công
+        
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('home_screen.course_deleted'.tr(args: [courseTitle])),
@@ -768,7 +768,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         );
       } else {
-        // Hiển thị thông báo lỗi
+        
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -779,10 +779,10 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       }
     } catch (e) {
-      // Đóng loading dialog
+      
       Navigator.of(context).pop();
 
-      // Hiển thị thông báo lỗi
+      
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('home_screen.delete_error'.tr(args: [e.toString()])),
@@ -851,7 +851,7 @@ class _HomeScreenState extends State<HomeScreen> {
   ) async {
     final notifier = Provider.of<HomeNotifier>(context, listen: false);
 
-    // Hiển thị loading
+    
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -877,11 +877,11 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       final success = await notifier.deleteClass(classId);
 
-      // Đóng loading dialog
+      
       Navigator.of(context).pop();
 
       if (success) {
-        // Hiển thị thông báo thành công
+        
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('home_screen.topic_deleted'.tr(args: [className])),
@@ -889,7 +889,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         );
       } else {
-        // Hiển thị thông báo lỗi
+        
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -900,10 +900,10 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       }
     } catch (e) {
-      // Đóng loading dialog
+      
       Navigator.of(context).pop();
 
-      // Hiển thị thông báo lỗi
+      
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('home_screen.delete_error'.tr(args: [e.toString()])),
@@ -913,23 +913,23 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  /// Handle avatar tap - Sign in if not signed in, show user info if signed in
+  
   Future<void> _handleAvatarTap(
     BuildContext context,
     AuthProvider authProvider,
   ) async {
     if (authProvider.isSignedIn) {
-      // Already signed in - show user info dialog
+      
       _showUserInfoDialog(context, authProvider);
     } else {
-      // Not signed in - trigger Google Sign-In
+      
       final success = await authProvider.signInWithGoogle();
 
-      // Không hiển thị toast nữa - loading indicator sẽ hiển thị trạng thái sync
-      // UI sẽ tự động cập nhật khi sync xong thông qua notifyListeners()
+      
+      
 
       if (!success && authProvider.errorMessage != null && mounted) {
-        // Chỉ hiển thị lỗi nếu đăng nhập thất bại
+        
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(authProvider.errorMessage!),
@@ -940,7 +940,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  /// Show user info dialog when avatar is tapped while signed in
+  
   void _showUserInfoDialog(BuildContext context, AuthProvider authProvider) {
     showDialog(
       context: context,
@@ -1013,7 +1013,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /// Show sign out confirmation dialog
+  
   void _showSignOutDialog(BuildContext context, AuthProvider authProvider) {
     showDialog(
       context: context,
@@ -1050,7 +1050,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: () async {
                 Navigator.of(context).pop();
 
-                // Đồng bộ dữ liệu lên Firestore TRƯỚC KHI đăng xuất
+                
                 print('🔄 [HomeScreen] Syncing data before logout...');
                 await DataSyncService().syncAllData();
                 print('✅ [HomeScreen] Data synced successfully');

@@ -274,7 +274,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
       return;
     }
 
-    // Lấy tên người dùng nếu đã đăng nhập
+    
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final author =
         authProvider.isSignedIn

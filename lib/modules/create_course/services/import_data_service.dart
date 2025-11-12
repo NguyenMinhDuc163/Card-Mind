@@ -73,9 +73,9 @@ class ImportDataService {
   static ParsedTerm? _parseTerm(String card, String delimiter, int cardNumber) {
     List<String> parts;
 
-    // Nếu delimiter là tab (\t), thì nhận cả tab VÀ nhiều dấu cách liên tiếp
+    
     if (delimiter == '\t') {
-      // Dùng regex để split theo tab HOẶC nhiều dấu cách liên tiếp
+      
       parts = card.split(RegExp(r'\t|\s{2,}'));
     } else {
       parts = card.split(delimiter);

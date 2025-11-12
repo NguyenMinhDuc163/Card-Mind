@@ -98,10 +98,10 @@ class CourseService implements ICreateCourseInterface {
 
       await deleteCourseData();
 
-      // Đồng bộ course lên Firestore (nếu user đã đăng nhập)
+      
       DataSyncService().syncCourse(courseData).catchError((error) {
         print('⚠️ [CourseService] Sync failed (will retry): $error');
-        // Không throw error, data đã lưu local thành công
+        
       });
     } catch (e) {
       throw Exception(

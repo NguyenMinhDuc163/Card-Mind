@@ -25,30 +25,30 @@ class ChatNotifier extends ChangeNotifier {
   Future<void> sendMessage({required String message}) async {
     if (message.trim().isEmpty) return;
 
-    // Thêm tin nhắn của user vào danh sách
+    
     _messages.add(ChatMessage(isUser: true, text: message));
     _errorMessage = null;
     _isLoading = true;
     notifyListeners();
 
     try {
-      // Gọi API
+      
       final ChatResponse response = await chatBotService.sendMessage(
         message: message,
       );
 
-      // Kiểm tra response
+      
       final String? answer = response.data?.answer;
 
       if (answer != null && answer.isNotEmpty) {
-        // Thêm tin nhắn AI vào danh sách
+        
         _messages.add(ChatMessage(isUser: false, text: answer));
         _errorMessage = null;
       } else {
         _errorMessage = tr('message.chat_bot.error.no_response');
       }
     } catch (e) {
-      // Hiển thị thông báo lỗi thân thiện
+      
       if (e.toString().contains('connection error') ||
           e.toString().contains('Failed host lookup')) {
         _errorMessage = tr('message.chat_bot.error.network');
