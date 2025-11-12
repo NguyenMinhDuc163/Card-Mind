@@ -225,6 +225,6 @@ Mọi đóng góp đều được chào đón! Vui lòng:
 Dự án này được phân phối dưới giấy phép MIT. Xem file `LICENSE` để biết thêm thông tin.
 
 <div align="center">
-  <p>Được phát triển với ❤️ bằng Flutter</p>
-  <p>© 2024 Card Mind. All rights reserved.</p>
+  <p>Được phát triển với Nguyễn Đức ❤️ bằng Flutter</p>
+  <p>© 2025 Card Mind. All rights reserved.</p>
 </div>
