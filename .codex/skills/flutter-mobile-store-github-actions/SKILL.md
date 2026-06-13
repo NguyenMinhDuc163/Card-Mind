@@ -297,11 +297,31 @@ Do not change iOS signing behavior unless the user asks; preserve existing worki
 Before relying on GitHub Actions, verify the Android Fastlane setup has:
 
 - `android/Gemfile` with `fastlane`.
+- `android/Gemfile.lock` committed and compatible with CI Bundler.
 - `android/fastlane/Appfile` with package name and `json_key_file("fastlane/play-store-credentials.json")`.
 - `android/fastlane/Fastfile` lanes `doctor`, `build`, `validate`, and `deploy`.
 - `upload_to_play_store` receives `version_name: play_release_name(options)` when the user wants Google Play release names like `48 (1.0.1)`.
 - `.gitignore` ignores `android/fastlane/play-store-credentials*.json`.
-- `android/.gitignore` ignores `key.properties`, `*.jks`, and `*.keystore`.
+- `android/.gitignore` ignores `key.properties`, `*.jks`, `*.keystore`, `.bundle/`, and `vendor/bundle/`.
+
+## Android Bundler 4 Checksum Pitfall
+
+If GitHub Actions fails inside `ruby/setup-ruby@v1` with:
+
+```text
+Your lockfile has an empty CHECKSUMS entry for "rake", but can't be updated because frozen mode is set
+```
+
+fix the committed lockfile locally from `android/`:
+
+```bash
+bundle lock --add-checksums
+bundle config set --local path vendor/bundle
+bundle config set --local deployment true
+bundle install --jobs 4
+```
+
+Commit only `android/Gemfile.lock` and ignore/remove generated `android/.bundle/` and `android/vendor/bundle/`.
 
 ## Validation Checklist
 
@@ -316,6 +336,7 @@ ruby -c android/fastlane/Fastfile
 ruby -c ios/fastlane/Fastfile
 cd android && bundle exec fastlane lanes
 cd ios && bundle exec fastlane lanes
+cd android && bundle lock --add-checksums
 ```
 
 If `actionlint` is installed, run it too:

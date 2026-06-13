@@ -82,6 +82,24 @@ bundle config set path vendor/bundle
 bundle install
 ```
 
+When using `ruby/setup-ruby` with `bundler-cache: true`, CI runs Bundler in deployment/frozen mode. If CI fails with an empty `CHECKSUMS` entry such as:
+
+```text
+Your lockfile has an empty CHECKSUMS entry for "rake", but can't be updated because frozen mode is set
+```
+
+regenerate checksums locally and commit the lockfile:
+
+```bash
+cd android
+bundle lock --add-checksums
+bundle config set --local path vendor/bundle
+bundle config set --local deployment true
+bundle install --jobs 4
+```
+
+Add `.bundle/` and `vendor/bundle/` to `android/.gitignore`; do not commit those generated directories.
+
 ## Appfile
 
 Use a fixed JSON key path and package name:
@@ -563,6 +581,7 @@ bundle exec fastlane run validate_play_store_json_key json_key:fastlane/play-sto
 
 - Missing gems: run `cd android && bundle install`.
 - Bundler version mismatch: install the Bundler version named in `android/Gemfile.lock`, or regenerate the lock with the local Bundler if appropriate.
+- Empty `CHECKSUMS` entry in CI frozen mode: run `cd android && bundle lock --add-checksums`, then verify with `bundle config set --local deployment true && bundle install --jobs 4`.
 - `Google Play service account JSON not found`: place the file at `android/fastlane/play-store-credentials.json`.
 - `403 permission denied`: grant the service account the required app permissions in Google Play Console.
 - Package/app not found: confirm `package_name(...)` matches the Play Console app package and Android `applicationId`.
