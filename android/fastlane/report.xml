@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="fastlane.lanes">
+    
+    
+    
+      
+      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000333">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="1: Switch to android deploy lane" time="5.6e-05">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="2: Switch to android doctor lane" time="4.4e-05">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="3: Switch to android build lane" time="4.2e-05">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="4: cd /Users/seatech/Desktop/project/workspace/Edu-Tech &amp;&amp; /Users/seatech/Desktop/project/workspace/Edu-Tech/.fvm/flutter_sdk/bin/flutter pub get" time="1.993174">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="5: cd /Users/seatech/Desktop/project/workspace/Edu-Tech &amp;&amp; /Users/seatech/Desktop/project/workspace/Edu-Tech/.fvm/flutter_sdk/bin/flutter build appbundle --release" time="11.730169">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="6: upload_to_play_store" time="56.561946">
+        
+      </testcase>
+    
+  </testsuite>
+</testsuites>

@@ -44,6 +44,13 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+# Store/signing secrets
+android/fastlane/play-store-credentials*.json
+ios/fastlane/.env
+ios/fastlane/*.p8
+ios/fastlane/*.p12
+ios/fastlane/*.mobileprovision
+
 # FVM Version Cache
 .fvm/
 /env/.env.dev
