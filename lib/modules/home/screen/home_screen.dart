@@ -92,40 +92,44 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(width: 12),
                   Consumer<AuthProvider>(
                     builder: (context, authProvider, child) {
-                      return GestureDetector(
-                        onTap: () => _handleAvatarTap(context, authProvider),
-                        onLongPress:
-                            authProvider.isSignedIn
-                                ? () =>
-                                    _showSignOutDialog(context, authProvider)
-                                : null,
-                        child: CircleAvatar(
-                          radius: 18,
-                          backgroundColor: context.brandColors.avatarBackground,
-                          backgroundImage:
-                              authProvider.photoURL != null
-                                  ? NetworkImage(authProvider.photoURL!)
-                                  : null,
-                          child:
-                              authProvider.isLoading
-                                  ? const SizedBox(
-                                    width: 16,
-                                    height: 16,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        Colors.white,
-                                      ),
-                                    ),
-                                  )
-                                  : authProvider.photoURL == null
-                                  ? Icon(
-                                    Icons.person,
-                                    color: context.brandColors.searchBarIcon,
-                                  )
-                                  : null,
-                        ),
+                      return Icon(
+                        Icons.person,
+                        color: context.brandColors.searchBarIcon,
                       );
+                      // return GestureDetector(
+                      //   onTap: () => _handleAvatarTap(context, authProvider),
+                      //   onLongPress:
+                      //       authProvider.isSignedIn
+                      //           ? () =>
+                      //               _showSignOutDialog(context, authProvider)
+                      //           : null,
+                      //   child: CircleAvatar(
+                      //     radius: 18,
+                      //     backgroundColor: context.brandColors.avatarBackground,
+                      //     backgroundImage:
+                      //         authProvider.photoURL != null
+                      //             ? NetworkImage(authProvider.photoURL!)
+                      //             : null,
+                      //     child:
+                      //         authProvider.isLoading
+                      //             ? const SizedBox(
+                      //               width: 16,
+                      //               height: 16,
+                      //               child: CircularProgressIndicator(
+                      //                 strokeWidth: 2,
+                      //                 valueColor: AlwaysStoppedAnimation<Color>(
+                      //                   Colors.white,
+                      //                 ),
+                      //               ),
+                      //             )
+                      //             : authProvider.photoURL == null
+                      //             ? Icon(
+                      //               Icons.person,
+                      //               color: context.brandColors.searchBarIcon,
+                      //             )
+                      //             : null,
+                      //   ),
+                      // );
                     },
                   ),
                 ],
