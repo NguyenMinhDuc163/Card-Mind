@@ -268,6 +268,15 @@
       "copy_text": "Copy Text",
       "copy_success": "Copied to clipboard",
       "input_hint": "Ask AI chat anything",
+      "consent": {
+        "title": "Confirm AI Use",
+        "description": "Before using Chat Bot, please confirm that you understand how data is processed to generate AI responses.",
+        "data_sent": "Data sent: the message content you enter and the context needed for AI to respond.",
+        "sent_to": "Data is sent to Card Mind servers and the third-party AI service provider used to generate responses.",
+        "permission": "By confirming, you allow this data to be shared for the Chat Bot feature.",
+        "cancel": "Cancel",
+        "confirm": "Confirm"
+      },
       "error": {
         "no_response": "No response from AI. Please try again.",
         "network": "Unable to connect to the server. Please check your network connection.",
