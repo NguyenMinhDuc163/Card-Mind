@@ -37,15 +37,15 @@ jobs:
       - name: Checkout bumped main
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.commit_sha }}
+          ref: '${{ inputs.commit_sha }}'
           persist-credentials: false
 
       - name: Validate required secrets
         shell: bash
         env:
-          GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
-          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-          ANDROID_KEY_PROPERTIES_BASE64: ${{ secrets.ANDROID_KEY_PROPERTIES_BASE64 }}
+          GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: '${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}'
+          ANDROID_KEYSTORE_BASE64: '${{ secrets.ANDROID_KEYSTORE_BASE64 }}'
+          ANDROID_KEY_PROPERTIES_BASE64: '${{ secrets.ANDROID_KEY_PROPERTIES_BASE64 }}'
         run: |
           set -euo pipefail
           missing=0
@@ -67,9 +67,9 @@ jobs:
       - name: Write Android signing and Play credentials
         shell: bash
         env:
-          GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
-          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-          ANDROID_KEY_PROPERTIES_BASE64: ${{ secrets.ANDROID_KEY_PROPERTIES_BASE64 }}
+          GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: '${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}'
+          ANDROID_KEYSTORE_BASE64: '${{ secrets.ANDROID_KEYSTORE_BASE64 }}'
+          ANDROID_KEY_PROPERTIES_BASE64: '${{ secrets.ANDROID_KEY_PROPERTIES_BASE64 }}'
         run: |
           set -euo pipefail
           mkdir -p android/fastlane
@@ -192,7 +192,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: ${{ steps.flutter_version.outputs.version }}
+          flutter-version: '${{ steps.flutter_version.outputs.version }}'
           cache: true
 
       - name: Setup Ruby
@@ -214,3 +214,11 @@ jobs:
           name: android-aab
           path: build/app/outputs/bundle/release/*.aab
           if-no-files-found: ignore
+
+      - name: Upload Android symbol artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: symbol
+          path: build/app/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib
+          if-no-files-found: warn

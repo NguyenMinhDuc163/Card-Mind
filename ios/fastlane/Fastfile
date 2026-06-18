@@ -120,6 +120,7 @@ platform :ios do
       export_options: build_export_options,
       output_directory: "../build/ios/ipa",
       output_name: "CardMind-#{version[:name]}-#{version[:number]}.ipa",
+      archive_path: "../build/ios/archive/Runner.xcarchive",
       clean: true,
       include_bitcode: false,
       include_symbols: true,
