@@ -272,7 +272,7 @@
         "title": "Thông báo về Trợ lý AI",
         "description": "Trước khi sử dụng Trợ lý AI, vui lòng đọc và xác nhận cách dữ liệu của bạn được xử lý.",
         "data_sent": "Dữ liệu được gửi bao gồm nội dung tin nhắn bạn nhập trong Trợ lý AI và ngữ cảnh hội thoại cần thiết để tạo phản hồi.",
-        "sent_to": "Dữ liệu được gửi đến máy chủ Card Mind. Để tạo phản hồi AI, máy chủ Card Mind có thể chuyển dữ liệu này đến các nhà cung cấp dịch vụ AI bên thứ ba: OpenAI, LLC, Google LLC thông qua Gemini API, và Anthropic PBC thông qua Claude API.",
+        "sent_to": "Dữ liệu được gửi đến máy chủ Card Mind. Để tạo phản hồi AI, máy chủ Card Mind có thể chuyển dữ liệu này đến các nhà cung cấp dịch vụ AI bên thứ ba: OpenAI, LLC thông qua OpenAI API và Google LLC thông qua Gemini API.",
         "purpose": "Dữ liệu này chỉ được sử dụng để xử lý yêu cầu chat của bạn, tạo phản hồi AI, vận hành, bảo mật và cải thiện chất lượng dịch vụ.",
         "privacy_notice": "Vui lòng không nhập mật khẩu, thông tin thanh toán, giấy tờ tùy thân, thông tin sức khỏe hoặc dữ liệu cá nhân nhạy cảm không cần thiết.",
         "permission": "Bằng cách chọn \"Đồng ý\", bạn cho phép Card Mind gửi và chia sẻ dữ liệu nêu trên với các bên được liệt kê để cung cấp chức năng Trợ lý AI.",
