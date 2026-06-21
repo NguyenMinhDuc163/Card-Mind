@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:card_mind/core/widgets/drawer_widget.dart';
 import 'package:card_mind/modules/dashboard/model/tab_item.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -35,6 +36,9 @@ final List<TabItem> _tabs = [
 
 class _DashboardScreenState extends State<DashboardScreen> {
   static const String _aiConsentStorageKey = 'ai_chatbot_data_consent_v1';
+  static final Uri _privacyPolicyUri = Uri.parse(
+    'http://nguyenduc163.notion.site/Privacy-Policy-for-Card-Mind-38303bc2971180cb97c1c7cec93aa138',
+  );
   static const int _homeTabIndex = 0;
   static const int _chatTabIndex = 2;
 
@@ -137,11 +141,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return false;
   }
 
+  Future<void> _openPrivacyPolicy(BuildContext dialogContext) async {
+    print('🔗 [Dashboard] Opening privacy policy: $_privacyPolicyUri');
+    final opened = await launchUrl(
+      _privacyPolicyUri,
+      mode: LaunchMode.externalApplication,
+    );
+    print('🔗 [Dashboard] Privacy policy opened: $opened');
+
+    if (!opened && dialogContext.mounted) {
+      ScaffoldMessenger.of(dialogContext).showSnackBar(
+        SnackBar(
+          content: Text('message.chat_bot.consent.privacy_policy_error'.tr()),
+        ),
+      );
+    }
+  }
+
   Future<bool?> _showAiConsentDialog() {
     return showDialog<bool>(
       context: context,
       barrierDismissible: false,
       builder: (dialogContext) {
+        final privacyPolicyColor = context.brandColors.warning;
+
         return AlertDialog(
           backgroundColor: context.brandColors.cardBackground,
           surfaceTintColor: Colors.transparent,
@@ -173,24 +196,68 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ],
           ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'message.chat_bot.consent.description'.tr(),
-                style: AppTextStyles.textContent2.copyWith(
-                  color: context.brandColors.textSecondary,
-                  height: 1.45,
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'message.chat_bot.consent.description'.tr(),
+                  style: AppTextStyles.textContent2.copyWith(
+                    color: context.brandColors.textSecondary,
+                    height: 1.45,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 12),
-              _AiConsentPoint(text: 'message.chat_bot.consent.data_sent'.tr()),
-              const SizedBox(height: 8),
-              _AiConsentPoint(text: 'message.chat_bot.consent.sent_to'.tr()),
-              const SizedBox(height: 8),
-              _AiConsentPoint(text: 'message.chat_bot.consent.permission'.tr()),
-            ],
+                const SizedBox(height: 12),
+                _AiConsentPoint(
+                  text: 'message.chat_bot.consent.data_sent'.tr(),
+                ),
+                const SizedBox(height: 8),
+                _AiConsentPoint(text: 'message.chat_bot.consent.sent_to'.tr()),
+                const SizedBox(height: 8),
+                _AiConsentPoint(text: 'message.chat_bot.consent.purpose'.tr()),
+                const SizedBox(height: 8),
+                _AiConsentPoint(
+                  text: 'message.chat_bot.consent.privacy_notice'.tr(),
+                ),
+                const SizedBox(height: 8),
+                _AiConsentPoint(
+                  text: 'message.chat_bot.consent.permission'.tr(),
+                ),
+                const SizedBox(height: 12),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton.icon(
+                    onPressed: () => _openPrivacyPolicy(dialogContext),
+                    icon: const Icon(Icons.open_in_new, size: 18),
+                    label: Text(
+                      'message.chat_bot.consent.privacy_policy'.tr(),
+                      style: AppTextStyles.textContent2.copyWith(
+                        color: privacyPolicyColor,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    style: TextButton.styleFrom(
+                      backgroundColor: privacyPolicyColor.withValues(
+                        alpha: 0.12,
+                      ),
+                      foregroundColor: privacyPolicyColor,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        side: BorderSide(
+                          color: privacyPolicyColor.withValues(alpha: 0.35),
+                        ),
+                      ),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
           actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
           actions: [

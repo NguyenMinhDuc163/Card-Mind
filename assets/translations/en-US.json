@@ -269,13 +269,17 @@
       "copy_success": "Copied to clipboard",
       "input_hint": "Ask AI chat anything",
       "consent": {
-        "title": "Confirm AI Use",
-        "description": "Before using Chat Bot, please confirm that you understand how data is processed to generate AI responses.",
-        "data_sent": "Data sent: the message content you enter and the context needed for AI to respond.",
-        "sent_to": "Data is sent to Card Mind servers and the third-party AI service provider used to generate responses.",
-        "permission": "By confirming, you allow this data to be shared for the Chat Bot feature.",
+        "title": "AI Assistant Notice",
+        "description": "Before using the AI Assistant, please read and confirm how your data is processed.",
+        "data_sent": "Data sent includes the message content you enter in the AI Assistant and the conversation context needed to generate a response.",
+        "sent_to": "Data is sent to Card Mind servers. To generate AI responses, Card Mind servers may forward this data to the following third-party AI service providers: OpenAI, LLC, Google LLC via the Gemini API, and Anthropic PBC via the Claude API.",
+        "purpose": "This data is used only to process your chat request, generate AI responses, operate and secure the service, and improve service quality.",
+        "privacy_notice": "Please do not enter passwords, payment information, government IDs, health information, or unnecessary sensitive personal data.",
+        "permission": "By tapping \"Agree\", you allow Card Mind to send and share the data described above with the listed parties to provide the AI Assistant feature.",
         "cancel": "Cancel",
-        "confirm": "Confirm"
+        "confirm": "Agree",
+        "privacy_policy": "View Privacy Policy",
+        "privacy_policy_error": "Unable to open the Privacy Policy. Please try again."
       },
       "error": {
         "no_response": "No response from AI. Please try again.",
