@@ -11,6 +11,11 @@
         android:label="Card Mind"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
+
+        <!-- Google AdMob App ID -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-4649011658078977~5374005352"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

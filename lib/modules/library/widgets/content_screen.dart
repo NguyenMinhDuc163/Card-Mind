@@ -1,3 +1,6 @@
+import 'package:card_mind/core/ads/ad_config.dart';
+import 'package:card_mind/core/ads/ad_unit_ids.dart';
+import 'package:card_mind/core/ads/widgets/native_course_ad_widget.dart';
 import 'package:card_mind/core/theme/theme_extensions.dart';
 import 'package:card_mind/init.dart';
 import 'package:card_mind/modules/library/provider/content_notifier.dart';
@@ -130,20 +133,43 @@ class _ContentScreenState extends State<ContentScreen> {
                 else
                   DataGroupWidget(
                     date: 'library.content.group_all'.tr(),
-                    items:
-                        notifier.contents.map((content) {
-                          return ContentItemWidget(
-                            title: content.title,
-                            details: 'library.content.item_details'.tr(
-                              args: [
-                                content.totalTerms.toString(),
-                                content.author,
-                              ],
-                            ),
-                            tabType: widget.tabType,
-                            contentData: content,
-                          );
-                        }).toList(),
+                    items: () {
+                      final contentItems = notifier.contents
+                          .map((content) {
+                            return ContentItemWidget(
+                              title: content.title,
+                              details: 'library.content.item_details'.tr(
+                                args: [
+                                  content.totalTerms.toString(),
+                                  content.author,
+                                ],
+                              ),
+                              tabType: widget.tabType,
+                              contentData: content,
+                            );
+                          })
+                          .toList();
+
+                      final itemCount = contentItems.length;
+                      final showFirstAd = itemCount > AdConfig.libraryNativeFirstInsertAfterIndex;
+                      final showSecondAd = itemCount > AdConfig.libraryNativeMinItemsForSecondAd;
+
+                      final result = <Widget>[];
+                      for (int i = 0; i < itemCount; i++) {
+                        result.add(contentItems[i]);
+                        if (showFirstAd && i == AdConfig.libraryNativeFirstInsertAfterIndex - 1) {
+                          result.add(NativeCourseAdWidget(
+                            adUnitId: AdUnitIds.libraryNative,
+                          ));
+                        }
+                        if (showSecondAd && i == AdConfig.libraryNativeSecondInsertAfterIndex - 1) {
+                          result.add(NativeCourseAdWidget(
+                            adUnitId: AdUnitIds.libraryNative,
+                          ));
+                        }
+                      }
+                      return result;
+                    }(),
                   ),
                 const SizedBox(height: 40),
               ],

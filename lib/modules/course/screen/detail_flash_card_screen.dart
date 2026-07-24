@@ -1,3 +1,4 @@
+import 'package:card_mind/core/ads/ad_manager.dart';
 import 'package:card_mind/modules/course/screen/course_result_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26,6 +27,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
   @override
   void initState() {
     super.initState();
+    AdManager.instance.setLearningSessionActive(true);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initializeData();
     });
@@ -33,6 +35,7 @@ class _DetailFlashCardScreenState extends State<DetailFlashCardScreen> {
 
   @override
   void dispose() {
+    AdManager.instance.setLearningSessionActive(false);
     _cardController.dispose();
     super.dispose();
   }

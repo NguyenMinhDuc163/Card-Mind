@@ -1,3 +1,4 @@
+import 'package:card_mind/core/ads/ad_manager.dart';
 import 'package:card_mind/core/theme/theme_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:card_mind/init.dart';
@@ -21,9 +22,16 @@ class _TestScreenState extends State<TestScreen> {
   @override
   void initState() {
     super.initState();
+    AdManager.instance.setTestSessionActive(true);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initializeTest();
     });
+  }
+
+  @override
+  void dispose() {
+    AdManager.instance.setTestSessionActive(false);
+    super.dispose();
   }
 
   @override

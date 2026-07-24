@@ -286,6 +286,16 @@
         "network": "Unable to connect to the server. Please check your network connection.",
         "timeout": "The request timed out. Please try again.",
         "generic": "An error occurred. Please try again later."
+      },
+      "watch_ad": "Watch ad for free turns",
+      "reward_earned": "You earned extra AI turns!",
+      "reward_failed": "Could not load ad. Try again later.",
+      "quota_dialog": {
+        "title": "Out of free turns",
+        "body_with_ad": "You've used all 5 free turns today.\n\nWatch a short video to get 3 more turns.\n(You can do this {} more time(s) today)",
+        "body_no_ad": "You've used all 14 turns today (5 free + 9 bonus).\n\nCome back tomorrow for more free turns!",
+        "dismiss": "Dismiss",
+        "watch_ad": "Watch video"
       }
     },
     "history": {

@@ -1,3 +1,6 @@
+import 'package:card_mind/core/ads/ad_config.dart';
+import 'package:card_mind/core/ads/ad_unit_ids.dart';
+import 'package:card_mind/core/ads/widgets/native_course_ad_widget.dart';
 import 'package:card_mind/core/widgets/template/function_screen_template.dart';
 import 'package:card_mind/core/theme/theme_extensions.dart';
 import 'package:card_mind/core/theme/app_pad.dart';
@@ -207,11 +210,20 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
   }
 
   Widget _buildResultsList(List<SearchResult> results) {
+    final showNative = results.length >= AdConfig.searchNativeMinResults;
+    final insertIdx = AdConfig.searchNativeInsertAfterIndex;
+
     return ListView.builder(
       padding: AppPad.h16v8,
-      itemCount: results.length,
+      itemCount: results.length + (showNative ? 1 : 0),
       itemBuilder: (context, index) {
-        final result = results[index];
+        if (showNative && index == insertIdx) {
+          return NativeCourseAdWidget(
+            adUnitId: AdUnitIds.searchNative,
+          );
+        }
+        final resultIdx = showNative && index > insertIdx ? index - 1 : index;
+        final result = results[resultIdx];
         return _buildSearchResultItem(result);
       },
     );

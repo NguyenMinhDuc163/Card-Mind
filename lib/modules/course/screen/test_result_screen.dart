@@ -1,3 +1,4 @@
+import 'package:card_mind/core/ads/ad_manager.dart';
 import 'package:card_mind/core/theme/theme_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:card_mind/init.dart';
@@ -194,8 +195,14 @@ class TestResultScreen extends StatelessWidget {
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).pop();
-                          Navigator.of(context).pop();
+                          final totalQuestions = answers.length;
+                          AdManager.instance.onTestCompleted(
+                            questionCount: totalQuestions,
+                            onComplete: () {
+                              Navigator.of(context).pop();
+                              Navigator.of(context).pop();
+                            },
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: context.brandColors.progressValue,

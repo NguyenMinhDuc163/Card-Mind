@@ -286,6 +286,16 @@
         "network": "Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng.",
         "timeout": "Yêu cầu quá thời gian chờ. Vui lòng thử lại.",
         "generic": "Đã xảy ra lỗi. Vui lòng thử lại sau."
+      },
+      "watch_ad": "Xem quảng cáo nhận thêm lượt",
+      "reward_earned": "Bạn đã nhận thêm lượt hỏi AI!",
+      "reward_failed": "Không thể tải quảng cáo. Thử lại sau.",
+      "quota_dialog": {
+        "title": "Hết lượt miễn phí",
+        "body_with_ad": "Bạn đã dùng hết 5 lượt miễn phí hôm nay.\n\nXem video ngắn để nhận thêm 3 lượt.\n(Bạn còn {} lần xem hôm nay)",
+        "body_no_ad": "Bạn đã dùng hết 14 lượt hôm nay (5 miễn phí + 9 thưởng).\n\nQuay lại ngày mai để có thêm lượt miễn phí!",
+        "dismiss": "Bỏ qua",
+        "watch_ad": "Xem video"
       }
     },
     "history": {

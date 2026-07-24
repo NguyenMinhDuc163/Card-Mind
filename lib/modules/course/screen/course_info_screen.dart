@@ -3,6 +3,8 @@ import 'package:card_mind/init.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:card_mind/core/ads/ad_unit_ids.dart';
+import 'package:card_mind/core/ads/widgets/adaptive_banner_ad_widget.dart';
 import 'package:card_mind/core/theme/theme_extensions.dart';
 import '../provider/course_info_notifier.dart';
 import '../widgets/flashcard_carousel_widget.dart';
@@ -139,6 +141,12 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
                   ),
                 ),
 
+                const SliverToBoxAdapter(child: SizedBox(height: 20)),
+                SliverToBoxAdapter(
+                  child: AdaptiveBannerAdWidget(
+                    adUnitId: AdUnitIds.courseInfoBanner,
+                  ),
+                ),
                 const SliverToBoxAdapter(child: SizedBox(height: 100)),
               ],
             ),

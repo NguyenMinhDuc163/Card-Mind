@@ -1,3 +1,4 @@
+import 'package:card_mind/core/ads/ad_manager.dart';
 import 'package:card_mind/core/theme/theme_extensions.dart';
 import 'package:card_mind/core/widgets/app_gap.dart';
 import 'package:card_mind/init.dart';
@@ -110,11 +111,17 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           GestureDetector(
-            onTap:
-                () => Navigator.pushReplacementNamed(
-                  context,
-                  DashboardScreen.routeName,
-                ),
+            onTap: () {
+              AdManager.instance.onStudySessionCompleted(
+                sessionCards: notifier.totalCards,
+                onComplete: () {
+                  Navigator.pushReplacementNamed(
+                    context,
+                    DashboardScreen.routeName,
+                  );
+                },
+              );
+            },
             child: Container(
               padding: AppPad.a8,
               child: Icon(
@@ -419,9 +426,14 @@ class _CourseResultScreenState extends State<CourseResultScreen> {
           const SizedBox(height: 12),
           GestureDetector(
             onTap: () {
-              Navigator.pushReplacementNamed(
-                context,
-                DashboardScreen.routeName,
+              AdManager.instance.onStudySessionCompleted(
+                sessionCards: notifier.totalCards,
+                onComplete: () {
+                  Navigator.pushReplacementNamed(
+                    context,
+                    DashboardScreen.routeName,
+                  );
+                },
               );
             },
             child: Container(

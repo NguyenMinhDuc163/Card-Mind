@@ -1,3 +1,6 @@
+import 'package:card_mind/core/ads/ad_config.dart';
+import 'package:card_mind/core/ads/ad_unit_ids.dart';
+import 'package:card_mind/core/ads/widgets/native_course_ad_widget.dart';
 import 'package:card_mind/core/theme/theme_extensions.dart';
 import 'package:card_mind/init.dart';
 import 'package:card_mind/modules/course/screen/course_info_screen.dart';
@@ -539,15 +542,29 @@ class _HomeScreenState extends State<HomeScreen> {
               final reversedClasses =
                   notifier.homeData.classes.reversed.toList();
 
+              final showNative = reversedClasses.length >= AdConfig.homeNativeMinCourses;
+              final nativeIndex = AdConfig.homeNativeInsertAfterIndex;
+
               return SliverPadding(
                 padding: AppPad.h16,
                 sliver: SliverList(
                   delegate: SliverChildBuilderDelegate((context, i) {
                     if (i.isOdd) return const SizedBox(height: 16);
-                    final int index = i ~/ 2;
-                    if (index >= reversedClasses.length) return null;
 
-                    final classItem = reversedClasses[index];
+                    final bool isNativeSlot = showNative && i == nativeIndex * 2;
+
+                    if (isNativeSlot) {
+                      return NativeCourseAdWidget(
+                        adUnitId: AdUnitIds.homeNative,
+                      );
+                    }
+
+                    final int classIdx = showNative && i > nativeIndex * 2
+                        ? (i ~/ 2) - 1
+                        : i ~/ 2;
+                    if (classIdx >= reversedClasses.length) return null;
+
+                    final classItem = reversedClasses[classIdx];
                     return GestureDetector(
                       onTap:
                           () => Navigator.pushNamed(
@@ -664,7 +681,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     );
-                  }, childCount: reversedClasses.length * 2 - 1),
+                  }, childCount: (reversedClasses.length + (showNative ? 1 : 0)) * 2 - 1),
                 ),
               );
             },

@@ -1,3 +1,4 @@
+import 'package:card_mind/core/ads/ad_manager.dart';
 import 'package:card_mind/init.dart';
 import 'package:card_mind/core/theme/theme_extensions.dart';
 import 'package:card_mind/modules/message/provider/chat_notifier.dart';
@@ -128,12 +129,20 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                   ),
                 ),
               const SizedBox(height: 4),
+              // Quota indicator + rewarded ad button
+              _buildQuotaBar(context, notifier),
               _ChatInput(
                 controller: _textController,
                 isLoading: notifier.isLoading,
+                canSend: notifier.canSend,
                 onSend: () {
                   final text = _textController.text.trim();
                   if (text.isEmpty || notifier.isLoading) return;
+
+                  if (!notifier.canSend) {
+                    _showOutOfTurnsDialog(context, notifier);
+                    return;
+                  }
 
                   notifier.sendMessage(message: text);
                   _textController.clear();
@@ -400,15 +409,156 @@ class _ActionIcon extends StatelessWidget {
   }
 }
 
+  // ── Quota UI helpers ──
+
+  Widget _buildQuotaBar(BuildContext context, ChatNotifier notifier) {
+    final freeUsed = notifier.todayChatCount.clamp(0, 5);
+    final freeLeft = (5 - freeUsed).clamp(0, 5);
+    final bonusLeft = notifier.remainingTurns - freeLeft;
+    final totalLeft = notifier.remainingTurns;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: context.brandColors.cardBackground.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.local_fire_department,
+            color: totalLeft > 0
+                ? context.brandColors.progressValue
+                : context.brandColors.buttonDestructive,
+            size: 14,
+          ),
+          const SizedBox(width: 6),
+          Text(
+            '$totalLeft',
+            style: AppTextStyles.textContent4.copyWith(
+              color: context.brandColors.textPrimary,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(width: 4),
+          Text(
+            '/ 14',
+            style: AppTextStyles.textContent4.copyWith(
+              color: context.brandColors.textSecondary,
+            ),
+          ),
+          if (bonusLeft > 0) ...[
+            const SizedBox(width: 6),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: context.brandColors.progressValue.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                '+$bonusLeft',
+                style: AppTextStyles.textContent4.copyWith(
+                  color: context.brandColors.progressValue,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  void _showOutOfTurnsDialog(BuildContext context, ChatNotifier notifier) {
+    final canWatch = notifier.canWatchRewardedAd;
+    final adWatchesLeft = 3 - notifier.todayRewardedCount;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: context.brandColors.cardBackground,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(
+          'message.chat_bot.quota_dialog.title'.tr(),
+          style: TextStyle(
+            color: context.brandColors.textPrimary,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        content: Text(
+          canWatch
+              ? 'message.chat_bot.quota_dialog.body_with_ad'.tr(
+                  args: [adWatchesLeft.toString()],
+                )
+              : 'message.chat_bot.quota_dialog.body_no_ad'.tr(),
+          style: TextStyle(color: context.brandColors.textSecondary),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(
+              'message.chat_bot.quota_dialog.dismiss'.tr(),
+              style: TextStyle(color: context.brandColors.textSecondary),
+            ),
+          ),
+          if (canWatch)
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(ctx).pop();
+                _watchRewardedAd(context, notifier);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: context.brandColors.buttonPrimary,
+              ),
+              child: Text(
+                'message.chat_bot.quota_dialog.watch_ad'.tr(),
+                style: const TextStyle(color: Colors.white),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  void _watchRewardedAd(BuildContext context, ChatNotifier notifier) {
+    AdManager.instance.showRewardedAi(
+      onRewardEarned: () {
+        notifier.addRewardedBonus();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('message.chat_bot.reward_earned'.tr()),
+            backgroundColor: context.brandColors.progressValue,
+          ),
+        );
+      },
+      onClosed: () {
+        debugPrint('[Ads] Rewarded ad flow completed');
+      },
+      onFailed: () {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('message.chat_bot.reward_failed'.tr()),
+            backgroundColor: context.brandColors.buttonDestructive,
+          ),
+        );
+      },
+    );
+  }
+
 class _ChatInput extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback onSend;
   final bool isLoading;
+  final bool canSend;
 
   const _ChatInput({
     required this.controller,
     required this.onSend,
     required this.isLoading,
+    required this.canSend,
   });
 
   @override
@@ -463,20 +613,21 @@ class _ChatInput extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           GestureDetector(
-            onTap: isLoading ? null : onSend,
+            onTap: (isLoading || !canSend) ? null : onSend,
             child: Container(
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color:
-                    isLoading
-                        ? context.brandColors.buttonPrimary.withOpacity(0.5)
-                        : context.brandColors.buttonPrimary,
+                color: (isLoading || !canSend)
+                    ? context.brandColors.buttonPrimary.withValues(alpha: 0.5)
+                    : context.brandColors.buttonPrimary,
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.send_rounded,
-                color: isLoading ? Colors.white.withOpacity(0.5) : Colors.white,
+                color: (isLoading || !canSend)
+                    ? Colors.white.withValues(alpha: 0.5)
+                    : Colors.white,
               ),
             ),
           ),

@@ -62,3 +62,7 @@ prn
 aux
 com[1-9]
 lpt[1-9]
+
+# Harness core maintenance binary
+scripts/bin/harness
+scripts/bin/harness.exe
