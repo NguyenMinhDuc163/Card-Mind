@@ -1122,7 +1122,7 @@ Yêu cầu:
 
 ## 20. Acceptance criteria
 
-Codex chỉ coi task hoàn thành khi đạt tất cả điều kiện sau:
+Codex chỉ coi task hoàn thành khi đạt tất cả điề  u kiện sau:
 
 ### 20.1 Build
 

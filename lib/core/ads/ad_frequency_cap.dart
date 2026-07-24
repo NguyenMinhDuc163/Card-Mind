@@ -85,6 +85,7 @@ class AdFrequencyCap {
     required int sessionCards,
   }) async {
     if (!AdConfig.adsEnabled) return false;
+    if (AdConfig.testMode) return true;
     if (sessionCards < AdConfig.minStudyCardsForInterstitial) return false;
 
     return _canShowInterstitialCommon();
@@ -95,12 +96,15 @@ class AdFrequencyCap {
     required int questionCount,
   }) async {
     if (!AdConfig.adsEnabled) return false;
+    if (AdConfig.testMode) return true;
     if (questionCount < AdConfig.minTestQuestionsForInterstitial) return false;
 
     return _canShowInterstitialCommon();
   }
 
   Future<bool> _canShowInterstitialCommon() async {
+    if (AdConfig.testMode) return true;
+
     final completedSessions = LocalStorageHelper.getValue(
           AdStorageKeys.completedSessionsSinceLastInterstitial,
         ) as int? ??
@@ -168,6 +172,7 @@ class AdFrequencyCap {
   /// Whether a rewarded ad can be shown (user-initiated).
   Future<bool> canShowRewarded() async {
     if (!AdConfig.adsEnabled) return false;
+    if (AdConfig.testMode) return true;
     final dailyCount = await _getDailyRewardedCount();
     return dailyCount < AdConfig.maxRewardedPerDay;
   }
@@ -190,6 +195,7 @@ class AdFrequencyCap {
   /// Whether an App Open ad can be shown on app resume.
   Future<bool> canShowAppOpen() async {
     if (!AdConfig.adsEnabled) return false;
+    if (AdConfig.testMode) return true;
 
     final lastAppOpen = _getTimestamp(AdStorageKeys.lastAppOpenShownAt);
     final cooldownSec = AdConfig.appOpenCooldownHours * 3600;

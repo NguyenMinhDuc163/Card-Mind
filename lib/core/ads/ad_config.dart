@@ -8,6 +8,13 @@ class AdConfig {
   /// Master kill-switch. Set to `false` to disable all ads globally.
   static const bool adsEnabled = true;
 
+  /// Test mode: bypasses all frequency caps, cooldowns, session checks,
+  /// and daily limits so ads show immediately. Also paints a red border
+  /// around every ad widget for easy visual identification.
+  ///
+  /// Toggle this at runtime (e.g. in a debug menu) — never ship `true`.
+  static bool testMode = false;
+
   // ── Interstitial ──
 
   /// Minimum cards studied before an interstitial can be shown.
@@ -66,4 +73,5 @@ class AdConfig {
 
   /// Search: insert native ad after this index.
   static const int searchNativeInsertAfterIndex = 3;
+
 }

@@ -44,6 +44,7 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
       builder: (context, notifier, child) {
         if (notifier.isLoading) {
           return FunctionScreenTemplate(
+            backgroundColor: context.colors.primary,
             screen: Scaffold(
               backgroundColor: context.colors.primary,
               body: Center(
@@ -57,6 +58,7 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
 
         if (notifier.hasError) {
           return FunctionScreenTemplate(
+            backgroundColor: context.colors.primary,
             screen: Scaffold(
               backgroundColor: context.colors.primary,
               body: Center(
@@ -91,6 +93,7 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
 
         if (notifier.course == null || notifier.flashcards.isEmpty) {
           return FunctionScreenTemplate(
+            backgroundColor: context.colors.primary,
             screen: Scaffold(
               backgroundColor: context.colors.primary,
               body: Center(
@@ -104,6 +107,7 @@ class _CourseInfoScreenState extends State<CourseInfoScreen> {
         }
 
         return FunctionScreenTemplate(
+          backgroundColor: context.colors.primary,
           screen: Scaffold(
             backgroundColor: context.colors.primary,
             body: CustomScrollView(
