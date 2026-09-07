@@ -47,8 +47,6 @@
 	<true/>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-4649011658078977~6904930057</string>
-	<key>NSUserTrackingUsageDescription</key>
-	<string>Quảng cáo được cá nhân hóa giúp Card Mind miễn phí. Dữ liệu của bạn không bị bán cho bên thứ ba.</string>
 	<key>SKAdNetworkItems</key>
 	<array>
 		<dict>
